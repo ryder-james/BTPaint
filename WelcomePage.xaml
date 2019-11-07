@@ -8,8 +8,15 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     Width="664"
-    Height="498"
-    >
+    Height="498" >
+
+    <Page.Resources>
+        <Style TargetType="Button">
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="Background" Value="#41494E"/>
+            <Setter Property="Padding" Value="20 10"/>
+        </Style>
+    </Page.Resources>
 
     <Grid Background="#425450">
         <Grid.RowDefinitions>
@@ -17,38 +24,25 @@
             <RowDefinition Height="7*"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        
+
         <TextBlock Text="Better Together Paint"
                    FontSize="42"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Center"
                    FontStyle="Italic"
-                   IsColorFontEnabled="True"
-                   />
+                   IsColorFontEnabled="True" />
 
         <StackPanel Spacing="20" Grid.Row="1" HorizontalAlignment="Center">
             <Button Content="Join"
-                FontSize="24"       
-                Background="#41494e"
-                Padding="20 10"
-                Width="{Binding ElementName=Solo, Path=ActualWidth, Mode=OneWay}" />
-            <Button Content="Host"
-                FontSize="24"           
-                Background="#41494e"
-                Padding="20 10"
-                Width="{Binding ElementName=Solo, Path=ActualWidth, Mode=OneWay}" />
-            <Button x:Name="Solo"
-                Content="Solo Paint"
-                FontSize="24"              
-                Padding="20 10"
-                Background="#41494e"/>
-            <Button Content="Exit"
-                FontSize="24"                
-                Background="#41494e"
-                Padding="20 10"
-                Width="{Binding ElementName=Solo, Path=ActualWidth, Mode=OneWay}"
-                Click="Exit" />
+                    Width="{Binding ElementName=soloBtn, Path=ActualWidth, Mode=OneWay}" />
+            <Button Content="Host"  
+                    Width="{Binding ElementName=soloBtn, Path=ActualWidth, Mode=OneWay}" />
+            <Button x:Name="soloBtn"
+                    Content="Solo Paint" />
+            <Button x:Name="exitBtn"
+                    Content="Exit"
+                    Width="{Binding ElementName=soloBtn, Path=ActualWidth, Mode=OneWay}" 
+                    Click="exitBtn_Click" />
         </StackPanel>
-        
     </Grid>
 </Page>
