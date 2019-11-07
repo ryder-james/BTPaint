@@ -8,7 +8,88 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
 
+    <!-- Grid Definitions -->
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.4*"/>
+            <RowDefinition Height="9*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.5*"/>
+            <ColumnDefinition Width="9*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Top Bar -->
+        <CommandBar DefaultLabelPosition="Right" Grid.ColumnSpan="2">
+            <AppBarButton Icon="OpenFile"  Label="File"> <!-- File Button -->
+                <AppBarButton.Flyout>
+                    <Flyout>
+                        <StackPanel Orientation="Vertical">
+                            <AppBarButton x:Name="SaveButton" Content="Save" Click="SaveButton_Click"></AppBarButton>
+                            <AppBarButton x:Name="LoadButton" Content="Load" Click="LoadButton_Click"></AppBarButton>
+                            <AppBarButton x:Name="ImportButton" Content="Import" Click="ImportButton_Click"></AppBarButton>
+                            <AppBarButton x:Name="ExitButton" Content="Exit" Click="ExitButton_Click"></AppBarButton>
+                        </StackPanel>
+                    </Flyout>
+                </AppBarButton.Flyout>
+            </AppBarButton>
+            <AppBarButton Icon="Edit"  Label="Edit"> <!-- Edit Button -->
+                <AppBarButton.Flyout>
+                    <Flyout>
+                        <StackPanel Orientation="Vertical">
+                            <AppBarButton x:Name="ResizeButton" Content="Resize" Click="ResizeButton_Click"></AppBarButton>
+                            <AppBarButton x:Name="EditButton" Content="Edit" Click="EditButton_Click"></AppBarButton>
+                        </StackPanel>
+                    </Flyout>
+                </AppBarButton.Flyout>
+            </AppBarButton>
+        </CommandBar>
+
+        <!-- Collapse Side Bar Button -->
+        <AppBarButton x:Name="CollapseSideBarButton" Icon="More" Click="CollapseSideBarButton_Click"/>
+
+        <!-- Canvas -->
+        <Canvas x:Name="MainCanvas" Grid.Row="1" Grid.ColumnSpan="2" 
+                Background="BlanchedAlmond"
+                PointerPressed="MainCanvas_PointerPressed"
+                PointerReleased="MainCanvas_PointerReleased"
+                PointerMoved="MainCanvas_PointerMoved"
+                Tapped="MainCanvas_Tapped"
+                DoubleTapped="MainCanvas_DoubleTapped"
+                RightTapped="MainCanvas_RightTapped"
+                Holding="MainCanvas_Holding"></Canvas>
+
+        <!-- Side Bar -->
+        <SplitView x:Name="SideBar"
+                   Grid.ColumnSpan="2"
+                   HorizontalAlignment="Left" 
+                   Grid.Row="1" 
+                   IsPaneOpen="True">
+            <SplitView.Pane>
+                <Grid Grid.RowSpan="3" Grid.ColumnSpan="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="6.5*"/>
+                        <RowDefinition Height="1.5*"/>
+                        <RowDefinition Height="3*"/>
+                    </Grid.RowDefinitions>
+                    <!-- Color Picker -->
+                    <ColorPicker x:Name="ColorPicker"
+                            ColorSpectrumShape="Ring">
+                    </ColorPicker>
+
+                    <!-- Sliders & TextBlocks -->
+                    <StackPanel Orientation="Vertical" Grid.Row="1">
+                        <TextBlock Text="Size" HorizontalAlignment="Center" Margin="0 10 0 0"/>
+                        <Slider x:Name="SizeSlider" Margin="10 0 10 0"/>
+                        <TextBlock Text="Opacity" HorizontalAlignment="Center" Margin="0 10 0 0"/>
+                        <Slider x:Name="OpacitySlider" Margin="10 0 10 0"/>
+                    </StackPanel>
+
+                    <!-- List of Brushes : This will be populated in code -->
+                    <ListView x:Name="BrushList" ScrollViewer.VerticalScrollBarVisibility="Visible" Grid.Row="3"></ListView>
+                </Grid>
+            </SplitView.Pane>
+        </SplitView>
     </Grid>
 </Page>

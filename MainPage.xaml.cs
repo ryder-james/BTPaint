@@ -26,5 +26,89 @@ namespace BTPaint
         {
             this.InitializeComponent();
         }
+
+        #region Mouse Input
+        private void MainCanvas_PointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            //Canvas click
+            //throw new NotImplementedException();
+        }
+
+        private void MainCanvas_PointerReleased(object sender, PointerRoutedEventArgs e)
+        {
+            //Canvas release click
+            //throw new NotImplementedException();
+        }
+
+        private void MainCanvas_PointerMoved(object sender, PointerRoutedEventArgs e)
+        {
+            //Canvas pointer moved
+            //throw new NotImplementedException();
+        }
+        #endregion
+
+        #region Tapped Input
+        private void MainCanvas_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            //Canvas tapped (FIRED ON RELEASE)
+        }
+
+        private void MainCanvas_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
+            //Canvas double tapped (FIRED AFTER FIRING TAP, IF IT'S A DOUBLE TAP)
+        }
+
+        private void MainCanvas_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            //Canvas right tapped (FIRED AFTER RELEASE)
+        }
+
+        private void MainCanvas_Holding(object sender, HoldingRoutedEventArgs e)
+        {
+            //Canvas being held (CANNOT BE FIRED BY MOUSE)
+        }
+        #endregion
+
+        private void CollapseSideBarButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (SideBar.IsPaneOpen == true)
+            {
+                SideBar.IsPaneOpen = false;
+            }
+            else
+            {
+                SideBar.IsPaneOpen = true;
+            }
+        }
+
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void LoadButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ImportButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ExitButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ResizeButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void EditButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
