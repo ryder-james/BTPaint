@@ -69,7 +69,7 @@ namespace BTPaint
         }
         #endregion
 
-        private void CollapseSideBarButton_Click(object sender, RoutedEventArgs e)
+        private void collapseSideBarBtn_Click(object sender, RoutedEventArgs e)
         {
             if (SideBar.IsPaneOpen == true)
             {
@@ -81,32 +81,32 @@ namespace BTPaint
             }
         }
 
-        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        private void saveBtn_Click(object sender, RoutedEventArgs e)
         {
 
         }
 
-        private void LoadButton_Click(object sender, RoutedEventArgs e)
+        private void loadBtn_Click(object sender, RoutedEventArgs e)
         {
 
         }
 
-        private void ImportButton_Click(object sender, RoutedEventArgs e)
+        private void importBtn_Click(object sender, RoutedEventArgs e)
         {
 
         }
 
-        private void ExitButton_Click(object sender, RoutedEventArgs e)
+        private void exitBtn_Click(object sender, RoutedEventArgs e)
         {
 
         }
 
-        private void ResizeButton_Click(object sender, RoutedEventArgs e)
+        private void resizeBtn_Click(object sender, RoutedEventArgs e)
         {
 
         }
 
-        private void EditButton_Click(object sender, RoutedEventArgs e)
+        private void editBtn_Click(object sender, RoutedEventArgs e)
         {
 
         }

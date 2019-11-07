@@ -26,10 +26,10 @@
                 <AppBarButton.Flyout>
                     <Flyout>
                         <StackPanel Orientation="Vertical">
-                            <AppBarButton x:Name="SaveButton" Content="Save" Click="SaveButton_Click"></AppBarButton>
-                            <AppBarButton x:Name="LoadButton" Content="Load" Click="LoadButton_Click"></AppBarButton>
-                            <AppBarButton x:Name="ImportButton" Content="Import" Click="ImportButton_Click"></AppBarButton>
-                            <AppBarButton x:Name="ExitButton" Content="Exit" Click="ExitButton_Click"></AppBarButton>
+                            <AppBarButton x:Name="saveBtn" Content="Save" Click="saveBtn_Click"></AppBarButton>
+                            <AppBarButton x:Name="loadBtn" Content="Load" Click="loadBtn_Click"></AppBarButton>
+                            <AppBarButton x:Name="importBtn" Content="Import" Click="importBtn_Click"></AppBarButton>
+                            <AppBarButton x:Name="exitBtn" Content="Exit" Click="exitBtn_Click"></AppBarButton>
                         </StackPanel>
                     </Flyout>
                 </AppBarButton.Flyout>
@@ -38,8 +38,8 @@
                 <AppBarButton.Flyout>
                     <Flyout>
                         <StackPanel Orientation="Vertical">
-                            <AppBarButton x:Name="ResizeButton" Content="Resize" Click="ResizeButton_Click"></AppBarButton>
-                            <AppBarButton x:Name="EditButton" Content="Edit" Click="EditButton_Click"></AppBarButton>
+                            <AppBarButton x:Name="resizeBtn" Content="Resize" Click="resizeBtn_Click"></AppBarButton>
+                            <AppBarButton x:Name="editBtn" Content="Edit" Click="editBtn_Click"></AppBarButton>
                         </StackPanel>
                     </Flyout>
                 </AppBarButton.Flyout>
@@ -47,7 +47,7 @@
         </CommandBar>
 
         <!-- Collapse Side Bar Button -->
-        <AppBarButton x:Name="CollapseSideBarButton" Icon="More" Click="CollapseSideBarButton_Click"/>
+        <AppBarButton x:Name="collapseSideBarBtn" Icon="More" Click="collapseSideBarBtn_Click"/>
 
         <!-- Canvas -->
         <Canvas x:Name="MainCanvas" Grid.Row="1" Grid.ColumnSpan="2" 
@@ -74,16 +74,16 @@
                         <RowDefinition Height="3*"/>
                     </Grid.RowDefinitions>
                     <!-- Color Picker -->
-                    <ColorPicker x:Name="ColorPicker"
+                    <ColorPicker x:Name="colorPicker"
                             ColorSpectrumShape="Ring">
                     </ColorPicker>
 
                     <!-- Sliders & TextBlocks -->
                     <StackPanel Orientation="Vertical" Grid.Row="1">
                         <TextBlock Text="Size" HorizontalAlignment="Center" Margin="0 10 0 0"/>
-                        <Slider x:Name="SizeSlider" Margin="10 0 10 0"/>
+                        <Slider x:Name="sizeSlider" Margin="10 0 10 0"/>
                         <TextBlock Text="Opacity" HorizontalAlignment="Center" Margin="0 10 0 0"/>
-                        <Slider x:Name="OpacitySlider" Margin="10 0 10 0"/>
+                        <Slider x:Name="spacitySlider" Margin="10 0 10 0"/>
                     </StackPanel>
 
                     <!-- List of Brushes : This will be populated in code -->
