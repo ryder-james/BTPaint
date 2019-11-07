@@ -28,10 +28,9 @@ namespace BTPaint
             this.InitializeComponent();
         }
 
-        private void Exit(object sender, RoutedEventArgs e)
+        private void exitBtn_Click(object sender, RoutedEventArgs e)
         {
             CoreApplication.Exit();
         }
-
     }
 }
