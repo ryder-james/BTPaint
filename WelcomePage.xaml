@@ -34,14 +34,14 @@
 
         <StackPanel Spacing="20" Grid.Row="1" HorizontalAlignment="Center">
             <Button Content="Join"
-                    Width="{Binding ElementName=Solo, Path=ActualWidth, Mode=OneWay}" />
+                    Width="{Binding ElementName=soloBtn, Path=ActualWidth, Mode=OneWay}" />
             <Button Content="Host"  
-                    Width="{Binding ElementName=Solo, Path=ActualWidth, Mode=OneWay}" />
+                    Width="{Binding ElementName=soloBtn, Path=ActualWidth, Mode=OneWay}" />
             <Button x:Name="soloBtn"
                     Content="Solo Paint" />
             <Button x:Name="exitBtn"
                     Content="Exit"
-                    Width="{Binding ElementName=Solo, Path=ActualWidth, Mode=OneWay}" 
+                    Width="{Binding ElementName=soloBtn, Path=ActualWidth, Mode=OneWay}" 
                     Click="exitBtn_Click" />
         </StackPanel>
     </Grid>
