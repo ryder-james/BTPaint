@@ -51,6 +51,8 @@ namespace BTPaint
         private void MainCanvas_Tapped(object sender, TappedRoutedEventArgs e)
         {
             //Canvas tapped (FIRED ON RELEASE)
+
+            WelcomeSplash.IsOpen = true;
         }
 
         private void MainCanvas_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)

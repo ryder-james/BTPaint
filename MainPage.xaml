@@ -20,9 +20,14 @@
             <ColumnDefinition Width="9*"/>
         </Grid.ColumnDefinitions>
 
+        <Popup x:Name="WelcomeSplash" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <local:WelcomePage/>
+        </Popup>
+
         <!-- Top Bar -->
         <CommandBar DefaultLabelPosition="Right" Grid.ColumnSpan="2">
-            <AppBarButton Icon="OpenFile"  Label="File"> <!-- File Button -->
+            <AppBarButton Icon="OpenFile"  Label="File">
+                <!-- File Button -->
                 <AppBarButton.Flyout>
                     <Flyout>
                         <StackPanel Orientation="Vertical">
@@ -34,7 +39,8 @@
                     </Flyout>
                 </AppBarButton.Flyout>
             </AppBarButton>
-            <AppBarButton Icon="Edit"  Label="Edit"> <!-- Edit Button -->
+            <AppBarButton Icon="Edit"  Label="Edit">
+                <!-- Edit Button -->
                 <AppBarButton.Flyout>
                     <Flyout>
                         <StackPanel Orientation="Vertical">
