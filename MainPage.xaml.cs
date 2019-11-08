@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage.Pickers;
@@ -12,6 +13,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
@@ -95,12 +97,16 @@ namespace BTPaint
             picker.FileTypeFilter.Add(".jpg");
             picker.FileTypeFilter.Add(".jpeg");
             picker.FileTypeFilter.Add(".png");
-
+       
             Windows.Storage.StorageFile file = await picker.PickSingleFileAsync();
             if (file != null)
             {
                 // Application now has read/write access to the picked file
-                this.test.Text = "Picked photo: " + file.Path;
+                test.Text = "Picked photo: " + file.Path;
+                BitmapImage BMI = new BitmapImage(new Uri(file.Path));
+                testImg.Width = BMI.DecodePixelWidth = 80;
+                testImg.Source = BMI;
+                testImg.Visibility = Visibility.Visible;
             }
             else
             {
@@ -115,7 +121,7 @@ namespace BTPaint
 
         private void exitBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            CoreApplication.Exit();
         }
 
         private void resizeBtn_Click(object sender, RoutedEventArgs e)

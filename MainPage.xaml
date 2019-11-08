@@ -59,6 +59,7 @@
                 DoubleTapped="MainCanvas_DoubleTapped"
                 RightTapped="MainCanvas_RightTapped"
                 Holding="MainCanvas_Holding">
+            <Image x:Name="testImg" />
             <TextBlock x:Name="test"/>
         </Canvas>
 
