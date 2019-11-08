@@ -12,18 +12,14 @@
     <!-- Grid Definitions -->
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="0.4*"/>
+            <RowDefinition Height="40"/>
             <RowDefinition Height="9*"/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.5*"/>
-            <ColumnDefinition Width="9*"/>
-        </Grid.ColumnDefinitions>
 
-        
+
 
         <!-- Top Bar -->
-        <CommandBar DefaultLabelPosition="Right" Grid.ColumnSpan="2">
+        <CommandBar DefaultLabelPosition="Right" Height="40">
             <AppBarButton Icon="OpenFile"  Label="File">
                 <!-- File Button -->
                 <AppBarButton.Flyout>
@@ -71,29 +67,27 @@
                    Grid.Row="1" 
                    IsPaneOpen="True">
             <SplitView.Pane>
-                <Grid Grid.RowSpan="3" Grid.ColumnSpan="2">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="6.5*"/>
-                        <RowDefinition Height="1.5*"/>
-                        <RowDefinition Height="3*"/>
-                    </Grid.RowDefinitions>
-                    <!-- Color Picker -->
-                    <ColorPicker x:Name="colorPicker"
-                            ColorSpectrumShape="Ring"
-                            Margin="0 0 5 0">
-                    </ColorPicker>
+                <ScrollViewer VerticalScrollBarVisibility="Visible">
+                    <StackPanel Orientation="Vertical">
+                        <!-- Color Picker -->
+                        <ColorPicker x:Name="colorPicker"
+                        ColorSpectrumShape="Ring"
+                        Margin="0 0 5 0">
+                        </ColorPicker>
 
-                    <!-- Sliders & TextBlocks -->
-                    <StackPanel Orientation="Vertical" Grid.Row="1">
-                        <TextBlock Text="Size" HorizontalAlignment="Center" Margin="0 10 0 0"/>
-                        <Slider x:Name="sizeSlider" Margin="10 0 10 0"/>
-                        <TextBlock Text="Opacity" HorizontalAlignment="Center" Margin="0 10 0 0"/>
-                        <Slider x:Name="spacitySlider" Margin="10 0 10 0"/>
+                        <!-- Sliders & TextBlocks -->
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="Size" HorizontalAlignment="Center" Margin="0 10 0 0"/>
+                            <Slider x:Name="sizeSlider" Margin="10 0 10 0"/>
+                            <TextBlock Text="Opacity" HorizontalAlignment="Center" Margin="0 10 0 0"/>
+                            <Slider x:Name="spacitySlider" Margin="10 0 10 0"/>
+                        </StackPanel>
+
+                        <!-- List of Brushes : This will be populated in code -->
+                        <ListView x:Name="BrushList" ScrollViewer.VerticalScrollBarVisibility="Visible"></ListView>
+
                     </StackPanel>
-
-                    <!-- List of Brushes : This will be populated in code -->
-                    <ListView x:Name="BrushList" ScrollViewer.VerticalScrollBarVisibility="Visible" Grid.Row="3"></ListView>
-                </Grid>
+                </ScrollViewer>
             </SplitView.Pane>
         </SplitView>
     </Grid>
