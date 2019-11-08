@@ -100,7 +100,7 @@ namespace BTPaint
             if (file != null)
             {
                 // Application now has read/write access to the picked file
-                this.test.Text = "Picked photo: " + file.Name;
+                this.test.Text = "Picked photo: " + file.Path;
             }
             else
             {
