@@ -48,11 +48,12 @@ namespace BTPaint
         #endregion
 
         #region Tapped Input
-        private void MainCanvas_Tapped(object sender, TappedRoutedEventArgs e)
+        private async void MainCanvas_Tapped(object sender, TappedRoutedEventArgs e)
         {
             //Canvas tapped (FIRED ON RELEASE)
 
-            WelcomeSplash.IsOpen = true;
+            WelcomePage welcomePage = new WelcomePage();
+            await welcomePage.ShowAsync();
         }
 
         private void MainCanvas_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
