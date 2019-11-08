@@ -29,10 +29,9 @@
                 <AppBarButton.Flyout>
                     <Flyout>
                         <StackPanel Orientation="Vertical">
-                            <AppBarButton x:Name="saveBtn" Content="Save" Click="saveBtn_Click"></AppBarButton>
-                            <AppBarButton x:Name="loadBtn" Content="Load" Click="loadBtn_Click"></AppBarButton>
-                            <AppBarButton x:Name="importBtn" Content="Import" Click="importBtn_Click"></AppBarButton>
-                            <AppBarButton x:Name="exitBtn" Content="Exit" Click="exitBtn_Click"></AppBarButton>
+                            <AppBarButton x:Name="saveBtn" Label="Save" Icon="Save"  Click="saveBtn_Click"></AppBarButton>
+                            <AppBarButton x:Name="loadBtn" Label="Load" Icon="Download" Click="loadBtn_Click"></AppBarButton>
+                            <AppBarButton x:Name="exitBtn" Label="Exit" Icon="Clear" Click="exitBtn_Click" Foreground="Red"></AppBarButton>
                         </StackPanel>
                     </Flyout>
                 </AppBarButton.Flyout>
@@ -42,8 +41,9 @@
                 <AppBarButton.Flyout>
                     <Flyout>
                         <StackPanel Orientation="Vertical">
-                            <AppBarButton x:Name="resizeBtn" Content="Resize" Click="resizeBtn_Click"></AppBarButton>
-                            <AppBarButton x:Name="editBtn" Content="Edit" Click="editBtn_Click"></AppBarButton>
+                            <AppBarButton x:Name="resizeBtn" Label="Resize" Icon="FullScreen" Click="resizeBtn_Click"></AppBarButton>
+                            <AppBarButton x:Name="importBtn" Label="Import" Icon="Import" Click="importBtn_Click"></AppBarButton>
+                            <AppBarButton x:Name="clearBtn" Label="Clear" Icon="Delete" Click="clearBtn_Click" Foreground="Red"></AppBarButton>
                         </StackPanel>
                     </Flyout>
                 </AppBarButton.Flyout>
@@ -79,7 +79,8 @@
                     </Grid.RowDefinitions>
                     <!-- Color Picker -->
                     <ColorPicker x:Name="colorPicker"
-                            ColorSpectrumShape="Ring">
+                            ColorSpectrumShape="Ring"
+                            Margin="0 0 5 0">
                     </ColorPicker>
 
                     <!-- Sliders & TextBlocks -->

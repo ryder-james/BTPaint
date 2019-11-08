@@ -109,7 +109,7 @@ namespace BTPaint
 
         }
 
-        private void editBtn_Click(object sender, RoutedEventArgs e)
+        private void clearBtn_Click(object sender, RoutedEventArgs e)
         {
 
         }
