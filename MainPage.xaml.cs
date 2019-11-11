@@ -38,6 +38,7 @@ namespace BTPaint
         {
             this.InitializeComponent();
 
+            ShowSplash();
         }
 
         #region Mouse Input
@@ -98,10 +99,8 @@ namespace BTPaint
         #endregion
 
         #region Tapped Input
-        private async void MainCanvas_Tapped(object sender, TappedRoutedEventArgs e)
+        private void MainCanvas_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            WelcomePage welcomePage = new WelcomePage();
-            await welcomePage.ShowAsync();
         }
 
         private void MainCanvas_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
@@ -139,7 +138,7 @@ namespace BTPaint
 
         }
 
-        private async void loadBtn_Click(object sender, RoutedEventArgs e)
+        private void loadBtn_Click(object sender, RoutedEventArgs e)
         {
         }
 
@@ -169,6 +168,12 @@ namespace BTPaint
             writableBitmap.Clear(Color.FromArgb(0, 255, 0, 0));
 
             ImageControl.Source = writableBitmap;
+        }
+
+        private async void ShowSplash()
+        {
+            WelcomePage welcomePage = new WelcomePage();
+            await welcomePage.ShowAsync();
         }
     }
 }
