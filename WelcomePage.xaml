@@ -1,4 +1,4 @@
-﻿<Page
+﻿<ContentDialog
     x:Class="BTPaint.WelcomePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -6,23 +6,20 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-    Width="664"
-    Height="498" >
+    Background="#425450">
 
-    <Page.Resources>
+    <ContentDialog.Resources>
         <Style TargetType="Button">
             <Setter Property="FontSize" Value="24"/>
             <Setter Property="Background" Value="#41494E"/>
             <Setter Property="Padding" Value="20 10"/>
         </Style>
-    </Page.Resources>
+    </ContentDialog.Resources>
 
-    <Grid Background="#425450">
+    <Grid Background="Transparent">
         <Grid.RowDefinitions>
             <RowDefinition Height="4*"/>
             <RowDefinition Height="7*"/>
-            <RowDefinition/>
         </Grid.RowDefinitions>
 
         <TextBlock Text="Better Together Paint"
@@ -30,19 +27,23 @@
                    HorizontalAlignment="Center"
                    VerticalAlignment="Center"
                    FontStyle="Italic"
-                   IsColorFontEnabled="True" />
+                   IsColorFontEnabled="True" 
+                   Margin="0 0 0 20"/>
 
-        <StackPanel Spacing="20" Grid.Row="1" HorizontalAlignment="Center">
-            <Button Content="Join"
-                    Width="{Binding ElementName=soloBtn, Path=ActualWidth, Mode=OneWay}" />
-            <Button Content="Host"  
-                    Width="{Binding ElementName=soloBtn, Path=ActualWidth, Mode=OneWay}" />
+        <StackPanel Spacing="10" Grid.Row="1" HorizontalAlignment="Center">
+            <Button x:Name="joinBtn"
+                    Content="Join"
+                    Width="{Binding ElementName=soloBtn, Path=ActualWidth, Mode=OneWay}" Click="joinBtn_Click" />
+            <Button x:Name="hostBtn"
+                    Content="Host"  
+                    Width="{Binding ElementName=soloBtn, Path=ActualWidth, Mode=OneWay}" Click="hostBtn_Click" />
             <Button x:Name="soloBtn"
-                    Content="Solo Paint" />
+                    Content="Solo Paint" 
+                    Click="soloBtn_Click" />
             <Button x:Name="exitBtn"
                     Content="Exit"
                     Width="{Binding ElementName=soloBtn, Path=ActualWidth, Mode=OneWay}" 
-                    Click="exitBtn_Click" />
+                    Click="exitBtn_Click"/>
         </StackPanel>
     </Grid>
-</Page>
+</ContentDialog>

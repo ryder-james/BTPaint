@@ -6,9 +6,87 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" >
 
-    <Button Content="Click me" FontSize="50" Click="Button_Click">
-        
-    </Button>
+
+    <!-- Grid Definitions -->
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="9*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Top Bar -->
+        <CommandBar DefaultLabelPosition="Right" Height="40">
+            <AppBarButton Icon="OpenFile"  Label="File">
+                <!-- File Button -->
+                <AppBarButton.Flyout>
+                    <Flyout>
+                        <StackPanel Orientation="Vertical">
+                            <AppBarButton x:Name="saveBtn" Label="Save" Icon="Save"  Click="saveBtn_Click"></AppBarButton>
+                            <AppBarButton x:Name="loadBtn" Label="Load" Icon="Download" Click="loadBtn_Click"></AppBarButton>
+                            <AppBarButton x:Name="exitBtn" Label="Exit" Icon="Clear" Click="exitBtn_Click" Foreground="Red"></AppBarButton>
+                        </StackPanel>
+                    </Flyout>
+                </AppBarButton.Flyout>
+            </AppBarButton>
+            <AppBarButton Icon="Edit"  Label="Edit"> <!-- Edit Button -->
+                <AppBarButton.Flyout>
+                    <Flyout>
+                        <StackPanel Orientation="Vertical">
+                            <AppBarButton x:Name="resizeBtn" Label="Resize" Icon="FullScreen" Click="resizeBtn_Click"></AppBarButton>
+                            <AppBarButton x:Name="importBtn" Label="Import" Icon="Import" Click="importBtn_Click"></AppBarButton>
+                            <AppBarButton x:Name="clearBtn" Label="Clear" Icon="Delete" Click="clearBtn_Click" Foreground="Red"></AppBarButton>
+                        </StackPanel>
+                    </Flyout>
+                </AppBarButton.Flyout>
+            </AppBarButton>
+        </CommandBar>
+
+        <!-- Collapse Side Bar Button -->
+        <AppBarButton x:Name="collapseSideBarBtn" Icon="More" Click="collapseSideBarBtn_Click"/>
+
+        <!-- Canvas -->
+        <Canvas x:Name="MainCanvas"  Grid.Row="1" Grid.ColumnSpan="2"
+                    Background="BlanchedAlmond"
+                    PointerPressed="MainCanvas_PointerPressed"
+                    PointerReleased="MainCanvas_PointerReleased"
+                    RightTapped="MainCanvas_RightTapped"
+                    SizeChanged="MainCanvas_SizeChanged">
+
+            <Image x:Name="ImageControl"/>
+        </Canvas>
+
+
+        <!-- Side Bar -->
+        <SplitView x:Name="SideBar"
+                   Grid.ColumnSpan="2"
+                   HorizontalAlignment="Left" 
+                   Grid.Row="1" 
+                   IsPaneOpen="False"
+                   DisplayMode="Overlay">
+            <SplitView.Pane>
+                <ScrollViewer VerticalScrollBarVisibility="Visible">
+                    <StackPanel Orientation="Vertical">
+                        <!-- Color Picker -->
+                        <ColorPicker x:Name="colorPicker"
+                        ColorSpectrumShape="Ring"
+                        Margin="0 0 5 0">
+                        </ColorPicker>
+
+                        <!-- Sliders & TextBlocks -->
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="Size" HorizontalAlignment="Center" Margin="0 10 0 0"/>
+                            <Slider x:Name="sizeSlider" Margin="10 0 10 0"/>
+                            <TextBlock Text="Opacity" HorizontalAlignment="Center" Margin="0 10 0 0"/>
+                            <Slider x:Name="opacitySlider" Margin="10 0 10 0" Minimum="0" Maximum="1" StepFrequency="0.01"/>
+                        </StackPanel>
+
+                        <!-- List of Brushes : This will be populated in code -->
+                        <ListView x:Name="BrushList" ScrollViewer.VerticalScrollBarVisibility="Visible"></ListView>
+                    </StackPanel>
+                </ScrollViewer>
+            </SplitView.Pane>
+        </SplitView>
+    </Grid>
 </Page>
