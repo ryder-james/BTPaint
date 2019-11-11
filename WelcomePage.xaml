@@ -6,9 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-    Width="664"
-    Height="498" >
+    Background="#425450">
 
     <ContentDialog.Resources>
         <Style TargetType="Button">
@@ -18,11 +16,10 @@
         </Style>
     </ContentDialog.Resources>
 
-    <Grid Background="#425450">
+    <Grid Background="Transparent">
         <Grid.RowDefinitions>
             <RowDefinition Height="4*"/>
             <RowDefinition Height="7*"/>
-            <RowDefinition/>
         </Grid.RowDefinitions>
 
         <TextBlock Text="Better Together Paint"
@@ -30,9 +27,10 @@
                    HorizontalAlignment="Center"
                    VerticalAlignment="Center"
                    FontStyle="Italic"
-                   IsColorFontEnabled="True" />
+                   IsColorFontEnabled="True" 
+                   Margin="0 0 0 20"/>
 
-        <StackPanel Spacing="20" Grid.Row="1" HorizontalAlignment="Center">
+        <StackPanel Spacing="10" Grid.Row="1" HorizontalAlignment="Center">
             <Button Content="Join"
                     Width="{Binding ElementName=soloBtn, Path=ActualWidth, Mode=OneWay}" />
             <Button Content="Host"  
@@ -42,7 +40,7 @@
             <Button x:Name="exitBtn"
                     Content="Exit"
                     Width="{Binding ElementName=soloBtn, Path=ActualWidth, Mode=OneWay}" 
-                    Click="exitBtn_Click" />
+                    Click="exitBtn_Click"/>
         </StackPanel>
     </Grid>
 </ContentDialog>
