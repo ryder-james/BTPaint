@@ -88,7 +88,7 @@
                         <TextBlock Text="Size" HorizontalAlignment="Center" Margin="0 10 0 0"/>
                         <Slider x:Name="sizeSlider" Margin="10 0 10 0"/>
                         <TextBlock Text="Opacity" HorizontalAlignment="Center" Margin="0 10 0 0"/>
-                        <Slider x:Name="spacitySlider" Margin="10 0 10 0"/>
+                        <Slider x:Name="opacitySlider" Margin="10 0 10 0" Minimum="0" Maximum="1" StepFrequency="0.01"/>
                     </StackPanel>
 
                     <!-- List of Brushes : This will be populated in code -->
