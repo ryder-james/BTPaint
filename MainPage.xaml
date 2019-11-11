@@ -51,10 +51,7 @@
                     Background="BlanchedAlmond"
                     PointerPressed="MainCanvas_PointerPressed"
                     PointerReleased="MainCanvas_PointerReleased"
-                    Tapped="MainCanvas_Tapped"
-                    DoubleTapped="MainCanvas_DoubleTapped"
                     RightTapped="MainCanvas_RightTapped"
-                    Holding="MainCanvas_Holding"
                     SizeChanged="MainCanvas_SizeChanged">
 
             <Image x:Name="ImageControl"/>
