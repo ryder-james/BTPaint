@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage.Pickers;
@@ -124,6 +125,18 @@ namespace BTPaint
         {
             WelcomePage welcomePage = new WelcomePage();
             await welcomePage.ShowAsync();
+
+            switch (welcomePage.Result)
+            {
+                case WelcomeSplashResult.Solo:
+                    // do stuff?
+                    break;
+                case WelcomeSplashResult.Exit:
+                    CoreApplication.Exit();
+                    break;
+            }
+
+            SideBar.IsPaneOpen = true;
         }
     }
 }
