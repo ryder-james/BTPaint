@@ -1,4 +1,4 @@
-﻿<UserControl
+﻿<ContentDialog
     x:Class="BTPaint.WelcomePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -10,13 +10,13 @@
     Width="664"
     Height="498" >
 
-    <UserControl.Resources>
+    <ContentDialog.Resources>
         <Style TargetType="Button">
             <Setter Property="FontSize" Value="24"/>
             <Setter Property="Background" Value="#41494E"/>
             <Setter Property="Padding" Value="20 10"/>
         </Style>
-    </UserControl.Resources>
+    </ContentDialog.Resources>
 
     <Grid Background="#425450">
         <Grid.RowDefinitions>
@@ -45,4 +45,4 @@
                     Click="exitBtn_Click" />
         </StackPanel>
     </Grid>
-</UserControl>
+</ContentDialog>
