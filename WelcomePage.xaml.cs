@@ -18,19 +18,48 @@ using Windows.UI.Xaml.Navigation;
 
 namespace BTPaint
 {
+    public enum WelcomeSplashResult
+    {
+        Host,
+        Join,
+        Solo,
+        Exit
+    }
+
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     public sealed partial class WelcomePage : ContentDialog
     {
+        public WelcomeSplashResult Result { get; set; }
+
         public WelcomePage()
         {
             this.InitializeComponent();
+            this.Result = WelcomeSplashResult.Solo;
         }
 
+        private void soloBtn_Click(object sender, RoutedEventArgs e)
+        {
+            this.Result = WelcomeSplashResult.Solo;
+            this.Hide();
+        }
+
+        private void joinBtn_Click(object sender, RoutedEventArgs e)
+        {
+            this.Result = WelcomeSplashResult.Solo;
+            this.Hide();
+        }
+
+        private void hostBtn_Click(object sender, RoutedEventArgs e)
+        {
+            this.Result = WelcomeSplashResult.Solo;
+            this.Hide();
+        }
         private void exitBtn_Click(object sender, RoutedEventArgs e)
         {
-            CoreApplication.Exit();
+            this.Result = WelcomeSplashResult.Exit;
+            this.Hide();
         }
     }
 }

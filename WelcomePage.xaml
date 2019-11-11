@@ -31,12 +31,15 @@
                    Margin="0 0 0 20"/>
 
         <StackPanel Spacing="10" Grid.Row="1" HorizontalAlignment="Center">
-            <Button Content="Join"
-                    Width="{Binding ElementName=soloBtn, Path=ActualWidth, Mode=OneWay}" />
-            <Button Content="Host"  
-                    Width="{Binding ElementName=soloBtn, Path=ActualWidth, Mode=OneWay}" />
+            <Button x:Name="joinBtn"
+                    Content="Join"
+                    Width="{Binding ElementName=soloBtn, Path=ActualWidth, Mode=OneWay}" Click="joinBtn_Click" />
+            <Button x:Name="hostBtn"
+                    Content="Host"  
+                    Width="{Binding ElementName=soloBtn, Path=ActualWidth, Mode=OneWay}" Click="hostBtn_Click" />
             <Button x:Name="soloBtn"
-                    Content="Solo Paint" />
+                    Content="Solo Paint" 
+                    Click="soloBtn_Click" />
             <Button x:Name="exitBtn"
                     Content="Exit"
                     Width="{Binding ElementName=soloBtn, Path=ActualWidth, Mode=OneWay}" 
