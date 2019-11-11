@@ -50,24 +50,27 @@
         <AppBarButton x:Name="collapseSideBarBtn" Icon="More" Click="collapseSideBarBtn_Click"/>
 
         <!-- Canvas -->
-        <Canvas x:Name="MainCanvas" Grid.Row="1" Grid.ColumnSpan="2" 
-                Background="BlanchedAlmond"
-                PointerPressed="MainCanvas_PointerPressed"
-                PointerReleased="MainCanvas_PointerReleased"
-                PointerMoved="MainCanvas_PointerMoved"
-                Tapped="MainCanvas_Tapped"
-                DoubleTapped="MainCanvas_DoubleTapped"
-                RightTapped="MainCanvas_RightTapped"
-                Holding="MainCanvas_Holding">
-            <TextBlock x:Name="test"/>
+        <Canvas x:Name="MainCanvas"  Grid.Row="1" Grid.ColumnSpan="2"
+                    Background="BlanchedAlmond"
+                    PointerPressed="MainCanvas_PointerPressed"
+                    PointerReleased="MainCanvas_PointerReleased"
+                    Tapped="MainCanvas_Tapped"
+                    DoubleTapped="MainCanvas_DoubleTapped"
+                    RightTapped="MainCanvas_RightTapped"
+                    Holding="MainCanvas_Holding"
+                    SizeChanged="MainCanvas_SizeChanged">
+
+            <Image x:Name="ImageControl"/>
         </Canvas>
+
 
         <!-- Side Bar -->
         <SplitView x:Name="SideBar"
                    Grid.ColumnSpan="2"
                    HorizontalAlignment="Left" 
                    Grid.Row="1" 
-                   IsPaneOpen="True">
+                   IsPaneOpen="True"
+                   DisplayMode="Overlay">
             <SplitView.Pane>
                 <Grid Grid.RowSpan="3" Grid.ColumnSpan="2">
                     <Grid.RowDefinitions>

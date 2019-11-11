@@ -6,12 +6,15 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage.Pickers;
+using Windows.UI;
+using Windows.UI.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
@@ -23,29 +26,73 @@ namespace BTPaint
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        WriteableBitmap writableBitmap = new WriteableBitmap(512, 512);
+
+        Point prevPosition;
+
+        List<Point> drawPoints = new List<Point>();
+
+        bool shouldErase = false;
+
         public MainPage()
         {
             this.InitializeComponent();
+
         }
 
         #region Mouse Input
         private void MainCanvas_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            //Canvas click
-            //throw new NotImplementedException();
+            prevPosition = e.GetCurrentPoint(MainCanvas).Position;
+            MainCanvas.PointerMoved += MainCanvas_PointerMoved;
         }
 
         private void MainCanvas_PointerReleased(object sender, PointerRoutedEventArgs e)
         {
-            //Canvas release click
-            //throw new NotImplementedException();
+            MainCanvas.PointerMoved -= MainCanvas_PointerMoved;
         }
 
         private void MainCanvas_PointerMoved(object sender, PointerRoutedEventArgs e)
         {
-            //Canvas pointer moved
-            //throw new NotImplementedException();
+            Point currentPosition = e.GetCurrentPoint(MainCanvas).Position;
+
+            writableBitmap.DrawLineAa((int)prevPosition.X, (int)prevPosition.Y, (int)currentPosition.X, (int)currentPosition.Y, colorPicker.Color, 10);
+            writableBitmap.FillEllipseCentered((int)e.GetCurrentPoint(MainCanvas).Position.X, (int)e.GetCurrentPoint(MainCanvas).Position.Y, 5, 5, colorPicker.Color);
+
+            prevPosition = currentPosition;
         }
+
+        //private void MainCanvas_PointerMoved(object sender, PointerRoutedEventArgs e)
+        //{
+        //    if (e.GetCurrentPoint(MainCanvas).Properties.IsLeftButtonPressed)
+        //    {
+        //        drawPoints.Add(e.GetCurrentPoint(MainCanvas).Position);
+
+        //        if (drawPoints.Count() > 10)
+        //        {
+        //            writableBitmap.DrawCurve(PointsToInts(drawPoints), 1, shouldErase ? colorPicker.Color : Colors.Transparent);
+
+        //            drawPoints.RemoveAt(0);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        drawPoints.Clear();
+        //    }
+        //}
+
+        //private int[] PointsToInts(IEnumerable<Point> points)
+        //{
+        //    int[] pointArray = new int[points.Count() * 2];
+
+        //    int i = 0;
+        //    foreach (Point p in points) {
+        //        pointArray[i++] = (int)p.X;
+        //        pointArray[i++] = (int)p.Y;
+        //    }
+
+        //    return pointArray;
+        //}
         #endregion
 
         #region Tapped Input
@@ -62,6 +109,8 @@ namespace BTPaint
         private void MainCanvas_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
             //Canvas right tapped (FIRED AFTER RELEASE)
+
+            shouldErase = !shouldErase;
         }
 
         private void MainCanvas_Holding(object sender, HoldingRoutedEventArgs e)
@@ -89,23 +138,6 @@ namespace BTPaint
 
         private async void loadBtn_Click(object sender, RoutedEventArgs e)
         {
-            var picker = new FileOpenPicker();
-            picker.ViewMode = PickerViewMode.Thumbnail;
-            picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-            picker.FileTypeFilter.Add(".jpg");
-            picker.FileTypeFilter.Add(".jpeg");
-            picker.FileTypeFilter.Add(".png");
-
-            Windows.Storage.StorageFile file = await picker.PickSingleFileAsync();
-            if (file != null)
-            {
-                // Application now has read/write access to the picked file
-                this.test.Text = "Picked photo: " + file.Name;
-            }
-            else
-            {
-                this.test.Text = "Operation cancelled.";
-            }
         }
 
         private void importBtn_Click(object sender, RoutedEventArgs e)
@@ -126,6 +158,14 @@ namespace BTPaint
         private void editBtn_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void MainCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            writableBitmap = BitmapFactory.New((int)MainCanvas.ActualWidth, (int)MainCanvas.ActualHeight);
+            writableBitmap.Clear(Color.FromArgb(0, 255, 0, 0));
+
+            ImageControl.Source = writableBitmap;
         }
     }
 }
