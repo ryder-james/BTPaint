@@ -7,6 +7,8 @@ using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage.Pickers;
+using Windows.UI;
+using Windows.UI.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -25,52 +27,50 @@ namespace BTPaint
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        WriteableBitmap writableBitmap = new WriteableBitmap(512, 512);
+
+        Point prevPosition;
+
+        List<Point> drawPoints = new List<Point>();
+
+        bool shouldErase = false;
+
         public MainPage()
         {
             this.InitializeComponent();
+
+            ShowSplash();
         }
 
-        #region Mouse Input
         private void MainCanvas_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            //Canvas click
-            //throw new NotImplementedException();
+            writableBitmap.FillEllipseCentered((int)e.GetCurrentPoint(MainCanvas).Position.X, (int)e.GetCurrentPoint(MainCanvas).Position.Y, (int)sizeSlider.Value / 2, (int)sizeSlider.Value / 2, colorPicker.Color);
+
+            prevPosition = e.GetCurrentPoint(MainCanvas).Position;
+            MainCanvas.PointerMoved += MainCanvas_PointerMoved;
         }
 
         private void MainCanvas_PointerReleased(object sender, PointerRoutedEventArgs e)
         {
-            //Canvas release click
-            //throw new NotImplementedException();
+            MainCanvas.PointerMoved -= MainCanvas_PointerMoved;
         }
 
         private void MainCanvas_PointerMoved(object sender, PointerRoutedEventArgs e)
         {
-            //Canvas pointer moved
-            //throw new NotImplementedException();
-        }
-        #endregion
+            Point currentPosition = e.GetCurrentPoint(MainCanvas).Position;
 
-        #region Tapped Input
-        private void MainCanvas_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            //Canvas tapped (FIRED ON RELEASE)
-        }
+            writableBitmap.DrawLineAa((int)prevPosition.X, (int)prevPosition.Y, (int)currentPosition.X, (int)currentPosition.Y, colorPicker.Color, (int)sizeSlider.Value);
+            writableBitmap.FillEllipseCentered((int)e.GetCurrentPoint(MainCanvas).Position.X, (int)e.GetCurrentPoint(MainCanvas).Position.Y, (int)sizeSlider.Value /2, (int)sizeSlider.Value /2, colorPicker.Color);
 
-        private void MainCanvas_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
-        {
-            //Canvas double tapped (FIRED AFTER FIRING TAP, IF IT'S A DOUBLE TAP)
+            prevPosition = currentPosition;
         }
 
         private void MainCanvas_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
             //Canvas right tapped (FIRED AFTER RELEASE)
-        }
 
-        private void MainCanvas_Holding(object sender, HoldingRoutedEventArgs e)
-        {
-            //Canvas being held (CANNOT BE FIRED BY MOUSE)
+            shouldErase = !shouldErase;
         }
-        #endregion
 
         private void collapseSideBarBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -89,7 +89,7 @@ namespace BTPaint
 
         }
 
-        private async void loadBtn_Click(object sender, RoutedEventArgs e)
+        private void loadBtn_Click(object sender, RoutedEventArgs e)
         {
             var picker = new FileOpenPicker();
             picker.ViewMode = PickerViewMode.Thumbnail;
@@ -109,6 +109,7 @@ namespace BTPaint
             {
                 this.test.Text = "Operation cancelled.";
             }
+
         }
 
         private void importBtn_Click(object sender, RoutedEventArgs e)
@@ -126,9 +127,35 @@ namespace BTPaint
 
         }
 
-        private void editBtn_Click(object sender, RoutedEventArgs e)
+        private void clearBtn_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void MainCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            writableBitmap = BitmapFactory.New((int)MainCanvas.ActualWidth, (int)MainCanvas.ActualHeight);
+            writableBitmap.Clear(Color.FromArgb(0, 255, 0, 0));
+
+            ImageControl.Source = writableBitmap;
+        }
+
+        private async void ShowSplash()
+        {
+            WelcomePage welcomePage = new WelcomePage();
+            await welcomePage.ShowAsync();
+
+            switch (welcomePage.Result)
+            {
+                case WelcomeSplashResult.Solo:
+                    // do stuff?
+                    break;
+                case WelcomeSplashResult.Exit:
+                    CoreApplication.Exit();
+                    break;
+            }
+
+            SideBar.IsPaneOpen = true;
         }
     }
 }
