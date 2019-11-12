@@ -89,7 +89,7 @@ namespace BTPaint
 
         }
 
-        private void loadBtn_Click(object sender, RoutedEventArgs e)
+        private async void loadBtn_Click(object sender, RoutedEventArgs e)
         {
             var picker = new FileOpenPicker();
             picker.ViewMode = PickerViewMode.Thumbnail;
