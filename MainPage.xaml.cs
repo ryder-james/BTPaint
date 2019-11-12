@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage.Pickers;
@@ -38,9 +39,9 @@ namespace BTPaint
         {
             this.InitializeComponent();
 
+            ShowSplash();
         }
 
-        #region Mouse Input
         private void MainCanvas_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
             writableBitmap.FillEllipseCentered((int)e.GetCurrentPoint(MainCanvas).Position.X, (int)e.GetCurrentPoint(MainCanvas).Position.Y, (int)sizeSlider.Value / 2, (int)sizeSlider.Value / 2, colorPicker.Color);
@@ -64,62 +65,12 @@ namespace BTPaint
             prevPosition = currentPosition;
         }
 
-        //private void MainCanvas_PointerMoved(object sender, PointerRoutedEventArgs e)
-        //{
-        //    if (e.GetCurrentPoint(MainCanvas).Properties.IsLeftButtonPressed)
-        //    {
-        //        drawPoints.Add(e.GetCurrentPoint(MainCanvas).Position);
-
-        //        if (drawPoints.Count() > 10)
-        //        {
-        //            writableBitmap.DrawCurve(PointsToInts(drawPoints), 1, shouldErase ? colorPicker.Color : Colors.Transparent);
-
-        //            drawPoints.RemoveAt(0);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        drawPoints.Clear();
-        //    }
-        //}
-
-        //private int[] PointsToInts(IEnumerable<Point> points)
-        //{
-        //    int[] pointArray = new int[points.Count() * 2];
-
-        //    int i = 0;
-        //    foreach (Point p in points) {
-        //        pointArray[i++] = (int)p.X;
-        //        pointArray[i++] = (int)p.Y;
-        //    }
-
-        //    return pointArray;
-        //}
-        #endregion
-
-        #region Tapped Input
-        private void MainCanvas_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            //Canvas tapped (FIRED ON RELEASE)
-        }
-
-        private void MainCanvas_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
-        {
-            //Canvas double tapped (FIRED AFTER FIRING TAP, IF IT'S A DOUBLE TAP)
-        }
-
         private void MainCanvas_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
             //Canvas right tapped (FIRED AFTER RELEASE)
 
             shouldErase = !shouldErase;
         }
-
-        private void MainCanvas_Holding(object sender, HoldingRoutedEventArgs e)
-        {
-            //Canvas being held (CANNOT BE FIRED BY MOUSE)
-        }
-        #endregion
 
         private void collapseSideBarBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -138,7 +89,7 @@ namespace BTPaint
 
         }
 
-        private async void loadBtn_Click(object sender, RoutedEventArgs e)
+        private void loadBtn_Click(object sender, RoutedEventArgs e)
         {
         }
 
@@ -157,7 +108,7 @@ namespace BTPaint
 
         }
 
-        private void editBtn_Click(object sender, RoutedEventArgs e)
+        private void clearBtn_Click(object sender, RoutedEventArgs e)
         {
 
         }
@@ -170,18 +121,22 @@ namespace BTPaint
             ImageControl.Source = writableBitmap;
         }
 
-        private void pencilBtn_Click(object sender, RoutedEventArgs e)
+        private async void ShowSplash()
         {
-            shouldErase = false;
-            pencilBtn.Background = new SolidColorBrush(colorPicker.Color);
-            eraserBtn.Background = new SolidColorBrush(Colors.White);
-        }
+            WelcomePage welcomePage = new WelcomePage();
+            await welcomePage.ShowAsync();
 
-        private void eraserBtn_Click(object sender, RoutedEventArgs e)
-        {
-            shouldErase = true;
-            eraserBtn.Background = new SolidColorBrush(colorPicker.Color);
-            pencilBtn.Background = new SolidColorBrush(Colors.White);
+            switch (welcomePage.Result)
+            {
+                case WelcomeSplashResult.Solo:
+                    // do stuff?
+                    break;
+                case WelcomeSplashResult.Exit:
+                    CoreApplication.Exit();
+                    break;
+            }
+
+            SideBar.IsPaneOpen = true;
         }
     }
 }
