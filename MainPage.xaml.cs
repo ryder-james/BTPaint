@@ -102,11 +102,8 @@ namespace BTPaint
             if (file != null)
             {
                 // Application now has read/write access to the picked file
-                test.Text = "Picked photo: " + file.Path;
-                BitmapImage BMI = new BitmapImage(new Uri(file.Path));
-                testImg.Width = BMI.DecodePixelWidth = 80;
-                testImg.Source = BMI;
-                testImg.Visibility = Visibility.Visible;
+                test.Text = "Picked photo: " + file.Name;
+                
             }
             else
             {
