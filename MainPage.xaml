@@ -9,6 +9,11 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
 
+    <Page.Resources>
+        <BitmapImage x:Key="pencilImage" UriSource="Assets/Icons/eraser.png"/>
+        <BitmapImage x:Key="eraserImage" UriSource="Assets/Icons/pencil.png"/>
+    </Page.Resources>
+    
     <!-- Grid Definitions -->
     <Grid>
         <Grid.RowDefinitions>
@@ -75,7 +80,7 @@
                 <Grid Grid.RowSpan="3" Grid.ColumnSpan="2">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="6.5*"/>
-                        <RowDefinition Height="1.5*"/>
+                        <RowDefinition Height="2*"/>
                         <RowDefinition Height="3*"/>
                     </Grid.RowDefinitions>
                     <!-- Color Picker -->
@@ -88,7 +93,22 @@
                     <StackPanel Orientation="Vertical" Grid.Row="1">
                         <TextBlock Text="Size" HorizontalAlignment="Center" Margin="0 10 0 0"/>
                         <Slider x:Name="sizeSlider" Margin="10 0 10 0" Value="10"/>
+
+                        <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center" Margin="10">
+                            <Button x:Name="pencilBtn" Margin="10" Height="50" Width="50" Click="pencilBtn_Click" Background="White">
+                                <Button.Content>
+                                    <Image Source="{StaticResource ResourceKey=pencilImage}"/>
+                                </Button.Content>
+                            </Button>
+                            <Button x:Name="eraserBtn" Margin="10" Height="50" Width="50" Click="eraserBtn_Click" Background="White">
+                                <Button.Content>
+                                    <Image Source="{StaticResource ResourceKey=eraserImage}" />
+                                </Button.Content>
+                            </Button>
+                        </StackPanel>
                     </StackPanel>
+
+                    <!-- Buttons -->
 
                     <!-- List of Brushes : This will be populated in code -->
                     <ListView x:Name="BrushList" ScrollViewer.VerticalScrollBarVisibility="Visible" Grid.Row="3"></ListView>

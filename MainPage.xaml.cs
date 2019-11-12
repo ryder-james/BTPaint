@@ -169,5 +169,19 @@ namespace BTPaint
 
             ImageControl.Source = writableBitmap;
         }
+
+        private void pencilBtn_Click(object sender, RoutedEventArgs e)
+        {
+            shouldErase = false;
+            pencilBtn.Background = new SolidColorBrush(colorPicker.Color);
+            eraserBtn.Background = new SolidColorBrush(Colors.White);
+        }
+
+        private void eraserBtn_Click(object sender, RoutedEventArgs e)
+        {
+            shouldErase = true;
+            eraserBtn.Background = new SolidColorBrush(colorPicker.Color);
+            pencilBtn.Background = new SolidColorBrush(Colors.White);
+        }
     }
 }
