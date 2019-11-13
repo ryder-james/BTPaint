@@ -30,14 +30,16 @@ namespace BTPaint
         WriteableBitmap writableBitmap = new WriteableBitmap(512, 512);
 
         Point prevPosition;
-
-        List<Point> drawPoints = new List<Point>();
-
+        Color drawColor;
         bool shouldErase = false;
+        int size;
+
 
         public MainPage()
         {
             this.InitializeComponent();
+
+            drawColor = (shouldErase ? ((SolidColorBrush)MainCanvas.Background).Color : colorPicker.Color);
 
             writableBitmap = BitmapFactory.New((int)MainCanvas.ActualWidth, (int)MainCanvas.ActualHeight);
             writableBitmap.Clear(((SolidColorBrush)MainCanvas.Background).Color);
@@ -49,19 +51,16 @@ namespace BTPaint
 
         private void MainCanvas_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            Color color;
-            SolidColorBrush s = new SolidColorBrush(Colors.Red);
+            drawColor = (shouldErase ? ((SolidColorBrush)MainCanvas.Background).Color : colorPicker.Color);
 
-            if (shouldErase == false)
+            size = (int)sizeSlider.Value;
+
+            if (e.Pointer.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Pen)
             {
-                color = colorPicker.Color;
-            }
-            else
-            {
-                color = ((SolidColorBrush)MainCanvas.Background).Color;
+                size = (int)Math.Ceiling(sizeSlider.Value * e.GetCurrentPoint(null).Properties.Pressure);
             }
 
-            writableBitmap.FillEllipseCentered((int)e.GetCurrentPoint(MainCanvas).Position.X, (int)e.GetCurrentPoint(MainCanvas).Position.Y, ((int)sizeSlider.Value / 2) - 1, ((int)sizeSlider.Value / 2) - 1, color);
+            writableBitmap.FillEllipseCentered((int)e.GetCurrentPoint(MainCanvas).Position.X, (int)e.GetCurrentPoint(MainCanvas).Position.Y, ((int)Math.Ceiling(size / 2.0)) - 1, ((int)sizeSlider.Value / 2) - 1, drawColor);
 
             prevPosition = e.GetCurrentPoint(MainCanvas).Position;
             MainCanvas.PointerMoved += MainCanvas_PointerMoved;
@@ -75,35 +74,22 @@ namespace BTPaint
         private void MainCanvas_PointerMoved(object sender, PointerRoutedEventArgs e)
         {
             Point currentPosition = e.GetCurrentPoint(MainCanvas).Position;
+            size = (int)sizeSlider.Value;
 
-            Color color;
-            SolidColorBrush s = new SolidColorBrush(Colors.Red);
-
-            if (shouldErase == false)
+            if (e.Pointer.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Pen)
             {
-                color = colorPicker.Color;
-            }
-            else
-            {
-                color = ((SolidColorBrush)MainCanvas.Background).Color;
+                size = (int)Math.Ceiling(sizeSlider.Value * e.GetCurrentPoint(null).Properties.Pressure);
             }
 
-            writableBitmap.DrawLineAa((int)prevPosition.X, (int)prevPosition.Y, (int)currentPosition.X, (int)currentPosition.Y, color, (int)sizeSlider.Value);
-            writableBitmap.FillEllipseCentered((int)e.GetCurrentPoint(MainCanvas).Position.X, (int)e.GetCurrentPoint(MainCanvas).Position.Y, ((int)sizeSlider.Value / 2) - 1, ((int)sizeSlider.Value / 2) - 1, color);
+            writableBitmap.DrawLineAa((int)prevPosition.X, (int)prevPosition.Y, (int)currentPosition.X, (int)currentPosition.Y, drawColor, size);
+            writableBitmap.FillEllipseCentered((int)e.GetCurrentPoint(MainCanvas).Position.X, (int)e.GetCurrentPoint(MainCanvas).Position.Y, (int)Math.Ceiling(size / 2.0) - 1, (int)Math.Ceiling(size / 2.0) - 1, drawColor);
 
             prevPosition = currentPosition;
         }
 
         private void collapseSideBarBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (SideBar.IsPaneOpen == true)
-            {
-                SideBar.IsPaneOpen = false;
-            }
-            else
-            {
-                SideBar.IsPaneOpen = true;
-            }
+            SideBar.IsPaneOpen = !SideBar.IsPaneOpen;
         }
 
         private void saveBtn_Click(object sender, RoutedEventArgs e)
@@ -133,11 +119,6 @@ namespace BTPaint
         private void clearBtn_Click(object sender, RoutedEventArgs e)
         {
             writableBitmap.Clear(((SolidColorBrush)MainCanvas.Background).Color);
-        }
-
-        private void MainCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-
         }
 
         private async void ShowSplash()

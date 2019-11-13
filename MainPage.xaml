@@ -57,7 +57,7 @@
                     Background="BlanchedAlmond"
                     PointerPressed="MainCanvas_PointerPressed"
                     PointerReleased="MainCanvas_PointerReleased"
-                    SizeChanged="MainCanvas_SizeChanged"
+                    PointerExited="MainCanvas_PointerReleased"
                     Width="800"
                     Height="600">
 
@@ -86,9 +86,9 @@
                         <!-- Size Slider & TextBlocks -->
                         <StackPanel Orientation="Vertical" Grid.Row="1">
                             <TextBlock Text="Size" HorizontalAlignment="Center" Margin="0 10 0 0"/>
-                            <Slider x:Name="sizeSlider" Margin="10 0 10 0" Value="10"/>
+                            <Slider x:Name="sizeSlider" Margin="10 0 10 0" Value="10" Minimum="1" Maximum="100"/>
 
-                            <!-- Pencil & Eraser Buttons -->
+                                <!-- Pencil & Eraser Buttons -->
                             <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center" Margin="10">
                                 <Button x:Name="pencilBtn" Margin="10" Height="50" Width="50" Click="pencilBtn_Click" Background="White">
                                     <Button.Content>
