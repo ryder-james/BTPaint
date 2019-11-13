@@ -85,7 +85,7 @@
                         <!-- Size Slider & TextBlocks -->
                         <StackPanel Orientation="Vertical" Grid.Row="1">
                             <TextBlock Text="Size" HorizontalAlignment="Center" Margin="0 10 0 0"/>
-                            <Slider x:Name="sizeSlider" Margin="10 0 10 0" Value="10"/>
+                            <Slider x:Name="sizeSlider" Margin="10 0 10 0" Value="10" Minimum="1"/>
 
                             <!-- Pencil & Eraser Buttons -->
                             <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center" Margin="10">
