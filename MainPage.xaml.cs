@@ -32,6 +32,7 @@ namespace BTPaint
         Point prevPosition;
         Color drawColor;
         bool shouldErase = false;
+        int size;
 
 
         public MainPage()
@@ -52,7 +53,14 @@ namespace BTPaint
         {
             drawColor = (shouldErase ? ((SolidColorBrush)MainCanvas.Background).Color : colorPicker.Color);
 
-            writableBitmap.FillEllipseCentered((int)e.GetCurrentPoint(MainCanvas).Position.X, (int)e.GetCurrentPoint(MainCanvas).Position.Y, ((int)sizeSlider.Value / 2) - 1, ((int)sizeSlider.Value / 2) - 1, drawColor);
+            size = (int)sizeSlider.Value;
+
+            if (e.Pointer.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Pen)
+            {
+                size = (int)Math.Ceiling(sizeSlider.Value * e.GetCurrentPoint(null).Properties.Pressure);
+            }
+
+            writableBitmap.FillEllipseCentered((int)e.GetCurrentPoint(MainCanvas).Position.X, (int)e.GetCurrentPoint(MainCanvas).Position.Y, ((int)Math.Ceiling(size / 2.0)) - 1, ((int)sizeSlider.Value / 2) - 1, drawColor);
 
             prevPosition = e.GetCurrentPoint(MainCanvas).Position;
             MainCanvas.PointerMoved += MainCanvas_PointerMoved;
@@ -66,9 +74,15 @@ namespace BTPaint
         private void MainCanvas_PointerMoved(object sender, PointerRoutedEventArgs e)
         {
             Point currentPosition = e.GetCurrentPoint(MainCanvas).Position;
+            size = (int)sizeSlider.Value;
 
-            writableBitmap.DrawLineAa((int)prevPosition.X, (int)prevPosition.Y, (int)currentPosition.X, (int)currentPosition.Y, drawColor, (int)sizeSlider.Value);
-            writableBitmap.FillEllipseCentered((int)e.GetCurrentPoint(MainCanvas).Position.X, (int)e.GetCurrentPoint(MainCanvas).Position.Y, ((int)sizeSlider.Value / 2) - 1, ((int)sizeSlider.Value / 2) - 1, drawColor);
+            if (e.Pointer.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Pen)
+            {
+                size = (int)Math.Ceiling(sizeSlider.Value * e.GetCurrentPoint(null).Properties.Pressure);
+            }
+
+            writableBitmap.DrawLineAa((int)prevPosition.X, (int)prevPosition.Y, (int)currentPosition.X, (int)currentPosition.Y, drawColor, size);
+            writableBitmap.FillEllipseCentered((int)e.GetCurrentPoint(MainCanvas).Position.X, (int)e.GetCurrentPoint(MainCanvas).Position.Y, (int)Math.Ceiling(size / 2.0) - 1, (int)Math.Ceiling(size / 2.0) - 1, drawColor);
 
             prevPosition = currentPosition;
         }
