@@ -57,8 +57,8 @@
 
             <Image x:Name="testImg"/>
             <Image x:Name="ImageControl"/>
-            <TextBlock x:Name="test"/>
-            <TextBlock x:Name="test2" Height="20" Width="1000" Canvas.Top="24"/>
+            <TextBlock x:Name="test" Foreground="Black"/>
+            <TextBlock x:Name="test2" Foreground="Black" Height="20" Width="1000" Canvas.Top="24"/>
         </Canvas>
 
 

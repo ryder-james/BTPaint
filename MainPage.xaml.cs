@@ -101,16 +101,16 @@ namespace BTPaint
             picker.FileTypeFilter.Add(".png");
        
             IStorageFile file = await picker.PickSingleFileAsync();
-            StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-            await file.CopyAsync(localFolder, "new "+file.Name,NameCollisionOption.GenerateUniqueName);
+            StorageFolder externalDevices = KnownFolders.RemovableDevices;
+            await externalDevices.TryGetItemAsync(file.Name);
             if (file != null)
             {
                 // Application now has read/write access to the picked file
-                test.Text = "Picked photo: " + localFolder.Path;
-                string newfilepath = localFolder.Path + file.Name;
-                test2.Text = "Picked photo: " + newfilepath;
+                test.Text = "Picked photo: " + externalDevices.Name;
+                string newfilepath = file.Path.Replace('\\', '/');
 
-                //testImg.Source = new BitmapImage(new Uri(newfilepath))
+                testImg.Source = new BitmapImage(new Uri(newfilepath, UriKind.Absolute));
+                test2.Text = "Picked photo: " + newfilepath;
 ;
             }
             else
