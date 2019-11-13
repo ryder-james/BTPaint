@@ -86,9 +86,42 @@ namespace BTPaint
             }
         }
 
-        private void saveBtn_Click(object sender, RoutedEventArgs e)
+        private async void saveBtn_Click(object sender, RoutedEventArgs e)
         {
+            var savePicker = new FileSavePicker();
+            savePicker.SuggestedStartLocation =
+            PickerLocationId.PicturesLibrary;
+            // Dropdown of file types the user can save the file as
+            savePicker.FileTypeChoices.Add("Image", new List<string>() { ".png", ".jpg", ".jpeg" });
+            // Default file name if the user does not type one in or select a file to replace
+            savePicker.SuggestedFileName = "New Image";
 
+            StorageFile file = await savePicker.PickSaveFileAsync();
+            if (file != null)
+            {
+                // Prevent updates to the remote version of the file until
+                // we finish making changes and call CompleteUpdatesAsync.
+                CachedFileManager.DeferUpdates(file);
+                // write to file
+                await FileIO.WriteTextAsync(file, file.Name);
+                // Let Windows know that we're finished changing the file so
+                // the other app can update the remote version of the file.
+                // Completing updates may require Windows to ask for user input.
+                Windows.Storage.Provider.FileUpdateStatus status =
+                    await CachedFileManager.CompleteUpdatesAsync(file);
+                if (status == Windows.Storage.Provider.FileUpdateStatus.Complete)
+                {
+                    test.Text = "File " + file.Name + " was saved.";
+                }
+                else
+                {
+                    test.Text = "File " + file.Name + " couldn't be saved.";
+                }
+            }
+            else
+            {
+                test.Text = "Operation cancelled.";
+            }
         }
 
         private async void loadBtn_Click(object sender, RoutedEventArgs e)
