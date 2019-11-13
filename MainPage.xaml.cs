@@ -50,7 +50,6 @@ namespace BTPaint
         private void MainCanvas_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
             Color color;
-            SolidColorBrush s = new SolidColorBrush(Colors.Red);
 
             if (shouldErase == false)
             {
@@ -77,7 +76,6 @@ namespace BTPaint
             Point currentPosition = e.GetCurrentPoint(MainCanvas).Position;
 
             Color color;
-            SolidColorBrush s = new SolidColorBrush(Colors.Red);
 
             if (shouldErase == false)
             {
