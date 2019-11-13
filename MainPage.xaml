@@ -8,7 +8,11 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" >
 
-
+    <Page.Resources>
+        <BitmapImage x:Key="pencilImage" UriSource="Assets/Icons/pencil.png"/>
+        <BitmapImage x:Key="eraserImage" UriSource="Assets/Icons/eraser.png"/>
+    </Page.Resources>
+    
     <!-- Grid Definitions -->
     <Grid>
         <Grid.RowDefinitions>
@@ -30,7 +34,8 @@
                     </Flyout>
                 </AppBarButton.Flyout>
             </AppBarButton>
-            <AppBarButton Icon="Edit"  Label="Edit"> <!-- Edit Button -->
+            <!-- Edit Button -->
+            <AppBarButton Icon="Edit"  Label="Edit">
                 <AppBarButton.Flyout>
                     <Flyout>
                         <StackPanel Orientation="Vertical">
@@ -47,16 +52,18 @@
         <AppBarButton x:Name="collapseSideBarBtn" Icon="More" Click="collapseSideBarBtn_Click"/>
 
         <!-- Canvas -->
-        <Canvas x:Name="MainCanvas"  Grid.Row="1" Grid.ColumnSpan="2"
+        <ScrollViewer Grid.Row="1" Grid.ColumnSpan="2" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible">
+            <Canvas x:Name="MainCanvas"  Grid.Row="1" Grid.ColumnSpan="2"
                     Background="BlanchedAlmond"
                     PointerPressed="MainCanvas_PointerPressed"
                     PointerReleased="MainCanvas_PointerReleased"
-                    RightTapped="MainCanvas_RightTapped"
-                    SizeChanged="MainCanvas_SizeChanged">
+                    SizeChanged="MainCanvas_SizeChanged"
+                    Width="800"
+                    Height="600">
 
-            <Image x:Name="ImageControl"/>
-        </Canvas>
-
+                <Image x:Name="ImageControl"/>
+            </Canvas>
+        </ScrollViewer>
 
         <!-- Side Bar -->
         <SplitView x:Name="SideBar"
@@ -68,22 +75,37 @@
             <SplitView.Pane>
                 <ScrollViewer VerticalScrollBarVisibility="Visible">
                     <StackPanel Orientation="Vertical">
+                        
                         <!-- Color Picker -->
                         <ColorPicker x:Name="colorPicker"
                         ColorSpectrumShape="Ring"
-                        Margin="0 0 5 0">
+                        Margin="0 0 5 0"
+                        Color="Black">
                         </ColorPicker>
 
-                        <!-- Sliders & TextBlocks -->
-                        <StackPanel Orientation="Vertical">
+                        <!-- Size Slider & TextBlocks -->
+                        <StackPanel Orientation="Vertical" Grid.Row="1">
                             <TextBlock Text="Size" HorizontalAlignment="Center" Margin="0 10 0 0"/>
-                            <Slider x:Name="sizeSlider" Margin="10 0 10 0"/>
-                            <TextBlock Text="Opacity" HorizontalAlignment="Center" Margin="0 10 0 0"/>
-                            <Slider x:Name="opacitySlider" Margin="10 0 10 0" Minimum="0" Maximum="1" StepFrequency="0.01"/>
+                            <Slider x:Name="sizeSlider" Margin="10 0 10 0" Value="10"/>
+
+                            <!-- Pencil & Eraser Buttons -->
+                            <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center" Margin="10">
+                                <Button x:Name="pencilBtn" Margin="10" Height="50" Width="50" Click="pencilBtn_Click" Background="White">
+                                    <Button.Content>
+                                        <Image Source="{StaticResource ResourceKey=pencilImage}"/>
+                                    </Button.Content>
+                                </Button>
+                                <Button x:Name="eraserBtn" Margin="10" Height="50" Width="50" Click="eraserBtn_Click" Background="Gray">
+                                    <Button.Content>
+                                        <Image Source="{StaticResource ResourceKey=eraserImage}" />
+                                    </Button.Content>
+                                </Button>
+                            </StackPanel>
                         </StackPanel>
 
-                        <!-- List of Brushes : This will be populated in code -->
+                        <!-- List of Brushes : This will be populated in code (NO DEFAULT CONTENT) -->
                         <ListView x:Name="BrushList" ScrollViewer.VerticalScrollBarVisibility="Visible"></ListView>
+                        
                     </StackPanel>
                 </ScrollViewer>
             </SplitView.Pane>

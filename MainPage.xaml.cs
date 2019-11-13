@@ -39,12 +39,29 @@ namespace BTPaint
         {
             this.InitializeComponent();
 
+            writableBitmap = BitmapFactory.New((int)MainCanvas.ActualWidth, (int)MainCanvas.ActualHeight);
+            writableBitmap.Clear(((SolidColorBrush)MainCanvas.Background).Color);
+
+            ImageControl.Source = writableBitmap;
+
             ShowSplash();
         }
 
         private void MainCanvas_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            writableBitmap.FillEllipseCentered((int)e.GetCurrentPoint(MainCanvas).Position.X, (int)e.GetCurrentPoint(MainCanvas).Position.Y, (int)sizeSlider.Value / 2, (int)sizeSlider.Value / 2, colorPicker.Color);
+            Color color;
+            SolidColorBrush s = new SolidColorBrush(Colors.Red);
+
+            if (shouldErase == false)
+            {
+                color = colorPicker.Color;
+            }
+            else
+            {
+                color = ((SolidColorBrush)MainCanvas.Background).Color;
+            }
+
+            writableBitmap.FillEllipseCentered((int)e.GetCurrentPoint(MainCanvas).Position.X, (int)e.GetCurrentPoint(MainCanvas).Position.Y, ((int)sizeSlider.Value / 2) - 1, ((int)sizeSlider.Value / 2) - 1, color);
 
             prevPosition = e.GetCurrentPoint(MainCanvas).Position;
             MainCanvas.PointerMoved += MainCanvas_PointerMoved;
@@ -59,17 +76,22 @@ namespace BTPaint
         {
             Point currentPosition = e.GetCurrentPoint(MainCanvas).Position;
 
-            writableBitmap.DrawLineAa((int)prevPosition.X, (int)prevPosition.Y, (int)currentPosition.X, (int)currentPosition.Y, colorPicker.Color, (int)sizeSlider.Value);
-            writableBitmap.FillEllipseCentered((int)e.GetCurrentPoint(MainCanvas).Position.X, (int)e.GetCurrentPoint(MainCanvas).Position.Y, (int)sizeSlider.Value /2, (int)sizeSlider.Value /2, colorPicker.Color);
+            Color color;
+            SolidColorBrush s = new SolidColorBrush(Colors.Red);
+
+            if (shouldErase == false)
+            {
+                color = colorPicker.Color;
+            }
+            else
+            {
+                color = ((SolidColorBrush)MainCanvas.Background).Color;
+            }
+
+            writableBitmap.DrawLineAa((int)prevPosition.X, (int)prevPosition.Y, (int)currentPosition.X, (int)currentPosition.Y, color, (int)sizeSlider.Value);
+            writableBitmap.FillEllipseCentered((int)e.GetCurrentPoint(MainCanvas).Position.X, (int)e.GetCurrentPoint(MainCanvas).Position.Y, ((int)sizeSlider.Value / 2) - 1, ((int)sizeSlider.Value / 2) - 1, color);
 
             prevPosition = currentPosition;
-        }
-
-        private void MainCanvas_RightTapped(object sender, RightTappedRoutedEventArgs e)
-        {
-            //Canvas right tapped (FIRED AFTER RELEASE)
-
-            shouldErase = !shouldErase;
         }
 
         private void collapseSideBarBtn_Click(object sender, RoutedEventArgs e)
@@ -100,7 +122,7 @@ namespace BTPaint
 
         private void exitBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            CoreApplication.Exit();
         }
 
         private void resizeBtn_Click(object sender, RoutedEventArgs e)
@@ -110,15 +132,12 @@ namespace BTPaint
 
         private void clearBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            writableBitmap.Clear(((SolidColorBrush)MainCanvas.Background).Color);
         }
 
         private void MainCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            writableBitmap = BitmapFactory.New((int)MainCanvas.ActualWidth, (int)MainCanvas.ActualHeight);
-            writableBitmap.Clear(Color.FromArgb(0, 255, 0, 0));
 
-            ImageControl.Source = writableBitmap;
         }
 
         private async void ShowSplash()
@@ -137,6 +156,20 @@ namespace BTPaint
             }
 
             SideBar.IsPaneOpen = true;
+        }
+
+        private void pencilBtn_Click(object sender, RoutedEventArgs e)
+        {
+            shouldErase = false;
+            eraserBtn.Background = new SolidColorBrush(Colors.Gray);
+            pencilBtn.Background = new SolidColorBrush(Colors.White);
+        }
+
+        private void eraserBtn_Click(object sender, RoutedEventArgs e)
+        {
+            shouldErase = true;
+            pencilBtn.Background = new SolidColorBrush(Colors.Gray);
+            eraserBtn.Background = new SolidColorBrush(Colors.White);
         }
     }
 }
