@@ -122,7 +122,7 @@ namespace BTPaint
 
         private void exitBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            CoreApplication.Exit();
         }
 
         private void resizeBtn_Click(object sender, RoutedEventArgs e)
@@ -132,7 +132,7 @@ namespace BTPaint
 
         private void clearBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            writableBitmap.Clear(((SolidColorBrush)MainCanvas.Background).Color);
         }
 
         private void MainCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
