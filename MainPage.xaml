@@ -8,7 +8,6 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" >
 
-
     <!-- Grid Definitions -->
     <Grid>
         <Grid.RowDefinitions>
@@ -30,7 +29,8 @@
                     </Flyout>
                 </AppBarButton.Flyout>
             </AppBarButton>
-            <AppBarButton Icon="Edit"  Label="Edit"> <!-- Edit Button -->
+            <AppBarButton Icon="Edit"  Label="Edit">
+                <!-- Edit Button -->
                 <AppBarButton.Flyout>
                     <Flyout>
                         <StackPanel Orientation="Vertical">
@@ -58,8 +58,9 @@
             <Image x:Name="testImg"/>
             <Image x:Name="ImageControl"/>
             <TextBlock x:Name="test"/>
+            <TextBlock x:Name="test2" Height="20" Width="1000" Canvas.Top="24"/>
         </Canvas>
-        
+
 
 
         <!-- Side Bar -->

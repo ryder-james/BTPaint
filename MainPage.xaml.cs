@@ -6,7 +6,9 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 using Windows.Storage.Pickers;
+using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Input;
 using Windows.UI.Xaml;
@@ -98,12 +100,18 @@ namespace BTPaint
             picker.FileTypeFilter.Add(".jpeg");
             picker.FileTypeFilter.Add(".png");
        
-            Windows.Storage.StorageFile file = await picker.PickSingleFileAsync();
+            IStorageFile file = await picker.PickSingleFileAsync();
+            StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+            await file.CopyAsync(localFolder, "new "+file.Name,NameCollisionOption.GenerateUniqueName);
             if (file != null)
             {
                 // Application now has read/write access to the picked file
-                test.Text = "Picked photo: " + file.Name;
-                
+                test.Text = "Picked photo: " + localFolder.Path;
+                string newfilepath = localFolder.Path + file.Name;
+                test2.Text = "Picked photo: " + newfilepath;
+
+                //testImg.Source = new BitmapImage(new Uri(newfilepath))
+;
             }
             else
             {
