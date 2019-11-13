@@ -57,7 +57,6 @@
                     Background="BlanchedAlmond"
                     PointerPressed="MainCanvas_PointerPressed"
                     PointerReleased="MainCanvas_PointerReleased"
-                    SizeChanged="MainCanvas_SizeChanged"
                     Width="800"
                     Height="600">
 
