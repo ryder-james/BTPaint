@@ -195,6 +195,8 @@ namespace BTPaint
 
                 // Get the SoftwareBitmap representation of the file
                 softwareBitmap = await decoder.GetSoftwareBitmapAsync();
+
+                await writableBitmap.SetSourceAsync(stream);
             }
         }
 
