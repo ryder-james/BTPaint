@@ -10,6 +10,7 @@ using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
@@ -121,7 +122,6 @@ namespace BTPaint
                 // Set additional encoding parameters, if needed
                 encoder.BitmapTransform.ScaledWidth = 320;
                 encoder.BitmapTransform.ScaledHeight = 240;
-                encoder.BitmapTransform.Rotation = Windows.Graphics.Imaging.BitmapRotation.Clockwise90Degrees;
                 encoder.BitmapTransform.InterpolationMode = BitmapInterpolationMode.Fant;
                 encoder.IsThumbnailGenerated = true;
 
@@ -193,7 +193,7 @@ namespace BTPaint
                 // The user cancelled the picking operation
                 return;
             }
-
+            
             SoftwareBitmap softwareBitmap;
 
             using (IRandomAccessStream stream = await inputFile.OpenAsync(FileAccessMode.Read))
@@ -203,7 +203,8 @@ namespace BTPaint
 
                 // Get the SoftwareBitmap representation of the file
                 softwareBitmap = await decoder.GetSoftwareBitmapAsync();
-
+                //test.Text = stream.Size.ToString(); 4449
+                
                 await writableBitmap.SetSourceAsync(stream);
             }
         }
