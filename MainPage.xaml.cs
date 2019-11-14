@@ -1,24 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
-using Windows.Foundation.Collections;
+using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
 using Windows.UI;
-using Windows.UI.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -62,7 +54,7 @@ namespace BTPaint
             Point currentPosition = e.GetCurrentPoint(MainCanvas).Position;
 
             writableBitmap.DrawLineAa((int)prevPosition.X, (int)prevPosition.Y, (int)currentPosition.X, (int)currentPosition.Y, colorPicker.Color, (int)sizeSlider.Value);
-            writableBitmap.FillEllipseCentered((int)e.GetCurrentPoint(MainCanvas).Position.X, (int)e.GetCurrentPoint(MainCanvas).Position.Y, (int)sizeSlider.Value /2, (int)sizeSlider.Value /2, colorPicker.Color);
+            writableBitmap.FillEllipseCentered((int)e.GetCurrentPoint(MainCanvas).Position.X, (int)e.GetCurrentPoint(MainCanvas).Position.Y, (int)sizeSlider.Value / 2, (int)sizeSlider.Value / 2, colorPicker.Color);
 
             prevPosition = currentPosition;
         }
@@ -88,39 +80,66 @@ namespace BTPaint
 
         private async void saveBtn_Click(object sender, RoutedEventArgs e)
         {
-            var savePicker = new FileSavePicker();
-            savePicker.SuggestedStartLocation =
-            PickerLocationId.PicturesLibrary;
-            // Dropdown of file types the user can save the file as
-            savePicker.FileTypeChoices.Add("Image", new List<string>() { ".png", ".jpg", ".jpeg" });
-            // Default file name if the user does not type one in or select a file to replace
-            savePicker.SuggestedFileName = "New Image";
+            FileSavePicker fileSavePicker = new FileSavePicker();
+            fileSavePicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+            fileSavePicker.FileTypeChoices.Add("JPEG files", new List<string>() { ".jpg" });
+            fileSavePicker.SuggestedFileName = "image";
 
-            StorageFile file = await savePicker.PickSaveFileAsync();
-            if (file != null)
+            var outputFile = await fileSavePicker.PickSaveFileAsync();
+
+            if (outputFile != null)
             {
-                // Prevent updates to the remote version of the file until
-                // we finish making changes and call CompleteUpdatesAsync.
-                CachedFileManager.DeferUpdates(file);
-                // write to file
-                await FileIO.WriteTextAsync(file, file.Name);
-                // Let Windows know that we're finished changing the file so
-                // the other app can update the remote version of the file.
-                // Completing updates may require Windows to ask for user input.
-                Windows.Storage.Provider.FileUpdateStatus status =
-                    await CachedFileManager.CompleteUpdatesAsync(file);
-                if (status == Windows.Storage.Provider.FileUpdateStatus.Complete)
-                {
-                    test.Text = "File " + file.Name + " was saved.";
-                }
-                else
-                {
-                    test.Text = "File " + file.Name + " couldn't be saved.";
-                }
+                SoftwareBitmap outputBitmap = SoftwareBitmap.CreateCopyFromBuffer(
+                writableBitmap.PixelBuffer,
+                BitmapPixelFormat.Bgra8,
+                writableBitmap.PixelWidth,
+                writableBitmap.PixelHeight);
+                SaveSoftwareBitmapToFile(outputBitmap, outputFile);
             }
-            else
+        }
+
+        private async void SaveSoftwareBitmapToFile(SoftwareBitmap softwareBitmap, StorageFile outputFile)
+        {
+            using (IRandomAccessStream stream = await outputFile.OpenAsync(FileAccessMode.ReadWrite))
             {
-                test.Text = "Operation cancelled.";
+                // Create an encoder with the desired format
+                BitmapEncoder encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, stream);
+
+                // Set the software bitmap
+                encoder.SetSoftwareBitmap(softwareBitmap);
+
+                // Set additional encoding parameters, if needed
+                encoder.BitmapTransform.ScaledWidth = 320;
+                encoder.BitmapTransform.ScaledHeight = 240;
+                encoder.BitmapTransform.Rotation = Windows.Graphics.Imaging.BitmapRotation.Clockwise90Degrees;
+                encoder.BitmapTransform.InterpolationMode = BitmapInterpolationMode.Fant;
+                encoder.IsThumbnailGenerated = true;
+
+                try
+                {
+                    await encoder.FlushAsync();
+                }
+                catch (Exception err)
+                {
+                    const int WINCODEC_ERR_UNSUPPORTEDOPERATION = unchecked((int)0x88982F81);
+                    switch (err.HResult)
+                    {
+                        case WINCODEC_ERR_UNSUPPORTEDOPERATION:
+                            // If the encoder does not support writing a thumbnail, then try again
+                            // but disable thumbnail generation.
+                            encoder.IsThumbnailGenerated = false;
+                            break;
+                        default:
+                            throw;
+                    }
+                }
+
+                if (encoder.IsThumbnailGenerated == false)
+                {
+                    await encoder.FlushAsync();
+                }
+
+
             }
         }
 
@@ -132,7 +151,7 @@ namespace BTPaint
             picker.FileTypeFilter.Add(".jpg");
             picker.FileTypeFilter.Add(".jpeg");
             picker.FileTypeFilter.Add(".png");
-       
+
             IStorageFile file = await picker.PickSingleFileAsync();
             StorageFolder externalDevices = KnownFolders.RemovableDevices;
             await externalDevices.TryGetItemAsync(file.Name);
@@ -144,7 +163,7 @@ namespace BTPaint
 
                 testImg.Source = new BitmapImage(new Uri(newfilepath, UriKind.Absolute));
                 test2.Text = "Picked photo: " + newfilepath;
-;
+                ;
             }
             else
             {
