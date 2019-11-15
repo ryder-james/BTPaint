@@ -1,0 +1,19 @@
+﻿<UserControl
+    x:Name="TopLevelControl"
+    x:Class="BTPaint.RasterCanvas"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BTPaint"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+    
+    <Canvas x:Name="MainCanvas"
+            PointerPressed="MainCanvas_PointerPressed"
+            PointerReleased="MainCanvas_PointerReleased"
+            PointerExited="MainCanvas_PointerReleased"
+            SizeChanged="MainCanvas_SizeChanged">
+
+        <Image x:Name="ImageControl"/>
+    </Canvas>
+</UserControl>

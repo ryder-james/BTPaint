@@ -55,19 +55,10 @@
 
         <!-- Canvas -->
         <ScrollViewer Grid.Row="1" Grid.ColumnSpan="2" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible">
-            <Canvas x:Name="MainCanvas"  Grid.Row="1" Grid.ColumnSpan="2"
-                    Background="BlanchedAlmond"
-                    PointerPressed="MainCanvas_PointerPressed"
-                    PointerReleased="MainCanvas_PointerReleased"
-                    PointerExited="MainCanvas_PointerReleased"
-                    Width="800"
-                    Height="600">
-            <Image x:Name="testImg"/>
-            <Image x:Name="ImageControl"/>
-            <TextBlock x:Name="test" Foreground="Black"/>
-            <TextBlock x:Name="test2" Foreground="Black" Height="20" Width="1000" Canvas.Top="24"/>
-
-            </Canvas>
+            <local:RasterCanvas x:Name="mainCanvas" 
+                                Background="Transparent"
+                                Size="{Binding ElementName=sizeSlider, Path=Value, Mode=TwoWay}"
+                                DrawColor="{Binding ElementName=colorPicker, Path=Color, Mode=TwoWay}"/>
         </ScrollViewer>
 
 
