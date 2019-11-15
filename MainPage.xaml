@@ -68,7 +68,7 @@
                    HorizontalAlignment="Left" 
                    Grid.Row="1" 
                    IsPaneOpen="False"
-                   DisplayMode="Overlay">
+                   DisplayMode="Inline">
             <SplitView.Pane>
                 <ScrollViewer VerticalScrollBarVisibility="Visible">
                     <StackPanel Orientation="Vertical">
