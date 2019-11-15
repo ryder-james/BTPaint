@@ -56,7 +56,7 @@ namespace BTPaint
             set
             {
                 base.Width = value;
-                Bitmap.Resize((int)Width, (int)Height, WriteableBitmapExtensions.Interpolation.Bilinear);
+                Bitmap.Resize((int) Width, (int) (Double.IsNaN(Height) ? Width : Height), WriteableBitmapExtensions.Interpolation.Bilinear);
                 FieldChanged();
             }
         }

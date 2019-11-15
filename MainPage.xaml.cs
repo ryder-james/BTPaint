@@ -47,10 +47,10 @@ namespace BTPaint
             if (outputFile != null)
             {
                 SoftwareBitmap outputBitmap = SoftwareBitmap.CreateCopyFromBuffer(
-                writableBitmap.PixelBuffer,
+                mainCanvas.Bitmap.PixelBuffer,
                 BitmapPixelFormat.Bgra8,
-                writableBitmap.PixelWidth,
-                writableBitmap.PixelHeight);
+                mainCanvas.Bitmap.PixelWidth,
+                mainCanvas.Bitmap.PixelHeight);
                 SaveSoftwareBitmapToFile(outputBitmap, outputFile);
             }
         }
@@ -67,8 +67,8 @@ namespace BTPaint
                 encoder.SetSoftwareBitmap(softwareBitmap);
 
                 // Set additional encoding parameters, if needed
-                encoder.BitmapTransform.ScaledWidth = (uint) MainCanvas.Width;
-                encoder.BitmapTransform.ScaledHeight = (uint) MainCanvas.Height;
+                encoder.BitmapTransform.ScaledWidth = (uint) mainCanvas.Width;
+                encoder.BitmapTransform.ScaledHeight = (uint) mainCanvas.Height;
                 encoder.BitmapTransform.InterpolationMode = BitmapInterpolationMode.Fant;
                 encoder.IsThumbnailGenerated = true;
 
@@ -102,30 +102,6 @@ namespace BTPaint
 
         private async void loadBtn_Click(object sender, RoutedEventArgs e)
         {
-            //var picker = new FileOpenPicker();
-            //picker.ViewMode = PickerViewMode.Thumbnail;
-            //picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-            //picker.FileTypeFilter.Add(".jpg");
-            //picker.FileTypeFilter.Add(".jpeg");
-            //picker.FileTypeFilter.Add(".png");
-
-            //IStorageFile file = await picker.PickSingleFileAsync();
-            //StorageFolder externalDevices = KnownFolders.RemovableDevices;
-            //await externalDevices.TryGetItemAsync(file.Name);
-            //if (file != null)
-            //{
-            //    // Application now has read/write access to the picked file
-            //    test.Text = "Picked photo: " + externalDevices.Name;
-            //    string newfilepath = file.Path.Replace('\\', '/');
-
-            //    SoftwareBitmap software = new BitmapImage(new Uri(newfilepath, UriKind.Absolute));
-            //    test2.Text = "Picked photo: " + newfilepath;
-            //    ;
-            //}
-            //else
-            //{
-            //    this.test.Text = "Operation cancelled.";
-            //}
             FileOpenPicker fileOpenPicker = new FileOpenPicker();
             fileOpenPicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
             fileOpenPicker.FileTypeFilter.Add(".jpg");
@@ -150,12 +126,11 @@ namespace BTPaint
 
                 // Get the SoftwareBitmap representation of the file
                 softwareBitmap = await decoder.GetSoftwareBitmapAsync();
-                //test.Text = stream.Size.ToString(); 4449
                 var x = await inputFile.Properties.GetImagePropertiesAsync();
-                MainCanvas.Width = x.Width;
-                MainCanvas.Height = x.Height;
+                mainCanvas.Width = x.Width;
+                mainCanvas.Height = x.Height;
 
-                await writableBitmap.SetSourceAsync(stream);
+                await mainCanvas.Bitmap.SetSourceAsync(stream);
             }
         }
 
