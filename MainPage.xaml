@@ -56,7 +56,7 @@
         <!-- Canvas -->
         <ScrollViewer Grid.Row="1" Grid.ColumnSpan="2" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible">
             <local:RasterCanvas x:Name="mainCanvas" 
-                                Background="Transparent"
+                                Background="White"
                                 Size="{Binding ElementName=sizeSlider, Path=Value, Mode=TwoWay}"
                                 DrawColor="{Binding ElementName=colorPicker, Path=Color, Mode=TwoWay}"/>
         </ScrollViewer>
