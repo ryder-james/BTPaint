@@ -120,8 +120,8 @@ namespace BTPaint
                 encoder.SetSoftwareBitmap(softwareBitmap);
 
                 // Set additional encoding parameters, if needed
-                encoder.BitmapTransform.ScaledWidth = 320;
-                encoder.BitmapTransform.ScaledHeight = 240;
+                encoder.BitmapTransform.ScaledWidth = (uint) MainCanvas.Width;
+                encoder.BitmapTransform.ScaledHeight = (uint) MainCanvas.Height;
                 encoder.BitmapTransform.InterpolationMode = BitmapInterpolationMode.Fant;
                 encoder.IsThumbnailGenerated = true;
 
@@ -204,7 +204,10 @@ namespace BTPaint
                 // Get the SoftwareBitmap representation of the file
                 softwareBitmap = await decoder.GetSoftwareBitmapAsync();
                 //test.Text = stream.Size.ToString(); 4449
-                
+                var x = await inputFile.Properties.GetImagePropertiesAsync();
+                MainCanvas.Width = x.Width;
+                MainCanvas.Height = x.Height;
+
                 await writableBitmap.SetSourceAsync(stream);
             }
         }
