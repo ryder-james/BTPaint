@@ -199,16 +199,19 @@ namespace BTPaint
             using (IRandomAccessStream stream = await inputFile.OpenAsync(FileAccessMode.Read))
             {
                 // Create the decoder from the stream
-                BitmapDecoder decoder = await BitmapDecoder.CreateAsync(stream);
+                if (stream.Size > 119)
+                {
+                    BitmapDecoder decoder = await BitmapDecoder.CreateAsync(stream);
 
-                // Get the SoftwareBitmap representation of the file
-                softwareBitmap = await decoder.GetSoftwareBitmapAsync();
-                //test.Text = stream.Size.ToString(); 4449
-                var x = await inputFile.Properties.GetImagePropertiesAsync();
-                MainCanvas.Width = x.Width;
-                MainCanvas.Height = x.Height;
+                    // Get the SoftwareBitmap representation of the file
+                    softwareBitmap = await decoder.GetSoftwareBitmapAsync();
+                    //test.Text = stream.Size.ToString(); 4449
+                    var x = await inputFile.Properties.GetImagePropertiesAsync();
+                    MainCanvas.Width = x.Width;
+                    MainCanvas.Height = x.Height;
 
-                await writableBitmap.SetSourceAsync(stream);
+                    await writableBitmap.SetSourceAsync(stream);
+                }
             }
         }
 
