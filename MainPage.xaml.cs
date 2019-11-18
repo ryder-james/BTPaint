@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Networking.Models;
+using System;
 using System.Collections.Generic;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
@@ -22,6 +23,8 @@ namespace BTPaint
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        private Client client;
+
         public MainPage()
         {
             this.InitializeComponent();

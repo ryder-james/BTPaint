@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Networking.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -27,6 +28,7 @@ namespace BTPaint
         public static readonly DependencyProperty DrawColorProperty = DependencyProperty.Register("DrawColor", typeof(Color), typeof(RasterCanvas), null);
 
         public event PropertyChangedEventHandler PropertyChanged;
+        public event PacketReadyEventHandler LineDrawn;
 
         private bool shouldErase = false;
         private bool sizeInitialized = false;
