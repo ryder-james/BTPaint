@@ -8,6 +8,7 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" >
 
+
     <Page.Resources>
         <BitmapImage x:Key="pencilImage" UriSource="Assets/Icons/pencil.png"/>
         <BitmapImage x:Key="eraserImage" UriSource="Assets/Icons/eraser.png"/>
@@ -34,6 +35,7 @@
                     </Flyout>
                 </AppBarButton.Flyout>
             </AppBarButton>
+
             <!-- Edit Button -->
             <AppBarButton Icon="Edit"  Label="Edit">
                 <AppBarButton.Flyout>
@@ -53,17 +55,12 @@
 
         <!-- Canvas -->
         <ScrollViewer Grid.Row="1" Grid.ColumnSpan="2" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible">
-            <Canvas x:Name="MainCanvas"  Grid.Row="1" Grid.ColumnSpan="2"
-                    Background="BlanchedAlmond"
-                    PointerPressed="MainCanvas_PointerPressed"
-                    PointerReleased="MainCanvas_PointerReleased"
-                    PointerExited="MainCanvas_PointerReleased"
-                    Width="800"
-                    Height="600">
-
-                <Image x:Name="ImageControl"/>
-            </Canvas>
+            <local:RasterCanvas x:Name="mainCanvas" 
+                                Background="White"
+                                Size="{Binding ElementName=sizeSlider, Path=Value, Mode=TwoWay}"
+                                DrawColor="{Binding ElementName=colorPicker, Path=Color, Mode=TwoWay}"/>
         </ScrollViewer>
+
 
         <!-- Side Bar -->
         <SplitView x:Name="SideBar"
@@ -71,7 +68,7 @@
                    HorizontalAlignment="Left" 
                    Grid.Row="1" 
                    IsPaneOpen="False"
-                   DisplayMode="Overlay">
+                   DisplayMode="Inline">
             <SplitView.Pane>
                 <ScrollViewer VerticalScrollBarVisibility="Visible">
                     <StackPanel Orientation="Vertical">
