@@ -211,6 +211,14 @@ namespace BTPaint
                     MainCanvas.Height = x.Height;
 
                     await writableBitmap.SetSourceAsync(stream);
+
+                    writableBitmap = BitmapFactory.New((int)MainCanvas.Width, (int)MainCanvas.Height);
+                    writableBitmap.Clear(((SolidColorBrush)MainCanvas.Background).Color);
+
+                    ImageControl.Source = writableBitmap;
+                    
+                    softwareBitmap.CopyToBuffer(writableBitmap.PixelBuffer);
+                    
                 }
             }
         }
