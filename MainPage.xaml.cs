@@ -184,24 +184,29 @@ namespace BTPaint
             pencilBtn.Background = new SolidColorBrush(Colors.White);
 
             //NETWORK CODE TESTING
-            byte[] data = { 1, 2, 3, 4 };
+            byte[] data = new byte[256];
+            data[0] = 1;
+            data[1] = 2;
+            data[2] = 3;
+            data[3] = 4;
 
-            IPEndPoint whereGo = new IPEndPoint(IPAddress.Parse("192.168.0.158"), 1000);
+
+            IPEndPoint whereGo = new IPEndPoint(IPAddress.Parse("192.168.0.158"), 10000);
 
             Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
             socket.Connect(whereGo);
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 5; i++)
             {
                 socket.Send(data);
             }
 
-            IPEndPoint whereFrom = new IPEndPoint(IPAddress.Parse("0.0.0.0"), 10000);
+            //IPEndPoint whereFrom = new IPEndPoint(IPAddress.Parse("0.0.0.0"), 10000);
 
-            Socket listen = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            listen.Bind(whereFrom);
-            listen.Listen(100);
+            //Socket listen = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            //listen.Bind(whereFrom);
+            //listen.Listen(100);
         }
 
         private void eraserBtn_Click(object sender, RoutedEventArgs e)
