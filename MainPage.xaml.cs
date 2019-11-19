@@ -1,6 +1,8 @@
 ﻿using Networking.Models;
 using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Sockets;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
@@ -180,6 +182,26 @@ namespace BTPaint
             mainCanvas.ShouldErase = false;
             eraserBtn.Background = new SolidColorBrush(Colors.Gray);
             pencilBtn.Background = new SolidColorBrush(Colors.White);
+
+            //NETWORK CODE TESTING
+            byte[] data = { 1, 2, 3, 4 };
+
+            IPEndPoint whereGo = new IPEndPoint(IPAddress.Parse("192.168.0.158"), 1000);
+
+            Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+            socket.Connect(whereGo);
+
+            for (int i = 0; i < 10; i++)
+            {
+                socket.Send(data);
+            }
+
+            IPEndPoint whereFrom = new IPEndPoint(IPAddress.Parse("0.0.0.0"), 10000);
+
+            Socket listen = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            listen.Bind(whereFrom);
+            listen.Listen(100);
         }
 
         private void eraserBtn_Click(object sender, RoutedEventArgs e)
