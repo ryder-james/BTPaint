@@ -122,7 +122,10 @@
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Models\Packet.cs" />
+    <Compile Include="Models\Client.cs" />
+    <Compile Include="Models\DrawPacket.cs" />
+    <Compile Include="Models\HostClient.cs" />
+    <Compile Include="Models\IPacket.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RasterCanvas.xaml.cs">
       <DependentUpon>RasterCanvas.xaml</DependentUpon>
