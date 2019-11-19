@@ -9,7 +9,45 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Grid>
+    <UserControl.Resources>
+        <Style TargetType="Button">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Background" Value="#41494E"/>
+            <Setter Property="Padding" Value="5 10"/>
+            <Setter Property="Margin" Value="10 10"/>
+            <Setter Property="Width" Value="75"/>
+        </Style>
+    </UserControl.Resources>
 
+    <Grid Background="#425450">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*"/>
+            <RowDefinition/>
+            <RowDefinition Height="3*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Grid.ColumnSpan="4" Text="Join a Canvas"
+                   FontSize="42"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Bottom"
+                   IsColorFontEnabled="True" 
+                   Margin="0 0 0 20"/>
+        <Border Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" 
+                BorderBrush="Black"
+                BorderThickness="2"
+                Background="LightGray" Height="25">
+            <TextBox Text="ENTER THE IP" Foreground="Black"/>
+        </Border>
+        <Button Grid.Row="2" Grid.Column="1"
+                HorizontalAlignment="Center" VerticalAlignment="Top"
+                Content="Join"/>
+        <Button Grid.Row="2" Grid.Column="2"
+                HorizontalAlignment="Center" VerticalAlignment="Top"
+                Content="Return"/>
     </Grid>
 </UserControl>
