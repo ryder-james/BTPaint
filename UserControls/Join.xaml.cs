@@ -23,5 +23,15 @@ namespace BTPaint.UserControls
         {
             this.InitializeComponent();
         }
+
+        private void Join_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Return_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
