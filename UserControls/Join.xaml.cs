@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace BTPaint.UserControls
 {
-    public sealed partial class Join : UserControl
+    public sealed partial class Join : ContentDialog
     {
         public Join()
         {
