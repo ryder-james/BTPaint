@@ -12,10 +12,18 @@ namespace BTPaint.Models
     {
         public const uint PacketHeader = 0xD34DC0D3;
 
-        Point pointA;
-        Point pointB;
-        Color color;
-        int size;
+        public Point pointA;
+        public Point pointB;
+        public Color color;
+        public int size;
+
+        public DrawPacket(Point A, Point B, Color Color, int Size)
+        {
+            pointA = A;
+            pointB = B;
+            color = Color;
+            size = Size;
+        }
 
         public byte[] ToByteArray()
         {
