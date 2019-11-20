@@ -50,6 +50,11 @@ namespace BTPaint.Models
         public static DrawPacket Restore(byte[] bytes)
         {
 
+            if(BitConverter.ToUInt32(bytes, 0) != PacketHeader)
+            {
+                throw new FormatException("Not Our Packet Exception AKA: byte[] is not our packet");
+            }
+
             int pointAX = BitConverter.ToInt32(bytes, bytes.Length - 24);
             int pointAY = BitConverter.ToInt32(bytes, bytes.Length - 20);
             int pointBX = BitConverter.ToInt32(bytes, bytes.Length - 16);
