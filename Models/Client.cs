@@ -49,13 +49,11 @@ namespace Networking.Models
         {
             Debug.WriteLine("Packet received");
 
-            AsyncPacket state = (AsyncPacket)result.AsyncState;
-            int packetSize = state.socket.EndReceive(result);
-
-            state.result = result;
+            Socket socket = (Socket)result.AsyncState;
+            int packetSize = socket.EndReceive(result);
 
             byte[] data = new byte[packetSize];
-            state.socket.BeginReceive(data, 0, data.Length, SocketFlags.None, OnPacketReceived, state);
+            socket.BeginReceive(data, 0, data.Length, SocketFlags.None, OnPacketReceived, socket);
         }
 
         protected void DefaultSendCallback(IAsyncResult result)

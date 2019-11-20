@@ -47,13 +47,13 @@ namespace BTPaint
 
         private void joinBtn_Click(object sender, RoutedEventArgs e)
         {
-            this.Result = WelcomeSplashResult.Solo;
+            this.Result = WelcomeSplashResult.Join;
             this.Hide();
         }
 
         private void hostBtn_Click(object sender, RoutedEventArgs e)
         {
-            this.Result = WelcomeSplashResult.Solo;
+            this.Result = WelcomeSplashResult.Host;
             this.Hide();
         }
         private void exitBtn_Click(object sender, RoutedEventArgs e)

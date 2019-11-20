@@ -17,11 +17,24 @@ using Windows.UI.Xaml.Navigation;
 
 namespace BTPaint.UserControls
 {
-    public sealed partial class Join : UserControl
+    public sealed partial class Join : ContentDialog
     {
+        public bool mainMenu { get; set; }
+
         public Join()
         {
             this.InitializeComponent();
+        }
+
+        private void Join_Click(object sender, RoutedEventArgs e)
+        {
+            mainMenu = false;
+        }
+
+        private void Return_Click(object sender, RoutedEventArgs e)
+        {
+            this.Hide();
+            mainMenu = true;
         }
     }
 }
