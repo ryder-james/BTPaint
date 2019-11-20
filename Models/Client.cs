@@ -27,7 +27,7 @@ namespace Networking.Models
             connectionSocket.BeginConnect(targetAddress, (callback != null ? callback : DefaultConnectCallback), connectionSocket);
         }
 
-        public void Send(IPacket packet)
+        public void Send(IPacket packet, SocketFlags flags = SocketFlags.None)
         {
             if (!clientSocket.Connected)
             {
@@ -36,15 +36,21 @@ namespace Networking.Models
 
             byte[] byteData = packet.ToByteArray();
 
-            clientSocket.BeginSend(byteData, 0, byteData.Length, SocketFlags.None, DefaultSendCallback, clientSocket);
+            clientSocket.BeginSend(byteData, 0, byteData.Length, flags, DefaultSendCallback, clientSocket);
         }
 
-        private void DefaultSendCallback(IAsyncResult result)
+        public void Close()
+        {
+            clientSocket.Close();
+            connectionSocket.Close();
+        }
+
+        protected void DefaultSendCallback(IAsyncResult result)
         {
             ((Socket)result.AsyncState).EndSend(result);
         }
 
-        private void DefaultConnectCallback(IAsyncResult result)
+        protected void DefaultConnectCallback(IAsyncResult result)
         {
             Debug.WriteLine("Connect call back called");
 
