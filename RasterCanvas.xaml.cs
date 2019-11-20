@@ -30,7 +30,6 @@ namespace BTPaint
         public static readonly DependencyProperty DrawColorProperty = DependencyProperty.Register("DrawColor", typeof(Color), typeof(RasterCanvas), null);
 
         public event PropertyChangedEventHandler PropertyChanged;
-        public event PacketReadyEventHandler LineDrawn;
 
         private bool shouldErase = false;
         private bool sizeInitialized = false;
@@ -145,7 +144,7 @@ namespace BTPaint
                 size = (int)Math.Ceiling(size * e.GetCurrentPoint(null).Properties.Pressure);
             }
 
-            Draw_Packet(new DrawPacket(currentPosition, currentPosition, newColor, size));
+            DrawPacket(new DrawPacket(currentPosition, currentPosition, newColor, size));
 
             prevPosition = e.GetCurrentPoint(MainCanvas).Position;
             MainCanvas.PointerMoved += MainCanvas_PointerMoved;
@@ -172,27 +171,25 @@ namespace BTPaint
                 size = (int)Math.Ceiling(size * e.GetCurrentPoint(null).Properties.Pressure);
             }
 
-            Draw_Packet(new DrawPacket(pp, currentPosition, newColor, size));
+            DrawPacket(new DrawPacket(pp, currentPosition, newColor, size));
 
             prevPosition = cp;
         }
 
-        private void Draw_Packet(DrawPacket packet)
+        private void DrawPacket(DrawPacket packet)
         {
             Color color = Color.FromArgb(packet.color.A, packet.color.R, packet.color.G, packet.color.B);
-
-            DrawPacket test = new DrawPacket(DrawPacket.Restore(packet.ToByteArray()).pointA, DrawPacket.Restore(packet.ToByteArray()).pointB, DrawPacket.Restore(packet.ToByteArray()).color, DrawPacket.Restore(packet.ToByteArray()).size);
 
             Bitmap.FillEllipseCentered(packet.pointA.X, packet.pointA.Y, (int)Math.Ceiling(packet.size / 2.0) - 1, (int)Math.Ceiling(packet.size / 2.0) - 1, color);
             Bitmap.DrawLineAa(packet.pointA.X, packet.pointA.Y, packet.pointB.X, packet.pointB.Y, color, packet.size);
             Bitmap.FillEllipseCentered(packet.pointB.X, packet.pointB.Y, (int)Math.Ceiling(packet.size / 2.0) - 1, (int)Math.Ceiling(packet.size / 2.0) - 1, color);
         }
 
-        private void Draw_Packets(IEnumerable<DrawPacket> packets)
+        private void DrawPackets(IEnumerable<DrawPacket> packets)
         {
             foreach(DrawPacket packet in packets)
             {
-                Draw_Packet(packet);
+                DrawPacket(packet);
             }
         }
 
@@ -207,5 +204,11 @@ namespace BTPaint
                 MainCanvas.SizeChanged -= MainCanvas_SizeChanged;
             }
         }
+
+        private void ProcessPacket(byte[] packet)
+        {
+            DrawPacket(Models.DrawPacket.Restore(packet));
+        }
+
     }
 }
