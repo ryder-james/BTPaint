@@ -66,7 +66,7 @@ namespace Networking.Models
             state.socket.BeginReceive(data, 0, data.Length, SocketFlags.None, OnPacketReceived, state);
         }
 
-        public void Close()
+        public override void Close()
         {
             serverSocket.Close();
             base.Close();

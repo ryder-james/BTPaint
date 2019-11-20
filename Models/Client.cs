@@ -39,7 +39,7 @@ namespace Networking.Models
             clientSocket.BeginSend(byteData, 0, byteData.Length, flags, DefaultSendCallback, clientSocket);
         }
 
-        public void Close()
+        public virtual void Close()
         {
             clientSocket.Close();
             connectionSocket.Close();
