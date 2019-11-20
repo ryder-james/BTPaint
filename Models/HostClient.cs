@@ -45,12 +45,8 @@ namespace Networking.Models
             {
                 Debug.WriteLine("Connection established");
 
-                AsyncPacket packet = new AsyncPacket();
-                packet.result = result;
-                packet.socket = newConnection;
-
                 byte[] data = new byte[256];
-                newConnection.BeginReceive(data, 0, data.Length, SocketFlags.Multicast, base.OnPacketReceived, packet);
+                newConnection.BeginReceive(data, 0, data.Length, SocketFlags.None, base.OnPacketReceived, result);
 
                 clientSockets.Add(newConnection);
             }
