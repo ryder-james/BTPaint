@@ -36,7 +36,7 @@ namespace Networking.Models
         {
             Debug.WriteLine("Attempting Connection");
 
-            Socket socket = (Socket)result.AsyncState;
+            Socket socket = ((Socket)result.AsyncState).EndAccept(result);
 
             if (socket.Connected)
             {
