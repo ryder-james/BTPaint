@@ -1,6 +1,7 @@
 ﻿using Networking.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using Windows.ApplicationModel.Core;
@@ -20,16 +21,25 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace BTPaint
 {
+
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     public sealed partial class MainPage : Page
     {
         private Client client;
+        public TcpListener server;
+        public TcpClient clientNetwork;
+
+        public Socket listen;
 
         public MainPage()
         {
             this.InitializeComponent();
+
+            //server = new TcpListener(IPAddress.Parse("192.168.0.158"), 10000);
+
+            //server.Start();
 
             ShowSplash();
         }
@@ -141,7 +151,17 @@ namespace BTPaint
 
         private void importBtn_Click(object sender, RoutedEventArgs e)
         {
+            
 
+            //while (true)
+            //{
+            //    clientNetwork = server.AcceptTcpClient();
+
+            //    byte[] receivedBuffer = new byte[4];
+            //    NetworkStream stream = clientNetwork.GetStream();
+
+            //    stream.Read(receivedBuffer, 0, receivedBuffer.Length);
+            //}
         }
 
         private void exitBtn_Click(object sender, RoutedEventArgs e)
@@ -177,7 +197,7 @@ namespace BTPaint
             SideBar.IsPaneOpen = true;
         }
 
-        private void pencilBtn_Click(object sender, RoutedEventArgs e)
+        async private void pencilBtn_Click(object sender, RoutedEventArgs e)
         {
             mainCanvas.ShouldErase = false;
             eraserBtn.Background = new SolidColorBrush(Colors.Gray);
@@ -186,22 +206,67 @@ namespace BTPaint
             //NETWORK CODE TESTING
             byte[] data = { 1, 2, 3, 4 };
 
-            IPEndPoint whereGo = new IPEndPoint(IPAddress.Parse("192.168.0.158"), 1000);
+            //IPEndPoint whereGo = new IPEndPoint(IPAddress.Parse("192.168.0.158"), 1000);
 
-            Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            //Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-            socket.Connect(whereGo);
+            //socket.Connect(whereGo);
 
-            for (int i = 0; i < 10; i++)
-            {
-                socket.Send(data);
-            }
+            //for (int i = 0; i < 10; i++)
+            //{
+            //    socket.Send(data);
+            //}
 
-            IPEndPoint whereFrom = new IPEndPoint(IPAddress.Parse("0.0.0.0"), 10000);
+            IPEndPoint whereFrom = new IPEndPoint(IPAddress.Parse("192.168.0.158"), 10000);
+            //IPEndPoint whereCARSON = new IPEndPoint(IPAddress.Parse("192.168.0.157"), 10000);
 
-            Socket listen = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            listen = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            //listen.Connect(whereCARSON);
             listen.Bind(whereFrom);
             listen.Listen(100);
+            listen.BeginAccept(OnConnectionEstablished, listen);
+
+            //listen.BeginReceive(data, 0, data.Length, SocketFlags.None, ar => { Debug.WriteLine("hi"); }, null);
+        }
+
+        private struct AsyncPacket
+        {
+            public IAsyncResult result;
+            public Socket socket;
+        }
+
+        private void OnConnectionEstablished(IAsyncResult result)
+        {
+            Debug.WriteLine("Attempting Connection");
+
+            Socket clientSocket = ((Socket)result.AsyncState).EndAccept(result);
+
+            if (clientSocket.Connected)
+            {
+                Debug.WriteLine("Connection established");
+
+                AsyncPacket packet = new AsyncPacket();
+                packet.result = result;
+                packet.socket = clientSocket;
+
+                byte[] data = new byte[256];
+                clientSocket.BeginReceive(data, 0, data.Length, SocketFlags.None, OnPacketReceived, packet);
+            }
+
+            //((Socket)result.AsyncState).BeginAccept(OnConnectionEstablished, ((Socket)result.AsyncState));
+        }
+
+        private void OnPacketReceived(IAsyncResult result)
+        {
+            Debug.WriteLine("Packet received");
+
+            AsyncPacket state = (AsyncPacket)result.AsyncState;
+            int packetSize = state.socket.EndReceive(result);
+
+            state.result = result;
+
+            byte[] data = new byte[packetSize];
+            state.socket.BeginReceive(data, 0, data.Length, SocketFlags.None, OnPacketReceived, state);
         }
 
         private void eraserBtn_Click(object sender, RoutedEventArgs e)
@@ -209,6 +274,8 @@ namespace BTPaint
             mainCanvas.ShouldErase = true;
             pencilBtn.Background = new SolidColorBrush(Colors.Gray);
             eraserBtn.Background = new SolidColorBrush(Colors.White);
+
+            listen.Close();
         }
     }
 }
