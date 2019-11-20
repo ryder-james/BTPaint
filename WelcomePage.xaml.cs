@@ -47,7 +47,7 @@ namespace BTPaint
 
         private void joinBtn_Click(object sender, RoutedEventArgs e)
         {
-            this.Result = WelcomeSplashResult.Solo;
+            this.Result = WelcomeSplashResult.Join;
             this.Hide();
         }
 

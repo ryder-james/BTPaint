@@ -1,4 +1,5 @@
-﻿using Networking.Models;
+﻿using BTPaint.UserControls;
+using Networking.Models;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -30,7 +31,7 @@ namespace BTPaint
         public MainPage()
         {
             this.InitializeComponent();
-
+            
             ShowSplash();
         }
 
@@ -168,6 +169,14 @@ namespace BTPaint
             {
                 case WelcomeSplashResult.Solo:
                     // do stuff?
+                    break;
+                case WelcomeSplashResult.Join:
+                    Join joinPage = new Join();
+                    await joinPage.ShowAsync();
+                    if (joinPage.mainMenu)
+                    {
+                        ShowSplash();
+                    }
                     break;
                 case WelcomeSplashResult.Exit:
                     CoreApplication.Exit();
