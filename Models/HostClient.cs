@@ -22,13 +22,13 @@ namespace Networking.Models
             ipAddr = ipHost.AddressList[1];
         }
 
-        public void BeginAccept(int backlog = 100, int port = 10000)
+        public void BeginAccept(int maxConnections = 100, int port = 10000)
         {
             IPEndPoint ipEnd = new IPEndPoint(IPAddress.Parse(ipAddr.ToString()), port);
             Debug.WriteLine("Endpoint created at: " + ipAddr.ToString());
 
             serverSocket.Bind(ipEnd);
-            serverSocket.Listen(backlog);
+            serverSocket.Listen(maxConnections);
             serverSocket.BeginAccept(OnConnectionEstablished, serverSocket);
         }
 
