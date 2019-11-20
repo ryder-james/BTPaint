@@ -12,12 +12,14 @@ namespace Networking.Models
     public class HostClient : Client
     {
         private Socket serverSocket;
+        private List<Socket> clientSockets;
         private IPHostEntry ipHost;
         private IPAddress ipAddr;
 
         public HostClient()
         {
             serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            clientSockets = new List<Socket>();
             ipHost = Dns.GetHostEntry(Dns.GetHostName());
             ipAddr = ipHost.AddressList[1];
         }
@@ -36,40 +38,30 @@ namespace Networking.Models
         {
             Debug.WriteLine("Attempting Connection");
 
-            Socket socket = (Socket)result.AsyncState;
+            Socket stateSocket = (Socket)result.AsyncState;
+            Socket newConnection = stateSocket.EndAccept(result);
 
-            if (socket.Connected)
+            if (newConnection.Connected)
             {
                 Debug.WriteLine("Connection established");
 
-                AsyncPacket packet = new AsyncPacket();
-                packet.result = result;
-                packet.socket = socket;
-
                 byte[] data = new byte[256];
-                socket.BeginReceive(data, 0, data.Length, SocketFlags.None, OnPacketReceived, packet);
+                newConnection.BeginReceive(data, 0, data.Length, SocketFlags.None, base.OnPacketReceived, result);
+
+                clientSockets.Add(newConnection);
             }
 
-            //((Socket)result.AsyncState).BeginAccept(OnConnectionEstablished, ((Socket)result.AsyncState));
+            stateSocket.BeginAccept(OnConnectionEstablished, stateSocket);
         }
 
-        private void OnPacketReceived(IAsyncResult result)
+        public override void Close()
         {
-            Debug.WriteLine("Packet received");
-
-            AsyncPacket state = (AsyncPacket)result.AsyncState;
-            int packetSize = state.socket.EndReceive(result);
-
-            state.result = result;
-
-            byte[] data = new byte[packetSize];
-            state.socket.BeginReceive(data, 0, data.Length, SocketFlags.None, OnPacketReceived, state);
-        }
-
-        private struct AsyncPacket
-        {
-            public IAsyncResult result;
-            public Socket socket;
+            foreach (Socket s in clientSockets)
+            {
+                s.Close();
+            }
+            serverSocket.Close();
+            base.Close();
         }
     }
 }

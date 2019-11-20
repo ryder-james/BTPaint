@@ -27,7 +27,7 @@ namespace Networking.Models
             connectionSocket.BeginConnect(targetAddress, (callback != null ? callback : DefaultConnectCallback), connectionSocket);
         }
 
-        public void Send(IPacket packet)
+        public void Send(IPacket packet, SocketFlags flags = SocketFlags.None)
         {
             if (!clientSocket.Connected)
             {
@@ -36,21 +36,44 @@ namespace Networking.Models
 
             byte[] byteData = packet.ToByteArray();
 
-            clientSocket.BeginSend(byteData, 0, byteData.Length, SocketFlags.None, DefaultSendCallback, clientSocket);
+            clientSocket.BeginSend(byteData, 0, byteData.Length, flags, DefaultSendCallback, clientSocket);
         }
 
-        private void DefaultSendCallback(IAsyncResult result)
+        public virtual void Close()
+        {
+            clientSocket.Close();
+            connectionSocket.Close();
+        }
+
+        protected void OnPacketReceived(IAsyncResult result)
+        {
+            Debug.WriteLine("Packet received");
+
+            Socket socket = (Socket)result.AsyncState;
+            int packetSize = socket.EndReceive(result);
+
+            byte[] data = new byte[packetSize];
+            socket.BeginReceive(data, 0, data.Length, SocketFlags.None, OnPacketReceived, socket);
+        }
+
+        protected void DefaultSendCallback(IAsyncResult result)
         {
             ((Socket)result.AsyncState).EndSend(result);
         }
 
-        private void DefaultConnectCallback(IAsyncResult result)
+        protected void DefaultConnectCallback(IAsyncResult result)
         {
             Debug.WriteLine("Connect call back called");
 
             clientSocket = (Socket)result.AsyncState;
 
             clientSocket.EndConnect(result);
+        }
+
+        protected struct AsyncPacket
+        {
+            public IAsyncResult result;
+            public Socket socket;
         }
     }
 }
