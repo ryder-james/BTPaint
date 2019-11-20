@@ -24,12 +24,15 @@ using Windows.UI.Xaml.Navigation;
 
 namespace BTPaint
 {
+    public delegate void LineDrawnEventHandler(DrawPacket line);
+
     public sealed partial class RasterCanvas : UserControl, INotifyPropertyChanged
     {
         public static readonly DependencyProperty SizeProperty = DependencyProperty.Register("Size", typeof(double), typeof(RasterCanvas), null);
         public static readonly DependencyProperty DrawColorProperty = DependencyProperty.Register("DrawColor", typeof(Color), typeof(RasterCanvas), null);
 
         public event PropertyChangedEventHandler PropertyChanged;
+        public event LineDrawnEventHandler LineDrawn;
 
         private bool shouldErase = false;
         private bool sizeInitialized = false;
@@ -144,7 +147,12 @@ namespace BTPaint
                 size = (int)Math.Ceiling(size * e.GetCurrentPoint(null).Properties.Pressure);
             }
 
-            DrawPacket(new DrawPacket(currentPosition, currentPosition, newColor, size));
+            DrawPacket line = new DrawPacket(currentPosition, currentPosition, newColor, size);
+
+            DrawPacket(line);
+
+            if (LineDrawn != null)
+                LineDrawn(line);
 
             prevPosition = e.GetCurrentPoint(MainCanvas).Position;
             MainCanvas.PointerMoved += MainCanvas_PointerMoved;

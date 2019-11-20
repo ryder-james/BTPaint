@@ -10,7 +10,7 @@ namespace BTPaint.Models
 {
     public struct DrawPacket : IPacket
     {
-        public const uint PacketHeader = 0xD34DC0D3;
+        private const uint PacketHeader = 0xD34DC0D3;
 
         public Point pointA;
         public Point pointB;
@@ -49,6 +49,12 @@ namespace BTPaint.Models
 
         public static DrawPacket Restore(byte[] bytes)
         {
+
+            if(BitConverter.ToUInt32(bytes, 0) != PacketHeader)
+            {
+                throw new FormatException("Byte array is not in DrawPacket format");
+            }
+
             int pointAX = BitConverter.ToInt32(bytes, bytes.Length - 24);
             int pointAY = BitConverter.ToInt32(bytes, bytes.Length - 20);
             int pointBX = BitConverter.ToInt32(bytes, bytes.Length - 16);
