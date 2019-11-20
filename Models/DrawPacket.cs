@@ -49,7 +49,17 @@ namespace BTPaint.Models
 
         public static DrawPacket Restore(byte[] bytes)
         {
-            return new DrawPacket();
+            int pointAX = BitConverter.ToInt32(bytes, 0);
+            int pointAY = BitConverter.ToInt32(bytes, 4);
+            int pointBX = BitConverter.ToInt32(bytes, 8);
+            int pointBY = BitConverter.ToInt32(bytes, 12);
+            Color kolor = Color.FromArgb(bytes[16], bytes[17], bytes[18], bytes[19]);
+            int soze = BitConverter.ToInt32(bytes, 20);
+
+            Point A = new Point(pointAX, pointAY);
+            Point B = new Point(pointBX, pointBY);
+
+            return new DrawPacket(pointAX, pointAY, pointBX, pointBY);
         }
 
         public int ByteSize()
