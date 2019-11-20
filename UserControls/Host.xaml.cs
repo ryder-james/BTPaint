@@ -19,9 +19,22 @@ namespace BTPaint.UserControls
 {
     public sealed partial class Host : ContentDialog
     {
+        public bool mainMenu { get; set; }
+
         public Host()
         {
             this.InitializeComponent();
+        }
+
+        private void Host_Click(object sender, RoutedEventArgs e)
+        {
+            mainMenu = false;
+        }
+
+        private void Return_Click(object sender, RoutedEventArgs e)
+        {
+            this.Hide();
+            mainMenu = true;
         }
     }
 }

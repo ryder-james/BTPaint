@@ -31,7 +31,7 @@ namespace BTPaint.UserControls
             mainMenu = false;
         }
 
-        private async void Return_Click(object sender, RoutedEventArgs e)
+        private void Return_Click(object sender, RoutedEventArgs e)
         {
             this.Hide();
             mainMenu = true;

@@ -178,6 +178,14 @@ namespace BTPaint
                         ShowSplash();
                     }
                     break;
+                case WelcomeSplashResult.Host:
+                    Host hostPage = new Host();
+                    await hostPage.ShowAsync();
+                    if (hostPage.mainMenu)
+                    {
+                        ShowSplash();
+                    }
+                    break;
                 case WelcomeSplashResult.Exit:
                     CoreApplication.Exit();
                     break;
