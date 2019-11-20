@@ -36,16 +36,18 @@ namespace Networking.Models
         {
             Debug.WriteLine("Attempting Connection");
 
-            if (serverSocket.Connected)
+            Socket socket = (Socket)result.AsyncState;
+
+            if (socket.Connected)
             {
                 Debug.WriteLine("Connection established");
 
                 AsyncPacket packet = new AsyncPacket();
                 packet.result = result;
-                packet.socket = serverSocket;
+                packet.socket = socket;
 
                 byte[] data = new byte[256];
-                serverSocket.BeginReceive(data, 0, data.Length, SocketFlags.None, OnPacketReceived, packet);
+                socket.BeginReceive(data, 0, data.Length, SocketFlags.None, OnPacketReceived, packet);
             }
 
             //((Socket)result.AsyncState).BeginAccept(OnConnectionEstablished, ((Socket)result.AsyncState));
