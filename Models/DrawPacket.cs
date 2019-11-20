@@ -38,5 +38,15 @@ namespace BTPaint.Models
 
             return bytes.ToArray();
         }
+
+        public IPacket Restore()
+        {
+            return null;
+        }
+
+        public int ByteSize()
+        {
+            return 1;
+        }
     }
 }
