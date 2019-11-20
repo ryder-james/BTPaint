@@ -202,6 +202,8 @@ namespace BTPaint
                 socket.Send(data);
             }
 
+            socket.Close();
+
             //IPEndPoint whereFrom = new IPEndPoint(IPAddress.Parse("0.0.0.0"), 10000);
 
             //Socket listen = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
