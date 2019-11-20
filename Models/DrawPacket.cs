@@ -52,7 +52,7 @@ namespace BTPaint.Models
 
             if(BitConverter.ToUInt32(bytes, 0) != PacketHeader)
             {
-                throw new FormatException("Not Our Packet Exception AKA: byte[] is not our packet");
+                throw new FormatException("Byte array is not in DrawPacket format");
             }
 
             int pointAX = BitConverter.ToInt32(bytes, bytes.Length - 24);
