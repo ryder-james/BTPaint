@@ -46,5 +46,15 @@ namespace BTPaint.Models
 
             return bytes.ToArray();
         }
+
+        public static DrawPacket Restore(byte[] bytes)
+        {
+            return new DrawPacket();
+        }
+
+        public int ByteSize()
+        {
+            return 1;
+        }
     }
 }
