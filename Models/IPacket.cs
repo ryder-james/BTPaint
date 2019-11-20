@@ -11,7 +11,6 @@ namespace Networking.Models
     public interface IPacket
     {
         byte[] ToByteArray();
-        IPacket Restore();
         int ByteSize();
     }
 }

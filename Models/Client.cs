@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -8,8 +9,12 @@ using System.Threading.Tasks;
 
 namespace Networking.Models
 {
+    public delegate void PacketReceivedEventHandler(byte[] packetBytes);
+
     public class Client
     {
+        public event PacketReceivedEventHandler PacketReceived;
+
         private Socket clientSocket, connectionSocket;
 
         public Client()
@@ -36,11 +41,13 @@ namespace Networking.Models
 
         private void DefaultSendCallback(IAsyncResult result)
         {
-
+            ((Socket)result.AsyncState).EndSend(result);
         }
 
         private void DefaultConnectCallback(IAsyncResult result)
         {
+            Debug.WriteLine("Connect call back called");
+
             clientSocket = (Socket)result.AsyncState;
 
             clientSocket.EndConnect(result);
