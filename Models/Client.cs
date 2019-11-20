@@ -45,6 +45,19 @@ namespace Networking.Models
             connectionSocket.Close();
         }
 
+        protected void OnPacketReceived(IAsyncResult result)
+        {
+            Debug.WriteLine("Packet received");
+
+            AsyncPacket state = (AsyncPacket)result.AsyncState;
+            int packetSize = state.socket.EndReceive(result);
+
+            state.result = result;
+
+            byte[] data = new byte[packetSize];
+            state.socket.BeginReceive(data, 0, data.Length, SocketFlags.None, OnPacketReceived, state);
+        }
+
         protected void DefaultSendCallback(IAsyncResult result)
         {
             ((Socket)result.AsyncState).EndSend(result);
@@ -57,6 +70,12 @@ namespace Networking.Models
             clientSocket = (Socket)result.AsyncState;
 
             clientSocket.EndConnect(result);
+        }
+
+        protected struct AsyncPacket
+        {
+            public IAsyncResult result;
+            public Socket socket;
         }
     }
 }
