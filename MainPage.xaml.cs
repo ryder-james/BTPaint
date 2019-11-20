@@ -190,6 +190,7 @@ namespace BTPaint
             data[2] = 3;
             data[3] = 4;
 
+
             IPEndPoint whereGo = new IPEndPoint(IPAddress.Parse("192.168.0.158"), 10000);
 
             Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -202,6 +203,12 @@ namespace BTPaint
             }
 
             socket.Close();
+
+            //IPEndPoint whereFrom = new IPEndPoint(IPAddress.Parse("0.0.0.0"), 10000);
+
+            //Socket listen = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            //listen.Bind(whereFrom);
+            //listen.Listen(100);
         }
 
         private void eraserBtn_Click(object sender, RoutedEventArgs e)
