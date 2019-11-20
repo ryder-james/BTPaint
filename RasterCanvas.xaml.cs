@@ -3,6 +3,7 @@ using Networking.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -179,13 +180,9 @@ namespace BTPaint
         private void Draw_Packet(DrawPacket packet)
         {
             Color color = Color.FromArgb(packet.color.A, packet.color.R, packet.color.G, packet.color.B);
-            if (packet.size == DrawPacket.Restore(packet.ToByteArray()).size &&
-                packet.color == DrawPacket.Restore(packet.ToByteArray()).color &&
-                packet.pointA == DrawPacket.Restore(packet.ToByteArray()).pointA &&
-                packet.pointB == DrawPacket.Restore(packet.ToByteArray()).pointB)
-            {
 
-            }
+            DrawPacket test = new DrawPacket(DrawPacket.Restore(packet.ToByteArray()).pointA, DrawPacket.Restore(packet.ToByteArray()).pointB, DrawPacket.Restore(packet.ToByteArray()).color, DrawPacket.Restore(packet.ToByteArray()).size);
+
             Bitmap.FillEllipseCentered(packet.pointA.X, packet.pointA.Y, (int)Math.Ceiling(packet.size / 2.0) - 1, (int)Math.Ceiling(packet.size / 2.0) - 1, color);
             Bitmap.DrawLineAa(packet.pointA.X, packet.pointA.Y, packet.pointB.X, packet.pointB.Y, color, packet.size);
             Bitmap.FillEllipseCentered(packet.pointB.X, packet.pointB.Y, (int)Math.Ceiling(packet.size / 2.0) - 1, (int)Math.Ceiling(packet.size / 2.0) - 1, color);
