@@ -36,7 +36,7 @@ namespace Networking.Models
         {
             Debug.WriteLine("Attempting Connection");
 
-            Socket socket = (Socket)result.AsyncState;
+            Socket socket = ((Socket)result.AsyncState).EndAccept(result);
 
             if (socket.Connected)
             {
@@ -64,6 +64,12 @@ namespace Networking.Models
 
             byte[] data = new byte[packetSize];
             state.socket.BeginReceive(data, 0, data.Length, SocketFlags.None, OnPacketReceived, state);
+        }
+
+        public void Close()
+        {
+            serverSocket.Close();
+            base.Close();
         }
 
         private struct AsyncPacket
