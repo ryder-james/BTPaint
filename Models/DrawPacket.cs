@@ -61,10 +61,5 @@ namespace BTPaint.Models
 
             return new DrawPacket(A, B, kolor, soze);
         }
-
-        public int ByteSize()
-        {
-            return 1;
-        }
     }
 }

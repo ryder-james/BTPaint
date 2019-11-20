@@ -9,6 +9,5 @@ namespace Networking.Models
     public interface IPacket
     {
         byte[] ToByteArray();
-        int ByteSize();
     }
 }
