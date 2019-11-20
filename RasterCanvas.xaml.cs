@@ -1,4 +1,5 @@
-﻿using Networking.Models;
+﻿using BTPaint.Models;
+using Networking.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -133,12 +134,17 @@ namespace BTPaint
 
             int size = (int)Size;
 
+            Point cp = e.GetCurrentPoint(MainCanvas).Position;
+            System.Drawing.Point currentPosition = new System.Drawing.Point((int)cp.X, (int)cp.Y);
+            System.Drawing.Color newColor = System.Drawing.Color.FromArgb(DrawColor.A, DrawColor.R, DrawColor.G, DrawColor.B);
+
+
             if (e.Pointer.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Pen)
             {
                 size = (int)Math.Ceiling(size * e.GetCurrentPoint(null).Properties.Pressure);
             }
 
-            Bitmap.FillEllipseCentered((int)e.GetCurrentPoint(MainCanvas).Position.X, (int)e.GetCurrentPoint(MainCanvas).Position.Y, (int)Math.Ceiling(size / 2.0) - 1, (int)Math.Ceiling(size / 2.0) - 1, DrawColor);
+            Draw_Packet(new DrawPacket(currentPosition, currentPosition, newColor, size));
 
             prevPosition = e.GetCurrentPoint(MainCanvas).Position;
             MainCanvas.PointerMoved += MainCanvas_PointerMoved;
@@ -151,7 +157,12 @@ namespace BTPaint
 
         private void MainCanvas_PointerMoved(object sender, PointerRoutedEventArgs e)
         {
-            Point currentPosition = e.GetCurrentPoint(MainCanvas).Position;
+            Point cp = e.GetCurrentPoint(MainCanvas).Position;
+
+            System.Drawing.Point pp = new System.Drawing.Point((int)prevPosition.X, (int)prevPosition.Y);
+            System.Drawing.Point currentPosition = new System.Drawing.Point((int)cp.X, (int)cp.Y);
+
+            System.Drawing.Color newColor = System.Drawing.Color.FromArgb(DrawColor.A, DrawColor.R, DrawColor.G, DrawColor.B);
 
             int size = (int)Size;
 
@@ -160,10 +171,26 @@ namespace BTPaint
                 size = (int)Math.Ceiling(size * e.GetCurrentPoint(null).Properties.Pressure);
             }
 
-            Bitmap.DrawLineAa((int)prevPosition.X, (int)prevPosition.Y, (int)currentPosition.X, (int)currentPosition.Y, DrawColor, size);
-            Bitmap.FillEllipseCentered((int)e.GetCurrentPoint(MainCanvas).Position.X, (int)e.GetCurrentPoint(MainCanvas).Position.Y, (int)Math.Ceiling(size / 2.0) - 1, (int)Math.Ceiling(size / 2.0) - 1, DrawColor);
+            Draw_Packet(new DrawPacket(pp, currentPosition, newColor, size));
 
-            prevPosition = currentPosition;
+            prevPosition = cp;
+        }
+
+        private void Draw_Packet(DrawPacket packet)
+        {
+            Color color = Color.FromArgb(packet.color.A, packet.color.R, packet.color.G, packet.color.B);
+
+            Bitmap.FillEllipseCentered(packet.pointA.X, packet.pointA.Y, (int)Math.Ceiling(packet.size / 2.0) - 1, (int)Math.Ceiling(packet.size / 2.0) - 1, color);
+            Bitmap.DrawLineAa(packet.pointA.X, packet.pointA.Y, packet.pointB.X, packet.pointB.Y, color, packet.size);
+            Bitmap.FillEllipseCentered(packet.pointB.X, packet.pointB.Y, (int)Math.Ceiling(packet.size / 2.0) - 1, (int)Math.Ceiling(packet.size / 2.0) - 1, color);
+        }
+
+        private void Draw_Packets(IEnumerable<DrawPacket> packets)
+        {
+            foreach(DrawPacket packet in packets)
+            {
+                Draw_Packet(packet);
+            }
         }
 
         private void MainCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
