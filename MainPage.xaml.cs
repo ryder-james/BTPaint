@@ -27,12 +27,15 @@ namespace BTPaint
     public sealed partial class MainPage : Page
     {
         private Client client;
+        private HostClient host = new HostClient();
 
         public MainPage()
         {
             this.InitializeComponent();
             
             ShowSplash();
+
+            
         }
 
         private void collapseSideBarBtn_Click(object sender, RoutedEventArgs e)
@@ -184,6 +187,10 @@ namespace BTPaint
                     if (hostPage.mainMenu)
                     {
                         ShowSplash();
+                    }
+                    else
+                    {
+                        host.BeginAccept();
                     }
                     break;
                 case WelcomeSplashResult.Exit:

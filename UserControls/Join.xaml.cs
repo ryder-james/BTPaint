@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Networking.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -20,6 +22,8 @@ namespace BTPaint.UserControls
     public sealed partial class Join : ContentDialog
     {
         public bool mainMenu { get; set; }
+        private Client client;
+
 
         public Join()
         {
@@ -29,6 +33,8 @@ namespace BTPaint.UserControls
         private void Join_Click(object sender, RoutedEventArgs e)
         {
             mainMenu = false;
+            this.Hide();
+            client.BeginConnect(new IPEndPoint(IPAddress.Parse(ipEnter.Text), 10000));
         }
 
         private void Return_Click(object sender, RoutedEventArgs e)

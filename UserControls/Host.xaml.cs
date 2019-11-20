@@ -24,11 +24,13 @@ namespace BTPaint.UserControls
         public Host()
         {
             this.InitializeComponent();
+            
         }
 
         private void Host_Click(object sender, RoutedEventArgs e)
         {
             mainMenu = false;
+            this.Hide();
         }
 
         private void Return_Click(object sender, RoutedEventArgs e)
