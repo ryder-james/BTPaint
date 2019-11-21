@@ -59,12 +59,16 @@ namespace Networking.Models
 
         public override void Close()
         {
+            base.Close();
+
             foreach (Socket s in clientSockets)
             {
-                s.Close();
+                if (s != null)
+                    s.Close();
             }
-            serverSocket.Close();
-            base.Close();
+
+            if (serverSocket != null)
+                serverSocket.Close();
         }
     }
 }
