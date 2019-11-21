@@ -221,6 +221,10 @@ namespace BTPaint
             mainCanvas.ShouldErase = false;
             eraserBtn.Background = new SolidColorBrush(Colors.Gray);
             pencilBtn.Background = new SolidColorBrush(Colors.White);
+            starBtn.Background = new SolidColorBrush(Colors.Gray);
+            sidesText.Visibility = Visibility.Collapsed;
+            sidesSlider.Visibility = Visibility.Collapsed;
+            sidesSlider.Value = 1;
         }
 
         private void eraserBtn_Click(object sender, RoutedEventArgs e)
@@ -228,6 +232,21 @@ namespace BTPaint
             mainCanvas.ShouldErase = true;
             pencilBtn.Background = new SolidColorBrush(Colors.Gray);
             eraserBtn.Background = new SolidColorBrush(Colors.White);
+            starBtn.Background = new SolidColorBrush(Colors.Gray);
+            sidesText.Visibility = Visibility.Collapsed;
+            sidesSlider.Visibility = Visibility.Collapsed;
+            sidesSlider.Value = 1;
+        }
+
+        private void starBtn_Click(object sender, RoutedEventArgs e)
+        {
+            mainCanvas.ShouldErase = false;
+            pencilBtn.Background = new SolidColorBrush(Colors.Gray);
+            eraserBtn.Background = new SolidColorBrush(Colors.Gray);
+            starBtn.Background = new SolidColorBrush(Colors.White);
+            sidesText.Visibility = Visibility.Visible;
+            sidesSlider.Visibility = Visibility.Visible;
+            sidesSlider.Value = 3;
         }
     }
 }
