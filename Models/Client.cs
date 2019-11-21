@@ -74,7 +74,8 @@ namespace Networking.Models
 
         protected void DefaultSendCallback(IAsyncResult result)
         {
-            ((Socket)result.AsyncState).EndSend(result);
+            StateObject state = (StateObject)result.AsyncState;
+            state.workSocket.EndSend(result);
         }
 
         protected void DefaultConnectCallback(IAsyncResult result)
