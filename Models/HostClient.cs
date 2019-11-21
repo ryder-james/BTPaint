@@ -49,7 +49,7 @@ namespace Networking.Models
                 state.workSocket = newConnection;
                 state.buffer = new byte[StateObject.BufferSize];
 
-                newConnection.BeginReceive(state.buffer, 0, state.buffer.Length, SocketFlags.None, OnClientPacketReceived, state);
+                newConnection.BeginReceive(state.buffer, 0, state.buffer.Length, SocketFlags.None, OnPacketReceivedFromClient, state);
 
                 clientSockets.Add(newConnection);
             }
@@ -76,7 +76,7 @@ namespace Networking.Models
                 serverSocket.Close();
         }
 
-        protected void OnClientPacketReceived(IAsyncResult result)
+        protected void OnPacketReceivedFromClient(IAsyncResult result)
         {
             base.OnPacketReceived(result);
 
@@ -84,7 +84,7 @@ namespace Networking.Models
 
             int packetSize = state.workSocket.EndReceive(result);
             state.buffer = new byte[packetSize];
-            state.workSocket.BeginReceive(state.buffer, 0, state.buffer.Length, SocketFlags.None, OnClientPacketReceived, state);
+            state.workSocket.BeginReceive(state.buffer, 0, state.buffer.Length, SocketFlags.None, OnPacketReceivedFromClient, state);
         }
     }
 }
