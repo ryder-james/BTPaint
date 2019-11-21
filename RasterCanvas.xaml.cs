@@ -213,9 +213,11 @@ namespace BTPaint
             }
         }
 
-        public void ProcessPacket(byte[] packet)
+        public async void ProcessPacket(byte[] packet)
         {
-            DrawPacket(Models.DrawPacket.Restore(packet));
+            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => {
+                DrawPacket(Models.DrawPacket.Restore(packet));
+            });
         }
 
     }
