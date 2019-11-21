@@ -62,7 +62,7 @@
                             </Style>
                         </Flyout.FlyoutPresenterStyle>
                         <StackPanel Orientation="Vertical">
-                            <MenuFlyoutItem x:Name="resizeBtn" Text="Fullscreen" HorizontalContentAlignment="Center" Click="resizeBtn_Click"></MenuFlyoutItem>
+                            <MenuFlyoutItem x:Name="resizeBtn" Text="Resize" HorizontalContentAlignment="Center" Click="resizeBtn_Click"></MenuFlyoutItem>
                             <MenuFlyoutSeparator/>
                             <MenuFlyoutItem x:Name="importBtn" Text="Import" HorizontalContentAlignment="Center" Click="importBtn_Click"></MenuFlyoutItem>
                             <MenuFlyoutSeparator/>
