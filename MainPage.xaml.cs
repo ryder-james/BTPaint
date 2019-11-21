@@ -1,4 +1,5 @@
-﻿using BTPaint.UserControls;
+﻿using BTPaint.Models;
+using BTPaint.UserControls;
 using Networking.Models;
 using System;
 using System.Collections.Generic;
@@ -34,6 +35,8 @@ namespace BTPaint
             this.InitializeComponent();
             
             ShowSplash();
+
+            mainCanvas.LineDrawn += CanvasLineDrawn;
 
             host = new HostClient();
             client = new Client();
@@ -142,6 +145,11 @@ namespace BTPaint
 
                 await mainCanvas.Bitmap.SetSourceAsync(stream);
             }
+        }
+
+        private void CanvasLineDrawn(DrawPacket line)
+        {
+            client.Send(line);
         }
 
         private void importBtn_Click(object sender, RoutedEventArgs e)
