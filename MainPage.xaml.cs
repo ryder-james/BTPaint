@@ -192,6 +192,7 @@ namespace BTPaint
                     else if (joinPage.Result == Join.JoinResult.Connect)
                     {
                         client.BeginConnect(new IPEndPoint(IPAddress.Parse(joinPage.IPText), Client.DefaultPort));
+                        client.PacketReceived += mainCanvas.ProcessPacket;
                     }
                     break;
                 case WelcomeSplashResult.Host:

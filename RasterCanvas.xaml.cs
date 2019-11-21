@@ -213,7 +213,7 @@ namespace BTPaint
             }
         }
 
-        private void ProcessPacket(byte[] packet)
+        public void ProcessPacket(byte[] packet)
         {
             DrawPacket(Models.DrawPacket.Restore(packet));
         }
