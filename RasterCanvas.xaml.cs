@@ -1,6 +1,9 @@
-﻿using System;
+﻿using BTPaint.Models;
+using Networking.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -21,12 +24,15 @@ using Windows.UI.Xaml.Navigation;
 
 namespace BTPaint
 {
+    public delegate void LineDrawnEventHandler(DrawPacket line);
+
     public sealed partial class RasterCanvas : UserControl, INotifyPropertyChanged
     {
         public static readonly DependencyProperty SizeProperty = DependencyProperty.Register("Size", typeof(double), typeof(RasterCanvas), null);
         public static readonly DependencyProperty DrawColorProperty = DependencyProperty.Register("DrawColor", typeof(Color), typeof(RasterCanvas), null);
 
         public event PropertyChangedEventHandler PropertyChanged;
+        public event LineDrawnEventHandler LineDrawn;
 
         private bool shouldErase = false;
         private bool sizeInitialized = false;
@@ -131,12 +137,20 @@ namespace BTPaint
 
             int size = (int)Size;
 
+            Point cp = e.GetCurrentPoint(MainCanvas).Position;
+            System.Drawing.Point currentPosition = new System.Drawing.Point((int)cp.X, (int)cp.Y);
+            System.Drawing.Color newColor = System.Drawing.Color.FromArgb(DrawColor.A, DrawColor.R, DrawColor.G, DrawColor.B);
+
+
             if (e.Pointer.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Pen)
             {
                 size = (int)Math.Ceiling(size * e.GetCurrentPoint(null).Properties.Pressure);
             }
 
-            Bitmap.FillEllipseCentered((int)e.GetCurrentPoint(MainCanvas).Position.X, (int)e.GetCurrentPoint(MainCanvas).Position.Y, (int)Math.Ceiling(size / 2.0) - 1, (int)Math.Ceiling(size / 2.0) - 1, DrawColor);
+            DrawPacket line = new DrawPacket(currentPosition, currentPosition, newColor, size);
+
+            DrawPacket(line);
+
 
             prevPosition = e.GetCurrentPoint(MainCanvas).Position;
             MainCanvas.PointerMoved += MainCanvas_PointerMoved;
@@ -149,7 +163,12 @@ namespace BTPaint
 
         private void MainCanvas_PointerMoved(object sender, PointerRoutedEventArgs e)
         {
-            Point currentPosition = e.GetCurrentPoint(MainCanvas).Position;
+            Point cp = e.GetCurrentPoint(MainCanvas).Position;
+
+            System.Drawing.Point pp = new System.Drawing.Point((int)prevPosition.X, (int)prevPosition.Y);
+            System.Drawing.Point currentPosition = new System.Drawing.Point((int)cp.X, (int)cp.Y);
+
+            System.Drawing.Color newColor = System.Drawing.Color.FromArgb(DrawColor.A, DrawColor.R, DrawColor.G, DrawColor.B);
 
             int size = (int)Size;
 
@@ -158,10 +177,29 @@ namespace BTPaint
                 size = (int)Math.Ceiling(size * e.GetCurrentPoint(null).Properties.Pressure);
             }
 
-            Bitmap.DrawLineAa((int)prevPosition.X, (int)prevPosition.Y, (int)currentPosition.X, (int)currentPosition.Y, DrawColor, size);
-            Bitmap.FillEllipseCentered((int)e.GetCurrentPoint(MainCanvas).Position.X, (int)e.GetCurrentPoint(MainCanvas).Position.Y, (int)Math.Ceiling(size / 2.0) - 1, (int)Math.Ceiling(size / 2.0) - 1, DrawColor);
+            DrawPacket(new DrawPacket(pp, currentPosition, newColor, size));
 
-            prevPosition = currentPosition;
+            prevPosition = cp;
+        }
+
+        private void DrawPacket(DrawPacket packet)
+        {
+            Color color = Color.FromArgb(packet.color.A, packet.color.R, packet.color.G, packet.color.B);
+
+            Bitmap.FillEllipseCentered(packet.pointA.X, packet.pointA.Y, (int)Math.Ceiling(packet.size / 2.0) - 1, (int)Math.Ceiling(packet.size / 2.0) - 1, color);
+            Bitmap.DrawLineAa(packet.pointA.X, packet.pointA.Y, packet.pointB.X, packet.pointB.Y, color, packet.size);
+            Bitmap.FillEllipseCentered(packet.pointB.X, packet.pointB.Y, (int)Math.Ceiling(packet.size / 2.0) - 1, (int)Math.Ceiling(packet.size / 2.0) - 1, color);
+
+            if (LineDrawn != null)
+                LineDrawn(packet);
+        }
+
+        private void DrawPackets(IEnumerable<DrawPacket> packets)
+        {
+            foreach(DrawPacket packet in packets)
+            {
+                DrawPacket(packet);
+            }
         }
 
         private void MainCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -175,5 +213,13 @@ namespace BTPaint
                 MainCanvas.SizeChanged -= MainCanvas_SizeChanged;
             }
         }
+
+        public async void ProcessPacket(byte[] packet)
+        {
+            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => {
+                DrawPacket(Models.DrawPacket.Restore(packet));
+            });
+        }
+
     }
 }

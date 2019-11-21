@@ -1,5 +1,10 @@
-﻿using System;
+﻿using BTPaint.Models;
+using BTPaint.UserControls;
+using Networking.Models;
+using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Sockets;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
@@ -22,11 +27,19 @@ namespace BTPaint
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        private HostClient host;
+        private Client client;
+
         public MainPage()
         {
             this.InitializeComponent();
-
+            
             ShowSplash();
+
+            mainCanvas.LineDrawn += CanvasLineDrawn;
+
+            host = new HostClient();
+            client = new Client();
         }
 
         private void collapseSideBarBtn_Click(object sender, RoutedEventArgs e)
@@ -134,6 +147,11 @@ namespace BTPaint
             }
         }
 
+        private void CanvasLineDrawn(DrawPacket line)
+        {
+            client.Send(line);
+        }
+
         private void importBtn_Click(object sender, RoutedEventArgs e)
         {
 
@@ -163,6 +181,32 @@ namespace BTPaint
             {
                 case WelcomeSplashResult.Solo:
                     // do stuff?
+                    break;
+                case WelcomeSplashResult.Join:
+                    Join joinPage = new Join();
+                    await joinPage.ShowAsync();
+                    if (joinPage.Result == Join.JoinResult.MainMenu)
+                    {
+                        ShowSplash();
+                    }
+                    else if (joinPage.Result == Join.JoinResult.Connect)
+                    {
+                        client.BeginConnect(new IPEndPoint(IPAddress.Parse(joinPage.IPText), Client.DefaultPort));
+                        client.PacketReceived += mainCanvas.ProcessPacket;
+                    }
+                    break;
+                case WelcomeSplashResult.Host:
+                    Host hostPage = new Host();
+                    await hostPage.ShowAsync();
+                    if (hostPage.Result == Host.HostResult.MainMenu)
+                    {
+                        ShowSplash();
+                    }
+                    else if (hostPage.Result == Host.HostResult.Host)
+                    {
+                        host.BeginAccept();
+                        host.PacketReceived += mainCanvas.ProcessPacket;
+                    }
                     break;
                 case WelcomeSplashResult.Exit:
                     CoreApplication.Exit();
