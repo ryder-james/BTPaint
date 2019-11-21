@@ -10,6 +10,8 @@ namespace Networking.Models
 {
     public class GuestClient : Client
     {
+        private Socket clientSocket;
+
         public void BeginConnect(IPEndPoint targetAddress, AsyncCallback callback = null)
         {
             connectionSocket.BeginConnect(targetAddress, (callback != null ? callback : DefaultConnectCallback), connectionSocket);
@@ -29,6 +31,14 @@ namespace Networking.Models
             state.buffer = byteData;
 
             clientSocket.BeginSend(state.buffer, 0, state.buffer.Length, flags, DefaultSendCallback, state);
+        }
+
+        public override void Close()
+        {
+            base.Close();
+
+            if (clientSocket != null)
+                clientSocket.Close();
         }
 
         protected override void OnPacketReceived(IAsyncResult result)
