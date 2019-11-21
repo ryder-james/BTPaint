@@ -151,8 +151,6 @@ namespace BTPaint
 
             DrawPacket(line);
 
-            if (LineDrawn != null)
-                LineDrawn(line);
 
             prevPosition = e.GetCurrentPoint(MainCanvas).Position;
             MainCanvas.PointerMoved += MainCanvas_PointerMoved;
@@ -191,6 +189,9 @@ namespace BTPaint
             Bitmap.FillEllipseCentered(packet.pointA.X, packet.pointA.Y, (int)Math.Ceiling(packet.size / 2.0) - 1, (int)Math.Ceiling(packet.size / 2.0) - 1, color);
             Bitmap.DrawLineAa(packet.pointA.X, packet.pointA.Y, packet.pointB.X, packet.pointB.Y, color, packet.size);
             Bitmap.FillEllipseCentered(packet.pointB.X, packet.pointB.Y, (int)Math.Ceiling(packet.size / 2.0) - 1, (int)Math.Ceiling(packet.size / 2.0) - 1, color);
+
+            if (LineDrawn != null)
+                LineDrawn(packet);
         }
 
         private void DrawPackets(IEnumerable<DrawPacket> packets)
