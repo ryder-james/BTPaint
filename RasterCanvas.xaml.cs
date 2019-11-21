@@ -37,14 +37,6 @@ namespace BTPaint
 
         private bool shouldErase = false;
         private bool sizeInitialized = false;
-        private byte numberOfSides = 100;
-
-        public byte NumberOfSides
-        {
-            get { return numberOfSides; }
-            set { numberOfSides = value; }
-        }
-
 
         private Point prevPosition;
         private WriteableBitmap writeableBitmap = new WriteableBitmap(512, 512);
@@ -162,7 +154,7 @@ namespace BTPaint
                 size = (int)Math.Ceiling(size * e.GetCurrentPoint(null).Properties.Pressure);
             }
 
-            DrawPacket line = new DrawPacket(currentPosition, currentPosition, newColor, size, NumberOfSides);
+            DrawPacket line = new DrawPacket(currentPosition, currentPosition, newColor, size, (byte)PolySides);
 
             DrawPacket(line);
 
@@ -192,7 +184,7 @@ namespace BTPaint
                 size = (int)Math.Ceiling(size * e.GetCurrentPoint(null).Properties.Pressure);
             }
 
-            DrawPacket(new DrawPacket(pp, currentPosition, newColor, size, NumberOfSides));
+            DrawPacket(new DrawPacket(pp, currentPosition, newColor, size, (byte)PolySides));
 
             prevPosition = cp;
         }
