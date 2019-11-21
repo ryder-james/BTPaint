@@ -155,30 +155,6 @@ namespace BTPaint
 
         private async void loadBtn_Click(object sender, RoutedEventArgs e)
         {
-            //var picker = new FileOpenPicker();
-            //picker.ViewMode = PickerViewMode.Thumbnail;
-            //picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-            //picker.FileTypeFilter.Add(".jpg");
-            //picker.FileTypeFilter.Add(".jpeg");
-            //picker.FileTypeFilter.Add(".png");
-
-            //IStorageFile file = await picker.PickSingleFileAsync();
-            //StorageFolder externalDevices = KnownFolders.RemovableDevices;
-            //await externalDevices.TryGetItemAsync(file.Name);
-            //if (file != null)
-            //{
-            //    // Application now has read/write access to the picked file
-            //    test.Text = "Picked photo: " + externalDevices.Name;
-            //    string newfilepath = file.Path.Replace('\\', '/');
-
-            //    SoftwareBitmap software = new BitmapImage(new Uri(newfilepath, UriKind.Absolute));
-            //    test2.Text = "Picked photo: " + newfilepath;
-            //    ;
-            //}
-            //else
-            //{
-            //    this.test.Text = "Operation cancelled.";
-            //}
             FileOpenPicker fileOpenPicker = new FileOpenPicker();
             fileOpenPicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
             fileOpenPicker.FileTypeFilter.Add(".jpg");
