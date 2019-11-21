@@ -50,16 +50,5 @@ namespace Networking.Models
             state.workSocket.EndConnect(result);
             clientSocket = state.workSocket;
         }
-
-        //protected override void OnPacketReceived(IAsyncResult result)
-        //{
-        //    base.OnPacketReceived(result);
-
-        //    StateObject state = (StateObject)result.AsyncState;
-
-        //    int packetSize = state.workSocket.EndReceive(result);
-        //    state.buffer = new byte[packetSize];
-        //    state.workSocket.BeginReceive(state.buffer, 0, state.buffer.Length, SocketFlags.None, OnPacketReceived, state);
-        //}
     }
 }
