@@ -111,7 +111,7 @@
                             <TextBlock Text="Size" HorizontalAlignment="Center" Margin="0 10 0 0"/>
                             <Slider x:Name="sizeSlider" Margin="10 0 10 0" Value="10" Minimum="1" Maximum="100"/>
 
-                                <!-- Side Bar Buttons -->
+                            <!-- Side Bar Buttons -->
                             <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center" Margin="10">
                                 <Button x:Name="pencilBtn" Margin="10" Height="50" Width="50" Click="pencilBtn_Click" Background="White">
                                     <Button.Content>
@@ -129,11 +129,11 @@
                                     </Button.Content>
                                 </Button>
                             </StackPanel>
+
+                            <TextBlock x:Name="sidesText" Text="Sides" HorizontalAlignment="Center" Margin="0 10 0 0" Visibility="Collapsed"/>
+                            <Slider x:Name="sidesSlider" Margin="10 0 10 0" Value="3" Minimum="3" Maximum="15" Visibility="Collapsed"/>
                         </StackPanel>
 
-                        <!-- List of Brushes : This will be populated in code (NO DEFAULT CONTENT) -->
-                        <ListView x:Name="BrushList" ScrollViewer.VerticalScrollBarVisibility="Visible"></ListView>
-                        
                     </StackPanel>
                 </ScrollViewer>
             </SplitView.Pane>
