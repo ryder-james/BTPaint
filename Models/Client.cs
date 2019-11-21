@@ -9,10 +9,13 @@ using System.Threading.Tasks;
 
 namespace Networking.Models
 {
+
     public delegate void PacketReceivedEventHandler(byte[] packetBytes);
 
     public class Client
     {
+        public const int DefaultPort = 25565;
+
         public event PacketReceivedEventHandler PacketReceived;
 
         private Socket clientSocket, connectionSocket;
