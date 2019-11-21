@@ -28,7 +28,7 @@ namespace BTPaint
     public sealed partial class MainPage : Page
     {
         private HostClient host;
-        private Client client;
+        private GuestClient client;
 
         public MainPage()
         {
@@ -39,7 +39,7 @@ namespace BTPaint
             mainCanvas.LineDrawn += CanvasLineDrawn;
 
             host = new HostClient();
-            client = new Client();
+            client = new GuestClient();
         }
 
         private void collapseSideBarBtn_Click(object sender, RoutedEventArgs e)
