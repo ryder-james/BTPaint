@@ -19,7 +19,12 @@ namespace BTPaint.UserControls
 {
     public sealed partial class Host : ContentDialog
     {
-        public bool mainMenu { get; set; }
+        public enum HostResult {
+            Host,
+            MainMenu
+        }
+
+        public HostResult Result { get; set; }
 
         public Host()
         {
@@ -29,14 +34,14 @@ namespace BTPaint.UserControls
 
         private void Host_Click(object sender, RoutedEventArgs e)
         {
-            mainMenu = false;
+            Result = HostResult.Host;
             this.Hide();
         }
 
         private void Return_Click(object sender, RoutedEventArgs e)
         {
+            Result = HostResult.MainMenu;
             this.Hide();
-            mainMenu = true;
         }
     }
 }

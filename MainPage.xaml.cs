@@ -176,19 +176,23 @@ namespace BTPaint
                 case WelcomeSplashResult.Join:
                     Join joinPage = new Join();
                     await joinPage.ShowAsync();
-                    if (joinPage.mainMenu)
+                    if (joinPage.Result == Join.JoinResult.MainMenu)
                     {
                         ShowSplash();
+                    }
+                    else if (joinPage.Result == Join.JoinResult.Connect)
+                    {
+                        client.BeginConnect(new IPEndPoint(IPAddress.Parse(joinPage.IPText), 10000));
                     }
                     break;
                 case WelcomeSplashResult.Host:
                     Host hostPage = new Host();
                     await hostPage.ShowAsync();
-                    if (hostPage.mainMenu)
+                    if (hostPage.Result == Host.HostResult.MainMenu)
                     {
                         ShowSplash();
                     }
-                    else
+                    else if (hostPage.Result == Host.HostResult.Host)
                     {
                         host.BeginAccept();
                     }

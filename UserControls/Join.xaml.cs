@@ -21,9 +21,25 @@ namespace BTPaint.UserControls
 {
     public sealed partial class Join : ContentDialog
     {
-        public bool mainMenu { get; set; }
-        private Client client;
+        public enum JoinResult
+        {
+            MainMenu,
+            Connect
+        }
 
+        public JoinResult Result { get; set; }
+
+        public string IPText
+        {
+            get
+            {
+                return ipEnter.Text;
+            }
+            private set
+            {
+                ipEnter.Text = value;
+            }
+        }
 
         public Join()
         {
@@ -32,15 +48,14 @@ namespace BTPaint.UserControls
 
         private void Join_Click(object sender, RoutedEventArgs e)
         {
-            mainMenu = false;
+            Result = JoinResult.Connect;
             this.Hide();
-            client.BeginConnect(new IPEndPoint(IPAddress.Parse(ipEnter.Text), 10000));
         }
 
         private void Return_Click(object sender, RoutedEventArgs e)
         {
+            Result = JoinResult.MainMenu;
             this.Hide();
-            mainMenu = true;
         }
     }
 }
