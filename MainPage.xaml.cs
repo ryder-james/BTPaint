@@ -224,6 +224,7 @@ namespace BTPaint
             starBtn.Background = new SolidColorBrush(Colors.Gray);
             sidesText.Visibility = Visibility.Collapsed;
             sidesSlider.Visibility = Visibility.Collapsed;
+            sidesSlider.Value = 1;
         }
 
         private void eraserBtn_Click(object sender, RoutedEventArgs e)
@@ -234,6 +235,7 @@ namespace BTPaint
             starBtn.Background = new SolidColorBrush(Colors.Gray);
             sidesText.Visibility = Visibility.Collapsed;
             sidesSlider.Visibility = Visibility.Collapsed;
+            sidesSlider.Value = 1;
         }
 
         private void starBtn_Click(object sender, RoutedEventArgs e)
@@ -244,6 +246,7 @@ namespace BTPaint
             starBtn.Background = new SolidColorBrush(Colors.White);
             sidesText.Visibility = Visibility.Visible;
             sidesSlider.Visibility = Visibility.Visible;
+            sidesSlider.Value = 3;
         }
     }
 }

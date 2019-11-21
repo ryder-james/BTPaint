@@ -81,6 +81,7 @@
             <local:RasterCanvas x:Name="mainCanvas" 
                                 Background="White"
                                 Size="{Binding ElementName=sizeSlider, Path=Value, Mode=TwoWay}"
+                                PolySides="{Binding ElementName=sidesSlider, Path=Value, Mode=TwoWay}"
                                 DrawColor="{Binding ElementName=colorPicker, Path=Color, Mode=TwoWay}"
                                 Height="2000"
                                 Width="2000"/>
