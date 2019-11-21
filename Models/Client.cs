@@ -33,6 +33,8 @@ namespace Networking.Models
             connectionSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         }
 
+        public abstract void Send(IPacket packet, SocketFlags flags = SocketFlags.None);
+
         public virtual void Close()
         {
             if (connectionSocket != null)

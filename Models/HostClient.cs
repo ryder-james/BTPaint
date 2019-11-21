@@ -57,6 +57,11 @@ namespace Networking.Models
             stateSocket.BeginAccept(OnConnectionEstablished, stateSocket);
         }
 
+        public override void Send(IPacket packet, SocketFlags flags = SocketFlags.None)
+        {
+            
+        }
+
         public override void Close()
         {
             base.Close();

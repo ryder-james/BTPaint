@@ -20,7 +20,7 @@ namespace Networking.Models
             connectionSocket.BeginConnect(targetAddress, (callback != null ? callback : DefaultConnectCallback), state);
         }
 
-        public void Send(IPacket packet, SocketFlags flags = SocketFlags.None)
+        public override void Send(IPacket packet, SocketFlags flags = SocketFlags.None)
         {
             if (clientSocket == null || !clientSocket.Connected)
             {
