@@ -182,7 +182,7 @@ namespace BTPaint
             prevPosition = cp;
         }
 
-        private void DrawPacket(DrawPacket packet)
+        private void DrawPacket(DrawPacket packet, bool invokeLineDrawn = true)
         {
             Color color = Color.FromArgb(packet.color.A, packet.color.R, packet.color.G, packet.color.B);
 
@@ -190,7 +190,7 @@ namespace BTPaint
             Bitmap.DrawLineAa(packet.pointA.X, packet.pointA.Y, packet.pointB.X, packet.pointB.Y, color, packet.size);
             Bitmap.FillEllipseCentered(packet.pointB.X, packet.pointB.Y, (int)Math.Ceiling(packet.size / 2.0) - 1, (int)Math.Ceiling(packet.size / 2.0) - 1, color);
 
-            if (LineDrawn != null)
+            if (invokeLineDrawn && LineDrawn != null)
                 LineDrawn(packet);
         }
 
@@ -217,7 +217,7 @@ namespace BTPaint
         public async void ProcessPacket(byte[] packet)
         {
             await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => {
-                DrawPacket(Models.DrawPacket.Restore(packet));
+                DrawPacket(Models.DrawPacket.Restore(packet), false);
             });
         }
 
