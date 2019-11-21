@@ -139,22 +139,21 @@ namespace BTPaint
                 {
                     BitmapDecoder decoder = await BitmapDecoder.CreateAsync(stream);
 
-                // Get the SoftwareBitmap representation of the file
-                softwareBitmap = await decoder.GetSoftwareBitmapAsync();
-                var x = await inputFile.Properties.GetImagePropertiesAsync();
-                mainCanvas.Width = x.Width;
-                mainCanvas.Height = x.Height;
+                    // Get the SoftwareBitmap representation of the file
+                    softwareBitmap = await decoder.GetSoftwareBitmapAsync();
+                    var x = await inputFile.Properties.GetImagePropertiesAsync();
+                    mainCanvas.Width = x.Width;
+                    mainCanvas.Height = x.Height;
 
-                    await writableBitmap.SetSourceAsync(stream);
+                    await mainCanvas.Bitmap.SetSourceAsync(stream);
 
-                    writableBitmap = BitmapFactory.New((int)MainCanvas.Width, (int)MainCanvas.Height);
-                    writableBitmap.Clear(((SolidColorBrush)MainCanvas.Background).Color);
+                    mainCanvas.Bitmap = BitmapFactory.New((int)mainCanvas.Width, (int)mainCanvas.Height);
+                    mainCanvas.Bitmap.Clear(((SolidColorBrush)mainCanvas.Background).Color);
 
-                    ImageControl.Source = writableBitmap;
-                    
-                    softwareBitmap.CopyToBuffer(writableBitmap.PixelBuffer);
+                    ImageControl.Source = mainCanvas.Bitmap;
 
-                await mainCanvas.Bitmap.SetSourceAsync(stream);
+                    softwareBitmap.CopyToBuffer(mainCanvas.Bitmap.PixelBuffer);
+                }
             }
         }
 
