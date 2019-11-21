@@ -150,7 +150,7 @@ namespace BTPaint
                     mainCanvas.Bitmap = BitmapFactory.New((int)mainCanvas.Width, (int)mainCanvas.Height);
                     mainCanvas.Bitmap.Clear(((SolidColorBrush)mainCanvas.Background).Color);
 
-                    ImageControl.Source = mainCanvas.Bitmap;
+                    mainCanvas.ImageControlSource = mainCanvas.Bitmap;
 
                     softwareBitmap.CopyToBuffer(mainCanvas.Bitmap.PixelBuffer);
                 }
