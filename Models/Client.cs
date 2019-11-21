@@ -33,7 +33,7 @@ namespace Networking.Models
 
         public void Send(IPacket packet, SocketFlags flags = SocketFlags.None)
         {
-            if (!clientSocket.Connected)
+            if (clientSocket == null || !clientSocket.Connected)
             {
                 return;
             }
@@ -49,8 +49,11 @@ namespace Networking.Models
 
         public virtual void Close()
         {
-            clientSocket.Close();
-            connectionSocket.Close();
+            if (clientSocket != null)
+                clientSocket.Close();
+
+            if (connectionSocket != null)
+                connectionSocket.Close();
         }
 
         protected void OnPacketReceived(IAsyncResult result)
