@@ -45,8 +45,11 @@ namespace Networking.Models
             {
                 Debug.WriteLine("Connection established");
 
-                byte[] data = new byte[256];
-                newConnection.BeginReceive(data, 0, data.Length, SocketFlags.None, base.OnPacketReceived, result);
+                StateObject state = new StateObject();
+                state.workSocket = newConnection;
+                state.buffer = new byte[StateObject.BufferSize];
+
+                newConnection.BeginReceive(state.buffer, 0, state.buffer.Length, SocketFlags.None, base.OnPacketReceived, state);
 
                 clientSockets.Add(newConnection);
             }

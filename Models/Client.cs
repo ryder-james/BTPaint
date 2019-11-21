@@ -12,6 +12,7 @@ namespace Networking.Models
 
     public delegate void PacketReceivedEventHandler(byte[] packetBytes);
 
+
     public class Client
     {
         public const int DefaultPort = 25565;
@@ -39,7 +40,11 @@ namespace Networking.Models
 
             byte[] byteData = packet.ToByteArray();
 
-            clientSocket.BeginSend(byteData, 0, byteData.Length, flags, DefaultSendCallback, clientSocket);
+            StateObject state = new StateObject();
+            state.workSocket = clientSocket;
+            state.buffer = byteData;
+
+            clientSocket.BeginSend(state.buffer, 0, state.buffer.Length, flags, DefaultSendCallback, state);
         }
 
         public virtual void Close()
@@ -51,12 +56,20 @@ namespace Networking.Models
         protected void OnPacketReceived(IAsyncResult result)
         {
             Debug.WriteLine("Packet received");
+            StateObject state = (StateObject)result.AsyncState;
 
-            Socket socket = (Socket)result.AsyncState;
-            int packetSize = socket.EndReceive(result);
+            if (PacketReceived != null)
+            {
+                PacketReceived(state.buffer);
+            }
+
+            int packetSize = state.workSocket.EndReceive(result);
 
             byte[] data = new byte[packetSize];
-            socket.BeginReceive(data, 0, data.Length, SocketFlags.None, OnPacketReceived, socket);
+
+            state.buffer = data;
+
+            state.workSocket.BeginReceive(state.buffer, 0, state.buffer.Length, SocketFlags.None, OnPacketReceived, state);
         }
 
         protected void DefaultSendCallback(IAsyncResult result)
@@ -73,10 +86,12 @@ namespace Networking.Models
             clientSocket.EndConnect(result);
         }
 
-        protected struct AsyncPacket
+        protected class StateObject
         {
-            public IAsyncResult result;
-            public Socket socket;
+            public const int BufferSize = 1024;
+
+            public Socket workSocket = null;
+            public byte[] buffer = new byte[BufferSize];
         }
     }
 }
