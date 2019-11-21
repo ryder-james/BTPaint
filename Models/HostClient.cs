@@ -75,5 +75,16 @@ namespace Networking.Models
             if (serverSocket != null)
                 serverSocket.Close();
         }
+
+        protected void OnClientPacketReceived(IAsyncResult result)
+        {
+            base.OnPacketReceived(result);
+
+            StateObject state = (StateObject)result.AsyncState;
+
+            int packetSize = state.workSocket.EndReceive(result);
+            state.buffer = new byte[packetSize];
+            state.workSocket.BeginReceive(state.buffer, 0, state.buffer.Length, SocketFlags.None, OnClientPacketReceived, state);
+        }
     }
 }
