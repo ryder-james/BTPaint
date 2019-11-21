@@ -205,6 +205,7 @@ namespace BTPaint
                     else if (hostPage.Result == Host.HostResult.Host)
                     {
                         host.BeginAccept();
+                        host.PacketReceived += mainCanvas.ProcessPacket;
                     }
                     break;
                 case WelcomeSplashResult.Exit:
