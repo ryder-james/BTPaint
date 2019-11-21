@@ -41,6 +41,8 @@ namespace Networking.Models
 
         protected virtual void OnPacketReceived(IAsyncResult result)
         {
+            Debug.WriteLine("Packet received");
+
             StateObject state = (StateObject)result.AsyncState;
 
             if (PacketReceived != null)
@@ -54,13 +56,5 @@ namespace Networking.Models
             StateObject state = (StateObject)result.AsyncState;
             state.workSocket.EndSend(result);
         }
-
-        protected void DefaultConnectCallback(IAsyncResult result)
-        {
-            StateObject state = (StateObject)result.AsyncState;
-            state.workSocket.EndConnect(result);
-        }
-
-
     }
 }

@@ -14,7 +14,10 @@ namespace Networking.Models
 
         public void BeginConnect(IPEndPoint targetAddress, AsyncCallback callback = null)
         {
-            connectionSocket.BeginConnect(targetAddress, (callback != null ? callback : DefaultConnectCallback), connectionSocket);
+            StateObject state = new StateObject();
+            state.workSocket = connectionSocket;
+
+            connectionSocket.BeginConnect(targetAddress, (callback != null ? callback : DefaultConnectCallback), state);
         }
 
         public void Send(IPacket packet, SocketFlags flags = SocketFlags.None)
@@ -39,6 +42,13 @@ namespace Networking.Models
 
             if (clientSocket != null)
                 clientSocket.Close();
+        }
+
+        protected void DefaultConnectCallback(IAsyncResult result)
+        {
+            StateObject state = (StateObject)result.AsyncState;
+            state.workSocket.EndConnect(result);
+            clientSocket = state.workSocket;
         }
 
         protected override void OnPacketReceived(IAsyncResult result)
