@@ -49,7 +49,7 @@ namespace Networking.Models
                 state.workSocket = newConnection;
                 state.buffer = new byte[StateObject.BufferSize];
 
-                newConnection.BeginReceive(state.buffer, 0, state.buffer.Length, SocketFlags.None, base.OnPacketReceived, state);
+                newConnection.BeginReceive(state.buffer, 0, state.buffer.Length, SocketFlags.None, OnPacketReceivedFromClient, state);
 
                 clientSockets.Add(newConnection);
             }
@@ -57,14 +57,34 @@ namespace Networking.Models
             stateSocket.BeginAccept(OnConnectionEstablished, stateSocket);
         }
 
+        public override void Send(IPacket packet, SocketFlags flags = SocketFlags.None)
+        {
+            
+        }
+
         public override void Close()
         {
+            base.Close();
+
             foreach (Socket s in clientSockets)
             {
-                s.Close();
+                if (s != null)
+                    s.Close();
             }
-            serverSocket.Close();
-            base.Close();
+
+            if (serverSocket != null)
+                serverSocket.Close();
+        }
+
+        protected void OnPacketReceivedFromClient(IAsyncResult result)
+        {
+            base.OnPacketReceived(result);
+
+            StateObject state = (StateObject)result.AsyncState;
+
+            int packetSize = state.workSocket.EndReceive(result);
+            state.buffer = new byte[packetSize];
+            state.workSocket.BeginReceive(state.buffer, 0, state.buffer.Length, SocketFlags.None, OnPacketReceivedFromClient, state);
         }
     }
 }

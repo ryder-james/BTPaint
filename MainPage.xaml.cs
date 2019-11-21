@@ -27,7 +27,6 @@ namespace BTPaint
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        private HostClient host;
         private Client client;
 
         public MainPage()
@@ -37,9 +36,6 @@ namespace BTPaint
             ShowSplash();
 
             mainCanvas.LineDrawn += CanvasLineDrawn;
-
-            host = new HostClient();
-            client = new Client();
         }
 
         private void collapseSideBarBtn_Click(object sender, RoutedEventArgs e)
@@ -191,7 +187,9 @@ namespace BTPaint
                     }
                     else if (joinPage.Result == Join.JoinResult.Connect)
                     {
-                        client.BeginConnect(new IPEndPoint(IPAddress.Parse(joinPage.IPText), Client.DefaultPort));
+                        client = new GuestClient();
+
+                        ((GuestClient)client).BeginConnect(new IPEndPoint(IPAddress.Parse(joinPage.IPText), Client.DefaultPort));
                         client.PacketReceived += mainCanvas.ProcessPacket;
                     }
                     break;
@@ -204,8 +202,10 @@ namespace BTPaint
                     }
                     else if (hostPage.Result == Host.HostResult.Host)
                     {
-                        host.BeginAccept();
-                        host.PacketReceived += mainCanvas.ProcessPacket;
+                        client = new HostClient();
+
+                        ((HostClient)client).BeginAccept();
+                        client.PacketReceived += mainCanvas.ProcessPacket;
                     }
                     break;
                 case WelcomeSplashResult.Exit:
