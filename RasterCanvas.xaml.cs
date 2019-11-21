@@ -36,6 +36,14 @@ namespace BTPaint
 
         private bool shouldErase = false;
         private bool sizeInitialized = false;
+        private byte numberOfSides = 100;
+
+        public byte NumberOfSides
+        {
+            get { return numberOfSides; }
+            set { numberOfSides = value; }
+        }
+
 
         private Point prevPosition;
         private WriteableBitmap writeableBitmap = new WriteableBitmap(512, 512);
@@ -147,7 +155,7 @@ namespace BTPaint
                 size = (int)Math.Ceiling(size * e.GetCurrentPoint(null).Properties.Pressure);
             }
 
-            DrawPacket line = new DrawPacket(currentPosition, currentPosition, newColor, size);
+            DrawPacket line = new DrawPacket(currentPosition, currentPosition, newColor, size, NumberOfSides);
 
             DrawPacket(line);
 
@@ -177,7 +185,7 @@ namespace BTPaint
                 size = (int)Math.Ceiling(size * e.GetCurrentPoint(null).Properties.Pressure);
             }
 
-            DrawPacket(new DrawPacket(pp, currentPosition, newColor, size));
+            DrawPacket(new DrawPacket(pp, currentPosition, newColor, size, NumberOfSides));
 
             prevPosition = cp;
         }
@@ -186,9 +194,41 @@ namespace BTPaint
         {
             Color color = Color.FromArgb(packet.color.A, packet.color.R, packet.color.G, packet.color.B);
 
-            Bitmap.FillEllipseCentered(packet.pointA.X, packet.pointA.Y, (int)Math.Ceiling(packet.size / 2.0) - 1, (int)Math.Ceiling(packet.size / 2.0) - 1, color);
-            Bitmap.DrawLineAa(packet.pointA.X, packet.pointA.Y, packet.pointB.X, packet.pointB.Y, color, packet.size);
-            Bitmap.FillEllipseCentered(packet.pointB.X, packet.pointB.Y, (int)Math.Ceiling(packet.size / 2.0) - 1, (int)Math.Ceiling(packet.size / 2.0) - 1, color);
+            if (packet.numOfSides < 3)
+            {
+                Bitmap.FillEllipseCentered(packet.pointA.X, packet.pointA.Y, (int)Math.Ceiling(packet.size / 2.0) - 1, (int)Math.Ceiling(packet.size / 2.0) - 1, color);
+                Bitmap.DrawLineAa(packet.pointA.X, packet.pointA.Y, packet.pointB.X, packet.pointB.Y, color, packet.size);
+                Bitmap.FillEllipseCentered(packet.pointB.X, packet.pointB.Y, (int)Math.Ceiling(packet.size / 2.0) - 1, (int)Math.Ceiling(packet.size / 2.0) - 1, color);
+            }
+            else
+            {
+                System.Drawing.Point[] prevPoints = new System.Drawing.Point[packet.numOfSides];
+                System.Drawing.Point[] currPoints = new System.Drawing.Point[packet.numOfSides];
+                int[] prevXY = new int[(prevPoints.Length * 2) + 2];
+                int[] currXY = new int[(currPoints.Length * 2) + 2];
+                int counter = 0;
+
+                for (int i = 0; i < packet.numOfSides; i++)
+                {
+                    prevPoints[i] = new System.Drawing.Point((int)(packet.pointA.X + packet.size * Math.Cos(2 * Math.PI * i / packet.numOfSides)), (int)(packet.pointA.Y + packet.size * Math.Sin(2 * Math.PI * i / packet.numOfSides)));
+                    currPoints[i] = new System.Drawing.Point((int)(packet.pointB.X + packet.size * Math.Cos(2 * Math.PI * i / packet.numOfSides)), (int)(packet.pointB.Y + packet.size * Math.Sin(2 * Math.PI * i / packet.numOfSides)));
+
+                    prevXY[counter] = prevPoints[i].X;
+                    currXY[counter] = currPoints[i].X;
+                    counter++;
+                    prevXY[counter] = prevPoints[i].Y;
+                    currXY[counter] = currPoints[i].Y;
+                    counter++;
+                }
+                prevXY[prevXY.Length - 1] = prevXY[1];
+                prevXY[prevXY.Length - 2] = prevXY[0];
+                currXY[prevXY.Length - 1] = currXY[1];
+                currXY[prevXY.Length - 2] = currXY[0];
+                Bitmap.FillPolygon(prevXY, color);
+                Bitmap.FillPolygon(currXY, color);
+
+            }
+
 
             if (invokeLineDrawn && LineDrawn != null)
                 LineDrawn(packet);
