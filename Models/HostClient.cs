@@ -49,7 +49,7 @@ namespace Networking.Models
                 state.workSocket = newConnection;
                 state.buffer = new byte[StateObject.BufferSize];
 
-                newConnection.BeginReceive(state.buffer, 0, state.buffer.Length, SocketFlags.None, base.OnPacketReceived, state);
+                newConnection.BeginReceive(state.buffer, 0, state.buffer.Length, SocketFlags.None, OnClientPacketReceived, state);
 
                 clientSockets.Add(newConnection);
             }
