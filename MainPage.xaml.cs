@@ -26,8 +26,8 @@ namespace BTPaint
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        private HostClient host;
         private Client client;
-        private HostClient host = new HostClient();
 
         public MainPage()
         {
@@ -35,7 +35,8 @@ namespace BTPaint
             
             ShowSplash();
 
-            
+            host = new HostClient();
+            client = new Client();
         }
 
         private void collapseSideBarBtn_Click(object sender, RoutedEventArgs e)
