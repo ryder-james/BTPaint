@@ -51,26 +51,23 @@ namespace Networking.Models
 
                 // opens up the remote side of the client's socket (that's us) to begin receiving messages
                 newConnection.BeginReceive(state.buffer, 0, state.buffer.Length, SocketFlags.None, OnPacketReceivedFromClient, state);
-                newConnection.BeginAccept(ar =>
+
+                Socket localToRemoteSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                StateObject state2 = new StateObject();
+                state2.workSocket = localToRemoteSocket;
+                localToRemoteSocket.BeginConnect(newConnection.LocalEndPoint, ar =>
                 {
-                    Socket socket = (Socket)ar.AsyncState;
-                    Socket newClientSocket = socket.EndAccept(ar);
+                    StateObject state3 = (StateObject)ar.AsyncState;
+                    state3.workSocket.EndConnect(result);
+                    clientSockets.Add(state3.workSocket);
+                }, state2);
 
-                    StateObject state2 = new StateObject();
-                    state2.buffer = new byte[StateObject.BufferSize];
-                    state2.workSocket = newClientSocket;
+                Socket remoteSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                remoteSocket.Bind(newConnection.LocalEndPoint);
+                remoteSocket.Listen(1);
+                remoteSocket.Accept();
 
-                    newClientSocket.BeginReceive(state2.buffer, 0, StateObject.BufferSize, SocketFlags.None, ar2 =>
-                    {
-                        Debug.WriteLine("client received from server");
-                        StateObject clientReceiveState = (StateObject)ar2.AsyncState;
-                        clientReceiveState.workSocket.EndReceive(ar2);
-                    }, state2);
-
-                    clientSockets.Add(newClientSocket);
-                }, newConnection);
-
-                serverSocket.Connect(newConnection.LocalEndPoint);
+                //clientSockets.Add(newConnection);
             }
 
             stateSocket.BeginAccept(OnConnectionEstablished, stateSocket);
