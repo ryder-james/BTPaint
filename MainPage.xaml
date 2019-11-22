@@ -81,7 +81,7 @@
             <local:RasterCanvas x:Name="mainCanvas" 
                                 Background="White"
                                 Size="{Binding ElementName=sizeSlider, Path=Value, Mode=TwoWay}"
-                                PolySides="{Binding ElementName=sidesSlider, Path=Value, Mode=TwoWay}"
+                                PolySides="{Binding ElementName=sidesValue, Path=Value, Mode=TwoWay}"
                                 DrawColor="{Binding ElementName=colorPicker, Path=Color, Mode=TwoWay}"
                                 Height="2000"
                                 Width="2000"/>
@@ -132,7 +132,8 @@
                             </StackPanel>
 
                             <TextBlock x:Name="sidesText" Text="Sides" HorizontalAlignment="Center" Margin="0 10 0 0" Visibility="Collapsed"/>
-                            <Slider x:Name="sidesSlider" Margin="10 0 10 0" Value="3" Minimum="3" Maximum="15" Visibility="Collapsed"/>
+                            <Slider x:Name="sidesValue" Visibility="Collapsed" Maximum="15" Value="1"/>
+                            <Slider x:Name="sidesSlider" Margin="10 0 10 0" Value="3" Minimum="3" Maximum="15" Visibility="Collapsed" ValueChanged="sidesSlider_ValueChanged"/>
                         </StackPanel>
 
                     </StackPanel>
