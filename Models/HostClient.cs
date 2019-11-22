@@ -60,12 +60,15 @@ namespace Networking.Models
         {
             if (clientSockets.Count > 0)
             {
-                Debug.WriteLine("Server sending packet to " + clientSockets[0].LocalEndPoint.ToString());
+                foreach (Socket client in clientSockets) {
+                    Debug.WriteLine("Server sending packet to " + client.LocalEndPoint.ToString());
 
-                StateObject state = new StateObject();
-                state.workSocket = clientSockets[0];
+                    StateObject state = new StateObject();
+                    state.workSocket = client;
+                    state.buffer = packet.ToByteArray();
 
-                clientSockets[0].BeginSend(state.buffer, 0, state.buffer.Length, SocketFlags.None, DefaultSendCallback, state);
+                    client.BeginSend(state.buffer, 0, state.buffer.Length, SocketFlags.None, DefaultSendCallback, state);
+                }
             }
         }
 
