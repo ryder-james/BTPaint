@@ -9,6 +9,7 @@ using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
+using Windows.Storage.FileProperties;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
 using Windows.UI;
@@ -29,11 +30,12 @@ namespace BTPaint
     {
         private HostClient host;
         private Client client;
+        private ImageProperties imageProperties;
 
         public MainPage()
         {
             this.InitializeComponent();
-            
+
             ShowSplash();
 
             mainCanvas.LineDrawn += CanvasLineDrawn;
@@ -86,10 +88,20 @@ namespace BTPaint
                 encoder.SetSoftwareBitmap(softwareBitmap);
 
                 // Set additional encoding parameters, if needed
-                encoder.BitmapTransform.ScaledWidth = (uint) mainCanvas.Width;
-                encoder.BitmapTransform.ScaledHeight = (uint) mainCanvas.Height;
-                encoder.BitmapTransform.InterpolationMode = BitmapInterpolationMode.Fant;
-                encoder.IsThumbnailGenerated = true;
+                if (imageProperties != null)
+                {
+                    encoder.BitmapTransform.ScaledWidth = imageProperties.Width;
+                    encoder.BitmapTransform.ScaledHeight = imageProperties.Height;
+                    encoder.BitmapTransform.InterpolationMode = BitmapInterpolationMode.Fant;
+                    encoder.IsThumbnailGenerated = true;
+                }
+                else
+                {
+                    encoder.BitmapTransform.ScaledWidth = (uint)mainCanvas.Width;
+                    encoder.BitmapTransform.ScaledHeight = (uint)mainCanvas.Height;
+                    encoder.BitmapTransform.InterpolationMode = BitmapInterpolationMode.Fant;
+                    encoder.IsThumbnailGenerated = true;
+                }
 
                 try
                 {
@@ -145,9 +157,15 @@ namespace BTPaint
                 {
                     BitmapDecoder decoder = await BitmapDecoder.CreateAsync(stream);
                     // Get the SoftwareBitmap representation of the file
-                    
-                    var x = await inputFile.Properties.GetImagePropertiesAsync();
-                    if(x.Width > 1000 && x.Height > 800)
+
+                    ImageProperties x = await inputFile.Properties.GetImagePropertiesAsync();
+                    imageProperties = x;
+                    if (x.Width > 2000 && x.Height > 1600)
+                    {
+                        mainCanvas.Width = x.Width / (scale * 2);
+                        mainCanvas.Height = x.Height / (scale * 2);
+                    }
+                    else if (x.Width > 1000 && x.Height > 800)
                     {
                         mainCanvas.Width = x.Width / scale;
                         mainCanvas.Height = x.Height / scale;
@@ -182,10 +200,10 @@ namespace BTPaint
 
         private void importBtn_Click(object sender, RoutedEventArgs e)
         {
-            
+
         }
 
-        
+
 
         private void exitBtn_Click(object sender, RoutedEventArgs e)
         {
