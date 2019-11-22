@@ -56,7 +56,6 @@ namespace BTPaint
             fileSavePicker.SuggestedFileName = "image";
 
             var outputFile = await fileSavePicker.PickSaveFileAsync();
-
             if (outputFile != null)
             {
                 SoftwareBitmap outputBitmap = SoftwareBitmap.CreateCopyFromBuffer(
@@ -73,8 +72,15 @@ namespace BTPaint
             using (IRandomAccessStream stream = await outputFile.OpenAsync(FileAccessMode.ReadWrite))
             {
                 // Create an encoder with the desired format
-                BitmapEncoder encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, stream);
-                //encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, stream);
+                BitmapEncoder encoder;
+                if (outputFile.FileType == ".jpg" || outputFile.FileType == ".jpeg")
+                {
+                    encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, stream);
+                }
+                else
+                {
+                    encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, stream);
+                }
 
                 // Set the software bitmap
                 encoder.SetSoftwareBitmap(softwareBitmap);
@@ -141,6 +147,7 @@ namespace BTPaint
 
                     // Get the SoftwareBitmap representation of the file
                     softwareBitmap = await decoder.GetSoftwareBitmapAsync();
+                    
                     var x = await inputFile.Properties.GetImagePropertiesAsync();
                     if(x.Width > 800 && x.Height > 600)
                     {
@@ -153,7 +160,7 @@ namespace BTPaint
                         mainCanvas.Height = x.Height;
                     }
                     softwareBitmap = new SoftwareBitmap(softwareBitmap.BitmapPixelFormat, (int)(mainCanvas.Width), (int)(mainCanvas.Height));
-
+                    
 
                     await mainCanvas.Bitmap.SetSourceAsync(stream);
 
@@ -174,69 +181,10 @@ namespace BTPaint
 
         private async void importBtn_Click(object sender, RoutedEventArgs e)
         {
-            FileSavePicker fileSavePicker = new FileSavePicker();
-            fileSavePicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-            fileSavePicker.FileTypeChoices.Add("JPEG files", new List<string>() { ".jpg", ".jpeg" });
-            fileSavePicker.FileTypeChoices.Add("PNG files", new List<string>() { ".png" });
-            fileSavePicker.SuggestedFileName = "image";
-
-            var outputFile = await fileSavePicker.PickSaveFileAsync();
-
-            if (outputFile != null)
-            {
-                SoftwareBitmap outputBitmap = SoftwareBitmap.CreateCopyFromBuffer(
-                mainCanvas.Bitmap.PixelBuffer,
-                BitmapPixelFormat.Bgra8,
-                mainCanvas.Bitmap.PixelWidth,
-                mainCanvas.Bitmap.PixelHeight);
-                SaveSoftwareBitmapToFilePNG(outputBitmap, outputFile);
-            }
+            
         }
 
-        private async void SaveSoftwareBitmapToFilePNG(SoftwareBitmap softwareBitmap, StorageFile outputFile)
-        {
-            using (IRandomAccessStream stream = await outputFile.OpenAsync(FileAccessMode.ReadWrite))
-            {
-                // Create an encoder with the desired format
-                BitmapEncoder encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, stream);
-                encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, stream);
-
-                // Set the software bitmap
-                encoder.SetSoftwareBitmap(softwareBitmap);
-
-                // Set additional encoding parameters, if needed
-                encoder.BitmapTransform.ScaledWidth = (uint)mainCanvas.Width;
-                encoder.BitmapTransform.ScaledHeight = (uint)mainCanvas.Height;
-                encoder.BitmapTransform.InterpolationMode = BitmapInterpolationMode.Fant;
-                encoder.IsThumbnailGenerated = true;
-
-                try
-                {
-                    await encoder.FlushAsync();
-                }
-                catch (Exception err)
-                {
-                    const int WINCODEC_ERR_UNSUPPORTEDOPERATION = unchecked((int)0x88982F81);
-                    switch (err.HResult)
-                    {
-                        case WINCODEC_ERR_UNSUPPORTEDOPERATION:
-                            // If the encoder does not support writing a thumbnail, then try again
-                            // but disable thumbnail generation.
-                            encoder.IsThumbnailGenerated = false;
-                            break;
-                        default:
-                            throw;
-                    }
-                }
-
-                if (encoder.IsThumbnailGenerated == false)
-                {
-                    await encoder.FlushAsync();
-                }
-
-
-            }
-        }
+        
 
         private void exitBtn_Click(object sender, RoutedEventArgs e)
         {
