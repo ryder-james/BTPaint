@@ -49,9 +49,28 @@ namespace Networking.Models
                 state.workSocket = newConnection;
                 state.buffer = new byte[StateObject.BufferSize];
 
+                // opens up the remote side of the client's socket (that's us) to begin receiving messages
                 newConnection.BeginReceive(state.buffer, 0, state.buffer.Length, SocketFlags.None, OnPacketReceivedFromClient, state);
+                newConnection.BeginAccept(ar =>
+                {
+                    Socket socket = (Socket)ar.AsyncState;
+                    Socket newClientSocket = socket.EndAccept(ar);
 
-                clientSockets.Add(newConnection);
+                    StateObject state2 = new StateObject();
+                    state2.buffer = new byte[StateObject.BufferSize];
+                    state2.workSocket = newClientSocket;
+
+                    newClientSocket.BeginReceive(state2.buffer, 0, StateObject.BufferSize, SocketFlags.None, ar2 =>
+                    {
+                        Debug.WriteLine("client received from server");
+                        StateObject clientReceiveState = (StateObject)ar2.AsyncState;
+                        clientReceiveState.workSocket.EndReceive(ar2);
+                    }, state2);
+
+                    clientSockets.Add(newClientSocket);
+                }, newConnection);
+
+                serverSocket.Connect(newConnection.LocalEndPoint);
             }
 
             stateSocket.BeginAccept(OnConnectionEstablished, stateSocket);
@@ -59,7 +78,10 @@ namespace Networking.Models
 
         public override void Send(IPacket packet, SocketFlags flags = SocketFlags.None)
         {
-            
+            if (clientSockets.Count > 0)
+            {
+                clientSockets[0].Send(new byte[] { 1, 2, 3, 4 });
+            }
         }
 
         public override void Close()
@@ -84,6 +106,9 @@ namespace Networking.Models
 
             int packetSize = state.workSocket.EndReceive(result);
             state.buffer = new byte[packetSize];
+
+            // this "workSocket" is essentially the connection to the client
+            // opens up the remote side of the client's socket (that's us) to begin receiving messages again
             state.workSocket.BeginReceive(state.buffer, 0, state.buffer.Length, SocketFlags.None, OnPacketReceivedFromClient, state);
         }
     }
