@@ -33,7 +33,12 @@ namespace Networking.Models
             connectionSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         }
 
-        public abstract void Send(IPacket packet, SocketFlags flags = SocketFlags.None);
+        public virtual void Send(IPacket packet, SocketFlags flags = SocketFlags.None)
+        {
+            Send(packet.ToByteArray(), flags);
+        }
+
+        public abstract void Send(byte[] buffer, SocketFlags flags = SocketFlags.None);
 
         public virtual void Close()
         {
@@ -53,7 +58,7 @@ namespace Networking.Models
             }
         }
 
-        protected void DefaultSendCallback(IAsyncResult result)
+        protected virtual void DefaultSendCallback(IAsyncResult result)
         {
             StateObject state = (StateObject)result.AsyncState;
             state.workSocket.EndSend(result);

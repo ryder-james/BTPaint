@@ -34,15 +34,11 @@ namespace Networking.Models
 
         private void OnConnectionReceived(IAsyncResult result)
         {
-            Debug.WriteLine("Connection attempt received by server");
-
             Socket stateSocket = (Socket)result.AsyncState;
             Socket newConnection = stateSocket.EndAccept(result);
 
             if (newConnection.Connected)
             {
-                Debug.WriteLine("Connection from server to " + newConnection.LocalEndPoint.ToString() + " established");
-
                 StateObject state = new StateObject();
                 state.workSocket = newConnection;
                 state.buffer = new byte[StateObject.BufferSize];
@@ -56,16 +52,15 @@ namespace Networking.Models
             stateSocket.BeginAccept(OnConnectionReceived, stateSocket);
         }
 
-        public override void Send(IPacket packet, SocketFlags flags = SocketFlags.None)
+        public override void Send(byte[] buffer, SocketFlags flags = SocketFlags.None)
         {
             if (clientSockets.Count > 0)
             {
-                foreach (Socket client in clientSockets) {
-                    Debug.WriteLine("Server sending packet to " + client.LocalEndPoint.ToString());
-
+                foreach (Socket client in clientSockets)
+                {
                     StateObject state = new StateObject();
                     state.workSocket = client;
-                    state.buffer = packet.ToByteArray();
+                    state.buffer = buffer;
 
                     client.BeginSend(state.buffer, 0, state.buffer.Length, SocketFlags.None, DefaultSendCallback, state);
                 }
@@ -88,14 +83,14 @@ namespace Networking.Models
 
         protected void OnPacketReceivedFromClient(IAsyncResult result)
         {
-            Debug.WriteLine("Server received packet from client");
-
             base.OnPacketReceived(result);
 
             StateObject state = (StateObject)result.AsyncState;
 
             int packetSize = state.workSocket.EndReceive(result);
             state.buffer = new byte[packetSize];
+
+            Send(state.buffer);
 
             // this "workSocket" is essentially the connection to the client
             // gets us ready to receive something from the client once again
