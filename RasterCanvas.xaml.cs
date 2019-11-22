@@ -226,6 +226,8 @@ namespace BTPaint
                 Bitmap.FillPolygon(prevXY, color);
                 Bitmap.FillPolygon(currXY, color);
 
+                BTPaint.Models.DrawPacket.Restore(packet.ToByteArray());
+
             }
 
 
