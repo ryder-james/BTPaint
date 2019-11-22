@@ -47,6 +47,14 @@ namespace BTPaint
         private void collapseSideBarBtn_Click(object sender, RoutedEventArgs e)
         {
             SideBar.IsPaneOpen = !SideBar.IsPaneOpen;
+
+            if (SideBar.IsPaneOpen)
+            {
+                collapseSideBarBtn.Icon = new SymbolIcon(Symbol.Back);
+            }else
+            {
+                collapseSideBarBtn.Icon = new SymbolIcon(Symbol.Forward);
+            }
         }
 
         private async void saveBtn_Click(object sender, RoutedEventArgs e)
@@ -263,6 +271,16 @@ namespace BTPaint
         private void colorPicker_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
         {
             mainCanvas.DrawColor = colorPicker.Color;
+        }
+
+        private void connectBtn_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void disconnectBtn_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
