@@ -62,8 +62,6 @@
                         <StackPanel Orientation="Vertical">
                             <MenuFlyoutItem x:Name="resizeBtn" Text="Resize" HorizontalContentAlignment="Center" Click="resizeBtn_Click"></MenuFlyoutItem>
                             <MenuFlyoutSeparator/>
-                            <MenuFlyoutItem x:Name="importBtn" Text="Import" HorizontalContentAlignment="Center" Click="importBtn_Click"></MenuFlyoutItem>
-                            <MenuFlyoutSeparator/>
                             <MenuFlyoutItem x:Name="clearBtn" Text="Clear" HorizontalContentAlignment="Center" Click="clearBtn_Click" Foreground="Red"></MenuFlyoutItem>
                         </StackPanel>
                     </Flyout>
