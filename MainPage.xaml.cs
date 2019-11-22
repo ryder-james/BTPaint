@@ -137,30 +137,31 @@ namespace BTPaint
             }
 
             SoftwareBitmap softwareBitmap;
-
+            int scale = 4;
             using (IRandomAccessStream stream = await inputFile.OpenAsync(FileAccessMode.Read))
             {
                 // Create the decoder from the stream
                 if (stream.Size > 119)
                 {
                     BitmapDecoder decoder = await BitmapDecoder.CreateAsync(stream);
-
                     // Get the SoftwareBitmap representation of the file
-                    softwareBitmap = await decoder.GetSoftwareBitmapAsync();
                     
                     var x = await inputFile.Properties.GetImagePropertiesAsync();
-                    if(x.Width > 800 && x.Height > 600)
+                    if(x.Width > 1000 && x.Height > 800)
                     {
-                        mainCanvas.Width = x.Width / 2;
-                        mainCanvas.Height = x.Height / 2;
+                        mainCanvas.Width = x.Width / scale;
+                        mainCanvas.Height = x.Height / scale;
                     }
                     else
                     {
                         mainCanvas.Width = x.Width;
                         mainCanvas.Height = x.Height;
                     }
-                    softwareBitmap = new SoftwareBitmap(softwareBitmap.BitmapPixelFormat, (int)(mainCanvas.Width), (int)(mainCanvas.Height));
-                    
+                    BitmapTransform bt = new BitmapTransform();
+                    softwareBitmap = new SoftwareBitmap(BitmapPixelFormat.Bgra8, (int)(mainCanvas.Width), (int)(mainCanvas.Height));
+                    bt.ScaledHeight = (uint)mainCanvas.Height;
+                    bt.ScaledWidth = (uint)mainCanvas.Width;
+                    softwareBitmap = await decoder.GetSoftwareBitmapAsync(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Ignore, bt, ExifOrientationMode.IgnoreExifOrientation, ColorManagementMode.DoNotColorManage);
 
                     await mainCanvas.Bitmap.SetSourceAsync(stream);
 
@@ -179,7 +180,7 @@ namespace BTPaint
             client.Send(line);
         }
 
-        private async void importBtn_Click(object sender, RoutedEventArgs e)
+        private void importBtn_Click(object sender, RoutedEventArgs e)
         {
             
         }
