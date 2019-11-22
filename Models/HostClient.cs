@@ -87,9 +87,10 @@ namespace Networking.Models
 
             StateObject state = (StateObject)result.AsyncState;
 
-            Send(state.buffer);
-
             int packetSize = state.workSocket.EndReceive(result);
+            
+            Send(state.buffer.Take(packetSize).ToArray());
+
             state.buffer = new byte[packetSize];
 
 
