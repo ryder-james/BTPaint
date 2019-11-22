@@ -221,6 +221,7 @@ namespace BTPaint
         private void pencilBtn_Click(object sender, RoutedEventArgs e)
         {
             mainCanvas.ShouldErase = false;
+            mainCanvas.DrawColor = colorPicker.Color;
             eraserBtn.Background = new SolidColorBrush(Colors.Gray);
             pencilBtn.Background = new SolidColorBrush(Colors.White);
             starBtn.Background = new SolidColorBrush(Colors.Gray);
@@ -243,6 +244,8 @@ namespace BTPaint
         private void starBtn_Click(object sender, RoutedEventArgs e)
         {
             mainCanvas.ShouldErase = false;
+            mainCanvas.DrawColor = colorPicker.Color;
+            colorPicker.Color = colorPicker.Color;
             pencilBtn.Background = new SolidColorBrush(Colors.Gray);
             eraserBtn.Background = new SolidColorBrush(Colors.Gray);
             starBtn.Background = new SolidColorBrush(Colors.White);
@@ -255,6 +258,11 @@ namespace BTPaint
         private void sidesSlider_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
         {
             sidesValue.Value = sidesSlider.Value;
+        }
+
+        private void colorPicker_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
+        {
+            mainCanvas.DrawColor = colorPicker.Color;
         }
     }
 }
