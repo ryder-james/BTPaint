@@ -126,14 +126,6 @@ namespace BTPaint
         public void Clear()
         {
             Clear(Colors.Transparent);
-            //Color clearColor = ((SolidColorBrush)MainCanvas.Background).Color;
-            //for (int i = 0; i < Width / 100; i += 100)
-            //{
-            //    for (int j = 0; j < Height / 100; i += 100)
-            //    {
-            //        DrawPacket(new DrawPacket(new System.Drawing.Point(i, j), new System.Drawing.Point(i, j), System.Drawing.Color.FromArgb(clearColor.A, clearColor.R, clearColor.G, clearColor.B), 1, 1));
-            //    }
-            //}
         }
 
         public void Clear(Color clearColor)
