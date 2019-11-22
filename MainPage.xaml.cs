@@ -232,6 +232,7 @@ namespace BTPaint
                     break;
                 case WelcomeSplashResult.Join:
                     loadBtn.IsEnabled = false;
+                    loadBtn.Visibility = Visibility.Collapsed;
                     Join joinPage = new Join();
                     await joinPage.ShowAsync();
                     if (joinPage.Result == Join.JoinResult.MainMenu)
@@ -246,6 +247,7 @@ namespace BTPaint
                     break;
                 case WelcomeSplashResult.Host:
                     loadBtn.IsEnabled = false;
+                    loadBtn.Visibility = Visibility.Collapsed;
                     Host hostPage = new Host();
                     await hostPage.ShowAsync();
                     if (hostPage.Result == Host.HostResult.MainMenu)
