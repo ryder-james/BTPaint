@@ -47,8 +47,6 @@
                 </AppBarButton.Flyout>
             </AppBarButton>
 
-            <!--<AppBarSeparator IsFocusEngaged="False"/>-->
-
             <!-- Edit Button -->
             <AppBarButton Icon="Edit"  Label="Edit">
                 <AppBarButton.Flyout>
@@ -72,25 +70,9 @@
                 </AppBarButton.Flyout>
             </AppBarButton>
 
-            <!-- Settings Button -->
-            <AppBarButton Icon="Setting"  Label="Settings">
-                <AppBarButton.Flyout>
-                    <Flyout>
-                        <Flyout.FlyoutPresenterStyle>
-                            <Style TargetType="FlyoutPresenter">
-                                <Setter Property="Padding" Value="5"/>
-                                <Setter Property="Margin" Value="0 -5 0 0"/>
-                                <Setter Property="BorderBrush" Value="Black"/>
-                                <Setter Property="BorderThickness" Value="2"/>
-                            </Style>
-                        </Flyout.FlyoutPresenterStyle>
-                        <StackPanel Orientation="Vertical">
-                            <MenuFlyoutItem x:Name="connectBtn" Text="Connect" HorizontalContentAlignment="Center" Click="connectBtn_Click"></MenuFlyoutItem>
-                            <MenuFlyoutItem x:Name="disconnectBtn" Text="Disconnect" HorizontalContentAlignment="Center" Click="disconnectBtn_Click"></MenuFlyoutItem>
-                        </StackPanel>
-                    </Flyout>
-                </AppBarButton.Flyout>
-            </AppBarButton>
+            <!-- Connection Buttons -->
+            <AppBarButton x:Name="connectBtn" Label="Connect" HorizontalContentAlignment="Center" Click="connectBtn_Click"></AppBarButton>
+            <AppBarButton x:Name="disconnectBtn" Label="Disconnect" Visibility="Collapsed" HorizontalContentAlignment="Center" Click="disconnectBtn_Click"></AppBarButton>
         </CommandBar>
 
         <!-- Collapse Side Bar Button -->
