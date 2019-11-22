@@ -209,8 +209,8 @@ namespace BTPaint
 
                 for (int i = 0; i < packet.numOfSides; i++)
                 {
-                    prevPoints[i] = new System.Drawing.Point((int)(packet.pointA.X + packet.size * Math.Cos(2 * Math.PI * i / packet.numOfSides)), (int)(packet.pointA.Y + packet.size * Math.Sin(2 * Math.PI * i / packet.numOfSides)));
-                    currPoints[i] = new System.Drawing.Point((int)(packet.pointB.X + packet.size * Math.Cos(2 * Math.PI * i / packet.numOfSides)), (int)(packet.pointB.Y + packet.size * Math.Sin(2 * Math.PI * i / packet.numOfSides)));
+                    prevPoints[i] = new System.Drawing.Point((int)(packet.pointA.X + packet.size * Math.Sin(2 * Math.PI * i / packet.numOfSides)), (int)(packet.pointA.Y + packet.size * -Math.Cos(2 * Math.PI * i / packet.numOfSides)));
+                    currPoints[i] = new System.Drawing.Point((int)(packet.pointB.X + packet.size * Math.Sin(2 * Math.PI * i / packet.numOfSides)), (int)(packet.pointB.Y + packet.size * -Math.Cos(2 * Math.PI * i / packet.numOfSides)));
 
                     prevXY[counter] = prevPoints[i].X;
                     currXY[counter] = currPoints[i].X;
