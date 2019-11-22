@@ -78,6 +78,18 @@ namespace BTPaint
             }
         }
 
+        public ImageSource ImageControlSource 
+        {
+            get 
+            {
+                return ImageControl.Source;
+            } 
+            set
+            {
+                ImageControl.Source = value;
+            } 
+        }
+
         public Color DrawColor
         {
             get { return (Color)GetValue(DrawColorProperty); }

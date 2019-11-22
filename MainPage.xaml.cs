@@ -9,6 +9,7 @@ using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
+using Windows.Storage.FileProperties;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
 using Windows.UI;
@@ -28,11 +29,12 @@ namespace BTPaint
     public sealed partial class MainPage : Page
     {
         private Client client;
+        private ImageProperties imageProperties;
 
         public MainPage()
         {
             this.InitializeComponent();
-            
+
             ShowSplash();
 
             mainCanvas.LineDrawn += CanvasLineDrawn;
@@ -52,7 +54,6 @@ namespace BTPaint
             fileSavePicker.SuggestedFileName = "image";
 
             var outputFile = await fileSavePicker.PickSaveFileAsync();
-
             if (outputFile != null)
             {
                 SoftwareBitmap outputBitmap = SoftwareBitmap.CreateCopyFromBuffer(
@@ -69,17 +70,34 @@ namespace BTPaint
             using (IRandomAccessStream stream = await outputFile.OpenAsync(FileAccessMode.ReadWrite))
             {
                 // Create an encoder with the desired format
-                BitmapEncoder encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, stream);
-                encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, stream);
+                BitmapEncoder encoder;
+                if (outputFile.FileType == ".jpg" || outputFile.FileType == ".jpeg")
+                {
+                    encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, stream);
+                }
+                else
+                {
+                    encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, stream);
+                }
 
                 // Set the software bitmap
                 encoder.SetSoftwareBitmap(softwareBitmap);
 
                 // Set additional encoding parameters, if needed
-                encoder.BitmapTransform.ScaledWidth = (uint) mainCanvas.Width;
-                encoder.BitmapTransform.ScaledHeight = (uint) mainCanvas.Height;
-                encoder.BitmapTransform.InterpolationMode = BitmapInterpolationMode.Fant;
-                encoder.IsThumbnailGenerated = true;
+                if (imageProperties != null)
+                {
+                    encoder.BitmapTransform.ScaledWidth = imageProperties.Width;
+                    encoder.BitmapTransform.ScaledHeight = imageProperties.Height;
+                    encoder.BitmapTransform.InterpolationMode = BitmapInterpolationMode.Fant;
+                    encoder.IsThumbnailGenerated = true;
+                }
+                else
+                {
+                    encoder.BitmapTransform.ScaledWidth = (uint)mainCanvas.Width;
+                    encoder.BitmapTransform.ScaledHeight = (uint)mainCanvas.Height;
+                    encoder.BitmapTransform.InterpolationMode = BitmapInterpolationMode.Fant;
+                    encoder.IsThumbnailGenerated = true;
+                }
 
                 try
                 {
@@ -125,21 +143,49 @@ namespace BTPaint
                 // The user cancelled the picking operation
                 return;
             }
-            
-            SoftwareBitmap softwareBitmap;
 
+            SoftwareBitmap softwareBitmap;
+            int scale = 4;
             using (IRandomAccessStream stream = await inputFile.OpenAsync(FileAccessMode.Read))
             {
                 // Create the decoder from the stream
-                BitmapDecoder decoder = await BitmapDecoder.CreateAsync(stream);
+                if (stream.Size > 119)
+                {
+                    BitmapDecoder decoder = await BitmapDecoder.CreateAsync(stream);
+                    // Get the SoftwareBitmap representation of the file
 
-                // Get the SoftwareBitmap representation of the file
-                softwareBitmap = await decoder.GetSoftwareBitmapAsync();
-                var x = await inputFile.Properties.GetImagePropertiesAsync();
-                mainCanvas.Width = x.Width;
-                mainCanvas.Height = x.Height;
+                    ImageProperties x = await inputFile.Properties.GetImagePropertiesAsync();
+                    imageProperties = x;
+                    if (x.Width > 2000 && x.Height > 1600)
+                    {
+                        mainCanvas.Width = x.Width / (scale * 2);
+                        mainCanvas.Height = x.Height / (scale * 2);
+                    }
+                    else if (x.Width > 1000 && x.Height > 800)
+                    {
+                        mainCanvas.Width = x.Width / scale;
+                        mainCanvas.Height = x.Height / scale;
+                    }
+                    else
+                    {
+                        mainCanvas.Width = x.Width;
+                        mainCanvas.Height = x.Height;
+                    }
+                    BitmapTransform bt = new BitmapTransform();
+                    softwareBitmap = new SoftwareBitmap(BitmapPixelFormat.Bgra8, (int)(mainCanvas.Width), (int)(mainCanvas.Height));
+                    bt.ScaledHeight = (uint)mainCanvas.Height;
+                    bt.ScaledWidth = (uint)mainCanvas.Width;
+                    softwareBitmap = await decoder.GetSoftwareBitmapAsync(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Ignore, bt, ExifOrientationMode.IgnoreExifOrientation, ColorManagementMode.DoNotColorManage);
 
-                await mainCanvas.Bitmap.SetSourceAsync(stream);
+                    await mainCanvas.Bitmap.SetSourceAsync(stream);
+
+                    mainCanvas.Bitmap = BitmapFactory.New((int)mainCanvas.Width, (int)mainCanvas.Height);
+                    mainCanvas.Bitmap.Clear(((SolidColorBrush)mainCanvas.Background).Color);
+
+                    mainCanvas.ImageControlSource = mainCanvas.Bitmap;
+
+                    softwareBitmap.CopyToBuffer(mainCanvas.Bitmap.PixelBuffer);
+                }
             }
         }
 
@@ -152,6 +198,8 @@ namespace BTPaint
         {
 
         }
+
+
 
         private void exitBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -179,6 +227,8 @@ namespace BTPaint
                     // do stuff?
                     break;
                 case WelcomeSplashResult.Join:
+                    loadBtn.IsEnabled = false;
+                    loadBtn.Visibility = Visibility.Collapsed;
                     Join joinPage = new Join();
                     await joinPage.ShowAsync();
                     if (joinPage.Result == Join.JoinResult.MainMenu)
@@ -194,6 +244,8 @@ namespace BTPaint
                     }
                     break;
                 case WelcomeSplashResult.Host:
+                    loadBtn.IsEnabled = false;
+                    loadBtn.Visibility = Visibility.Collapsed;
                     Host hostPage = new Host();
                     await hostPage.ShowAsync();
                     if (hostPage.Result == Host.HostResult.MainMenu)
