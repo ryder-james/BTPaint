@@ -244,7 +244,7 @@ namespace BTPaint
             mainCanvas.DrawColor = colorPicker.Color;
             eraserBtn.Background = new SolidColorBrush(Colors.Gray);
             pencilBtn.Background = new SolidColorBrush(Colors.White);
-            starBtn.Background = new SolidColorBrush(Colors.Gray);
+            polygonBtn.Background = new SolidColorBrush(Colors.Gray);
             sidesText.Visibility = Visibility.Collapsed;
             sidesSlider.Visibility = Visibility.Collapsed;
             sidesValue.Value = 1;
@@ -255,20 +255,20 @@ namespace BTPaint
             mainCanvas.ShouldErase = true;
             pencilBtn.Background = new SolidColorBrush(Colors.Gray);
             eraserBtn.Background = new SolidColorBrush(Colors.White);
-            starBtn.Background = new SolidColorBrush(Colors.Gray);
+            polygonBtn.Background = new SolidColorBrush(Colors.Gray);
             sidesText.Visibility = Visibility.Collapsed;
             sidesSlider.Visibility = Visibility.Collapsed;
             sidesValue.Value = 1;
         }
 
-        private void starBtn_Click(object sender, RoutedEventArgs e)
+        private void polygonBtn_Click(object sender, RoutedEventArgs e)
         {
             mainCanvas.ShouldErase = false;
             mainCanvas.DrawColor = colorPicker.Color;
             colorPicker.Color = colorPicker.Color;
             pencilBtn.Background = new SolidColorBrush(Colors.Gray);
             eraserBtn.Background = new SolidColorBrush(Colors.Gray);
-            starBtn.Background = new SolidColorBrush(Colors.White);
+            polygonBtn.Background = new SolidColorBrush(Colors.White);
             sidesText.Visibility = Visibility.Visible;
             sidesSlider.Visibility = Visibility.Visible;
             sidesValue.Value = 3;

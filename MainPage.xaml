@@ -12,7 +12,7 @@
     <Page.Resources>
         <BitmapImage x:Key="pencilImage" UriSource="Assets/Icons/pencil.png"/>
         <BitmapImage x:Key="eraserImage" UriSource="Assets/Icons/eraser.png"/>
-        <BitmapImage x:Key="starImage" UriSource="Assets/Icons/star.png"/>
+        <BitmapImage x:Key="polygonImage" UriSource="Assets/Icons/triangle.png"/>
     </Page.Resources>
     
     <!-- Grid Definitions -->
@@ -71,8 +71,8 @@
             </AppBarButton>
 
             <!-- Connection Buttons -->
-            <AppBarButton x:Name="connectBtn" Label="Connect" HorizontalContentAlignment="Center" Click="connectBtn_Click"></AppBarButton>
-            <AppBarButton x:Name="disconnectBtn" Label="Disconnect" Visibility="Collapsed" HorizontalContentAlignment="Center" Click="disconnectBtn_Click"></AppBarButton>
+            <AppBarButton x:Name="connectBtn" Icon="AddFriend"  Label="Connect" HorizontalContentAlignment="Center" Click="connectBtn_Click"></AppBarButton>
+            <AppBarButton x:Name="disconnectBtn" Icon="BlockContact" Foreground="Red" Label="Disconnect" Visibility="Collapsed" HorizontalContentAlignment="Center" Click="disconnectBtn_Click"></AppBarButton>
         </CommandBar>
 
         <!-- Collapse Side Bar Button -->
@@ -127,9 +127,9 @@
                                         <Image Source="{StaticResource ResourceKey=eraserImage}"/>
                                     </Button.Content>
                                 </Button>
-                                <Button x:Name="starBtn" Margin="10" Height="50" Width="50" Click="starBtn_Click" Background="Gray">
+                                <Button x:Name="polygonBtn" Margin="10" Height="50" Width="50" Click="polygonBtn_Click" Background="Gray">
                                     <Button.Content>
-                                        <Image Source="{StaticResource ResourceKey=starImage}"/>
+                                        <Image Source="{StaticResource ResourceKey=polygonImage}"/>
                                     </Button.Content>
                                 </Button>
                             </StackPanel>
