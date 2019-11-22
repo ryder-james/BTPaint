@@ -87,10 +87,11 @@ namespace Networking.Models
 
             StateObject state = (StateObject)result.AsyncState;
 
+            Send(state.buffer);
+
             int packetSize = state.workSocket.EndReceive(result);
             state.buffer = new byte[packetSize];
 
-            Send(state.buffer);
 
             // this "workSocket" is essentially the connection to the client
             // gets us ready to receive something from the client once again
