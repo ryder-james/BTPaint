@@ -40,8 +40,6 @@ namespace BTPaint
             sidesValue.Value = 1;
             
             ShowSplash();
-
-            mainCanvas.LineDrawn += CanvasLineDrawn;
         }
 
         private void collapseSideBarBtn_Click(object sender, RoutedEventArgs e)
@@ -254,6 +252,8 @@ namespace BTPaint
                         ((GuestClient)client).BeginConnect(new IPEndPoint(IPAddress.Parse(joinPage.IPText), Client.DefaultPort));
                         client.PacketReceived += mainCanvas.ProcessPacket;
                         isConnected = true;
+
+                        mainCanvas.LineDrawn += CanvasLineDrawn;
                     }
                     break;
                 case WelcomeSplashResult.Host:
@@ -272,6 +272,8 @@ namespace BTPaint
                         ((HostClient)client).BeginAccept();
                         client.PacketReceived += mainCanvas.ProcessPacket;
                         isConnected = true;
+
+                        mainCanvas.LineDrawn += CanvasLineDrawn;
                     }
                     break;
                 case WelcomeSplashResult.Exit:
