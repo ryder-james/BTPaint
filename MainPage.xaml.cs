@@ -29,12 +29,16 @@ namespace BTPaint
     public sealed partial class MainPage : Page
     {
         private Client client;
+        
+        private bool isConnected = false;
         private ImageProperties imageProperties;
 
         public MainPage()
         {
             this.InitializeComponent();
 
+            sidesValue.Value = 1;
+            
             ShowSplash();
 
             mainCanvas.LineDrawn += CanvasLineDrawn;
@@ -43,6 +47,14 @@ namespace BTPaint
         private void collapseSideBarBtn_Click(object sender, RoutedEventArgs e)
         {
             SideBar.IsPaneOpen = !SideBar.IsPaneOpen;
+
+            if (SideBar.IsPaneOpen)
+            {
+                collapseSideBarBtn.Icon = new SymbolIcon(Symbol.Back);
+            }else
+            {
+                collapseSideBarBtn.Icon = new SymbolIcon(Symbol.Forward);
+            }
         }
 
         private async void saveBtn_Click(object sender, RoutedEventArgs e)
@@ -224,7 +236,7 @@ namespace BTPaint
             switch (welcomePage.Result)
             {
                 case WelcomeSplashResult.Solo:
-                    // do stuff?
+                    isConnected = false;
                     break;
                 case WelcomeSplashResult.Join:
                     loadBtn.IsEnabled = false;
@@ -241,6 +253,7 @@ namespace BTPaint
 
                         ((GuestClient)client).BeginConnect(new IPEndPoint(IPAddress.Parse(joinPage.IPText), Client.DefaultPort));
                         client.PacketReceived += mainCanvas.ProcessPacket;
+                        isConnected = true;
                     }
                     break;
                 case WelcomeSplashResult.Host:
@@ -258,6 +271,7 @@ namespace BTPaint
 
                         ((HostClient)client).BeginAccept();
                         client.PacketReceived += mainCanvas.ProcessPacket;
+                        isConnected = true;
                     }
                     break;
                 case WelcomeSplashResult.Exit:
@@ -265,14 +279,30 @@ namespace BTPaint
                     break;
             }
 
+            if (isConnected)
+            {
+                connectBtn.Visibility = Visibility.Collapsed;
+                disconnectBtn.Visibility = Visibility.Visible;
+                clearBtn.Visibility = Visibility.Collapsed;
+            }else
+            {
+                connectBtn.Visibility = Visibility.Visible;
+                disconnectBtn.Visibility = Visibility.Collapsed;
+                clearBtn.Visibility = Visibility.Visible;
+            }
             SideBar.IsPaneOpen = true;
         }
 
         private void pencilBtn_Click(object sender, RoutedEventArgs e)
         {
             mainCanvas.ShouldErase = false;
+            mainCanvas.DrawColor = colorPicker.Color;
             eraserBtn.Background = new SolidColorBrush(Colors.Gray);
             pencilBtn.Background = new SolidColorBrush(Colors.White);
+            polygonBtn.Background = new SolidColorBrush(Colors.Gray);
+            sidesText.Visibility = Visibility.Collapsed;
+            sidesSlider.Visibility = Visibility.Collapsed;
+            sidesValue.Value = 1;
         }
 
         private void eraserBtn_Click(object sender, RoutedEventArgs e)
@@ -280,6 +310,46 @@ namespace BTPaint
             mainCanvas.ShouldErase = true;
             pencilBtn.Background = new SolidColorBrush(Colors.Gray);
             eraserBtn.Background = new SolidColorBrush(Colors.White);
+            polygonBtn.Background = new SolidColorBrush(Colors.Gray);
+            sidesText.Visibility = Visibility.Collapsed;
+            sidesSlider.Visibility = Visibility.Collapsed;
+            sidesValue.Value = 1;
+        }
+
+        private void polygonBtn_Click(object sender, RoutedEventArgs e)
+        {
+            mainCanvas.ShouldErase = false;
+            mainCanvas.DrawColor = colorPicker.Color;
+            colorPicker.Color = colorPicker.Color;
+            pencilBtn.Background = new SolidColorBrush(Colors.Gray);
+            eraserBtn.Background = new SolidColorBrush(Colors.Gray);
+            polygonBtn.Background = new SolidColorBrush(Colors.White);
+            sidesText.Visibility = Visibility.Visible;
+            sidesSlider.Visibility = Visibility.Visible;
+            sidesValue.Value = 3;
+            sidesSlider.Value = 3;
+        }
+
+        private void sidesSlider_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+        {
+            sidesValue.Value = sidesSlider.Value;
+        }
+
+        private void colorPicker_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
+        {
+            mainCanvas.DrawColor = colorPicker.Color;
+        }
+
+        private void connectBtn_Click(object sender, RoutedEventArgs e)
+        {
+            ShowSplash();
+        }
+
+        private void disconnectBtn_Click(object sender, RoutedEventArgs e)
+        {
+            ShowSplash();
+            //if (host != null) host.Close();
+            //if (client != null) client.Close();
         }
     }
 }

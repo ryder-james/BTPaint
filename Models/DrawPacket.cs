@@ -16,13 +16,15 @@ namespace BTPaint.Models
         public Point pointB;
         public Color color;
         public int size;
+        public byte numOfSides;
 
-        public DrawPacket(Point A, Point B, Color Color, int Size)
+        public DrawPacket(Point A, Point B, Color Color, int Size,byte NumOfSides)
         {
             pointA = A;
             pointB = B;
             color = Color;
             size = Size;
+            numOfSides = NumOfSides;
         }
 
         public byte[] ToByteArray()
@@ -37,6 +39,7 @@ namespace BTPaint.Models
             byte[] ByBytes = BitConverter.GetBytes(pointB.Y);
             byte[] colorBytes = BitConverter.GetBytes(color.ToArgb());
             byte[] sizeBytes = BitConverter.GetBytes(size);
+            bytes.Add(numOfSides);
             bytes.AddRange(AxBytes);
             bytes.AddRange(AyBytes);
             bytes.AddRange(BxBytes);
@@ -55,6 +58,7 @@ namespace BTPaint.Models
                 throw new FormatException("Byte array is not in DrawPacket format");
             }
 
+            byte desNumOfSides = bytes[4];
             int pointAX = BitConverter.ToInt32(bytes, bytes.Length - 24);
             int pointAY = BitConverter.ToInt32(bytes, bytes.Length - 20);
             int pointBX = BitConverter.ToInt32(bytes, bytes.Length - 16);
@@ -65,7 +69,7 @@ namespace BTPaint.Models
             Point A = new Point(pointAX, pointAY);
             Point B = new Point(pointBX, pointBY);
 
-            return new DrawPacket(A, B, desColor, desSize);
+            return new DrawPacket(A, B, desColor, desSize, desNumOfSides);
         }
     }
 }

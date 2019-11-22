@@ -12,6 +12,7 @@
     <Page.Resources>
         <BitmapImage x:Key="pencilImage" UriSource="Assets/Icons/pencil.png"/>
         <BitmapImage x:Key="eraserImage" UriSource="Assets/Icons/eraser.png"/>
+        <BitmapImage x:Key="polygonImage" UriSource="Assets/Icons/triangle.png"/>
     </Page.Resources>
     
     <!-- Grid Definitions -->
@@ -27,10 +28,20 @@
                 <!-- File Button -->
                 <AppBarButton.Flyout>
                     <Flyout>
+                        <Flyout.FlyoutPresenterStyle>
+                            <Style TargetType="FlyoutPresenter">
+                                <Setter Property="Padding" Value="5"/>
+                                <Setter Property="Margin" Value="0 -5 0 0"/>
+                                <Setter Property="BorderBrush" Value="Black"/>
+                                <Setter Property="BorderThickness" Value="2"/>
+                            </Style>
+                        </Flyout.FlyoutPresenterStyle>
                         <StackPanel Orientation="Vertical">
-                            <AppBarButton x:Name="saveBtn" Label="Save" Icon="Save"  Click="saveBtn_Click"></AppBarButton>
-                            <AppBarButton x:Name="loadBtn" Label="Load" Icon="Download" Click="loadBtn_Click"></AppBarButton>
-                            <AppBarButton x:Name="exitBtn" Label="Exit" Icon="Clear" Click="exitBtn_Click" Foreground="Red"></AppBarButton>
+                            <MenuFlyoutItem x:Name="saveBtn" Text="Save" HorizontalContentAlignment="Center" Click="saveBtn_Click"></MenuFlyoutItem>
+                            <MenuFlyoutSeparator/>
+                            <MenuFlyoutItem x:Name="loadBtn" Text="Load" HorizontalContentAlignment="Center" Click="loadBtn_Click"></MenuFlyoutItem>
+                            <MenuFlyoutSeparator/>
+                            <MenuFlyoutItem x:Name="exitBtn" Text="Exit" HorizontalContentAlignment="Center" Click="exitBtn_Click" Foreground="Red"></MenuFlyoutItem>
                         </StackPanel>
                     </Flyout>
                 </AppBarButton.Flyout>
@@ -40,25 +51,41 @@
             <AppBarButton Icon="Edit"  Label="Edit">
                 <AppBarButton.Flyout>
                     <Flyout>
+                        <Flyout.FlyoutPresenterStyle>
+                            <Style TargetType="FlyoutPresenter">
+                                <Setter Property="Padding" Value="5"/>
+                                <Setter Property="Margin" Value="0 -5 0 0"/>
+                                <Setter Property="BorderBrush" Value="Black"/>
+                                <Setter Property="BorderThickness" Value="2"/>
+                            </Style>
+                        </Flyout.FlyoutPresenterStyle>
                         <StackPanel Orientation="Vertical">
-                            <AppBarButton x:Name="resizeBtn" Label="Resize" Icon="FullScreen" Click="resizeBtn_Click"></AppBarButton>
-                            <AppBarButton x:Name="importBtn" Label="Import" Icon="Import" Click="importBtn_Click"></AppBarButton>
-                            <AppBarButton x:Name="clearBtn" Label="Clear" Icon="Delete" Click="clearBtn_Click" Foreground="Red"></AppBarButton>
+                            <MenuFlyoutItem x:Name="resizeBtn" Text="Resize" HorizontalContentAlignment="Center" Click="resizeBtn_Click"></MenuFlyoutItem>
+                            <MenuFlyoutSeparator/>
+                            <MenuFlyoutItem x:Name="clearBtn" Text="Clear" HorizontalContentAlignment="Center" Click="clearBtn_Click" Foreground="Red"></MenuFlyoutItem>
                         </StackPanel>
                     </Flyout>
                 </AppBarButton.Flyout>
             </AppBarButton>
+
+            <!-- Connection Buttons -->
+            <AppBarButton x:Name="connectBtn" Icon="AddFriend"  Label="Connect" HorizontalContentAlignment="Center" Click="connectBtn_Click"></AppBarButton>
+            <AppBarButton x:Name="disconnectBtn" Icon="BlockContact" Foreground="Red" Label="Disconnect" Visibility="Collapsed" HorizontalContentAlignment="Center" Click="disconnectBtn_Click"></AppBarButton>
         </CommandBar>
 
         <!-- Collapse Side Bar Button -->
-        <AppBarButton x:Name="collapseSideBarBtn" Icon="More" Click="collapseSideBarBtn_Click"/>
+        <AppBarButton x:Name="collapseSideBarBtn" Icon="Back"  Click="collapseSideBarBtn_Click"/>
 
         <!-- Canvas -->
         <ScrollViewer Grid.Row="1" Grid.ColumnSpan="2" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible">
             <local:RasterCanvas x:Name="mainCanvas" 
                                 Background="White"
                                 Size="{Binding ElementName=sizeSlider, Path=Value, Mode=TwoWay}"
-                                DrawColor="{Binding ElementName=colorPicker, Path=Color, Mode=TwoWay}"/>
+                                PolySides="{Binding ElementName=sidesValue, Path=Value, Mode=TwoWay}"
+                                DrawColor="{Binding ElementName=colorPicker, Path=Color, Mode=OneWay}"
+                                Height="2000"
+                                Width="2000"/>
+            <!-- Height and Width set to enable scroll bars, DO NOT CHANGE -->
         </ScrollViewer>
 
 
@@ -77,7 +104,8 @@
                         <ColorPicker x:Name="colorPicker"
                         ColorSpectrumShape="Ring"
                         Margin="0 0 5 0"
-                        Color="Black">
+                        Color="Black"
+                        ColorChanged="colorPicker_ColorChanged">
                         </ColorPicker>
 
                         <!-- Size Slider & TextBlocks -->
@@ -85,7 +113,7 @@
                             <TextBlock Text="Size" HorizontalAlignment="Center" Margin="0 10 0 0"/>
                             <Slider x:Name="sizeSlider" Margin="10 0 10 0" Value="10" Minimum="1" Maximum="100"/>
 
-                                <!-- Pencil & Eraser Buttons -->
+                            <!-- Side Bar Buttons -->
                             <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center" Margin="10">
                                 <Button x:Name="pencilBtn" Margin="10" Height="50" Width="50" Click="pencilBtn_Click" Background="White">
                                     <Button.Content>
@@ -94,15 +122,21 @@
                                 </Button>
                                 <Button x:Name="eraserBtn" Margin="10" Height="50" Width="50" Click="eraserBtn_Click" Background="Gray">
                                     <Button.Content>
-                                        <Image Source="{StaticResource ResourceKey=eraserImage}" />
+                                        <Image Source="{StaticResource ResourceKey=eraserImage}"/>
+                                    </Button.Content>
+                                </Button>
+                                <Button x:Name="polygonBtn" Margin="10" Height="50" Width="50" Click="polygonBtn_Click" Background="Gray">
+                                    <Button.Content>
+                                        <Image Source="{StaticResource ResourceKey=polygonImage}"/>
                                     </Button.Content>
                                 </Button>
                             </StackPanel>
+
+                            <TextBlock x:Name="sidesText" Text="Sides" HorizontalAlignment="Center" Margin="0 10 0 0" Visibility="Collapsed"/>
+                            <Slider x:Name="sidesValue" Visibility="Collapsed" Maximum="15" Value="1"/>
+                            <Slider x:Name="sidesSlider" Margin="10 0 10 0" Value="3" Minimum="3" Maximum="15" Visibility="Collapsed" ValueChanged="sidesSlider_ValueChanged"/>
                         </StackPanel>
 
-                        <!-- List of Brushes : This will be populated in code (NO DEFAULT CONTENT) -->
-                        <ListView x:Name="BrushList" ScrollViewer.VerticalScrollBarVisibility="Visible"></ListView>
-                        
                     </StackPanel>
                 </ScrollViewer>
             </SplitView.Pane>

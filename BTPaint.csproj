@@ -147,12 +147,11 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\Icons\triangle.png" />
     <Content Include="Images\Nokk_001.jpg" />
     <Content Include="Images\Nokk_Heroic.jpg" />
     <Content Include="Assets\Icons\eraser.png" />
-    <Content Include="Assets\Icons\eraser.svg" />
     <Content Include="Assets\Icons\pencil.png" />
-    <Content Include="Assets\Icons\pencil.svg" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
