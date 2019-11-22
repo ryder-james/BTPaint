@@ -124,6 +124,7 @@
     </Compile>
     <Compile Include="Models\Client.cs" />
     <Compile Include="Models\DrawPacket.cs" />
+    <Compile Include="Models\GuestClient.cs" />
     <Compile Include="Models\HostClient.cs" />
     <Compile Include="Models\IPacket.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
