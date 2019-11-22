@@ -72,6 +72,7 @@
                 </AppBarButton.Flyout>
             </AppBarButton>
 
+            <!-- Settings Button -->
             <AppBarButton Icon="Setting"  Label="Settings">
                 <AppBarButton.Flyout>
                     <Flyout>
@@ -85,7 +86,6 @@
                         </Flyout.FlyoutPresenterStyle>
                         <StackPanel Orientation="Vertical">
                             <MenuFlyoutItem x:Name="connectBtn" Text="Connect" HorizontalContentAlignment="Center" Click="connectBtn_Click"></MenuFlyoutItem>
-                            <MenuFlyoutSeparator/>
                             <MenuFlyoutItem x:Name="disconnectBtn" Text="Disconnect" HorizontalContentAlignment="Center" Click="disconnectBtn_Click"></MenuFlyoutItem>
                         </StackPanel>
                     </Flyout>

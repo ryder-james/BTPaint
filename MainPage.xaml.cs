@@ -29,6 +29,7 @@ namespace BTPaint
     {
         private HostClient host;
         private Client client;
+        private bool isConnected = false;
 
         public MainPage()
         {
@@ -190,7 +191,7 @@ namespace BTPaint
             switch (welcomePage.Result)
             {
                 case WelcomeSplashResult.Solo:
-                    // do stuff?
+                    isConnected = false;
                     break;
                 case WelcomeSplashResult.Join:
                     Join joinPage = new Join();
@@ -203,6 +204,7 @@ namespace BTPaint
                     {
                         client.BeginConnect(new IPEndPoint(IPAddress.Parse(joinPage.IPText), Client.DefaultPort));
                         client.PacketReceived += mainCanvas.ProcessPacket;
+                        isConnected = true;
                     }
                     break;
                 case WelcomeSplashResult.Host:
@@ -216,6 +218,7 @@ namespace BTPaint
                     {
                         host.BeginAccept();
                         host.PacketReceived += mainCanvas.ProcessPacket;
+                        isConnected = true;
                     }
                     break;
                 case WelcomeSplashResult.Exit:
@@ -223,6 +226,16 @@ namespace BTPaint
                     break;
             }
 
+            if (isConnected)
+            {
+                connectBtn.Visibility = Visibility.Collapsed;
+                disconnectBtn.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                connectBtn.Visibility = Visibility.Visible;
+                disconnectBtn.Visibility = Visibility.Collapsed;
+            }
             SideBar.IsPaneOpen = true;
         }
 
@@ -275,12 +288,14 @@ namespace BTPaint
 
         private void connectBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            ShowSplash();
         }
 
         private void disconnectBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            ShowSplash();
+            if (host != null) host.Close();
+            if (client != null) client.Close();
         }
     }
 }
