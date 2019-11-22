@@ -11,73 +11,61 @@ namespace Networking.Models
 {
     public class HostClient : Client
     {
-        private Socket serverSocket;
-        private List<Socket> clientSockets;
-        private IPHostEntry ipHost;
-        private IPAddress ipAddr;
+        private List<Socket> clientSockets; // list of everybody connected to the service
 
-        public HostClient()
+        public HostClient(int maxConnections = 100, int port = Client.DefaultPort)
         {
-            serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            connectionSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             clientSockets = new List<Socket>();
-            ipHost = Dns.GetHostEntry(Dns.GetHostName());
-            ipAddr = ipHost.AddressList[1];
-        }
 
-        public void BeginAccept(int maxConnections = 100, int port = Client.DefaultPort)
-        {
+            IPHostEntry ipHost = Dns.GetHostEntry(Dns.GetHostName());
+            IPAddress ipAddr = ipHost.AddressList[1];
+
             IPEndPoint ipEnd = new IPEndPoint(IPAddress.Parse(ipAddr.ToString()), port);
-            Debug.WriteLine("Endpoint created at: " + ipAddr.ToString());
 
-            serverSocket.Bind(ipEnd);
-            serverSocket.Listen(maxConnections);
-            serverSocket.BeginAccept(OnConnectionEstablished, serverSocket);
+            connectionSocket.Bind(ipEnd);
+            connectionSocket.Listen(maxConnections);
         }
 
-        private void OnConnectionEstablished(IAsyncResult result)
+        public void BeginAccept()
         {
-            Debug.WriteLine("Attempting Connection");
+            connectionSocket.BeginAccept(OnConnectionReceived, connectionSocket);
+        }
+
+        private void OnConnectionReceived(IAsyncResult result)
+        {
+            Debug.WriteLine("Connection attempt received by server");
 
             Socket stateSocket = (Socket)result.AsyncState;
             Socket newConnection = stateSocket.EndAccept(result);
 
             if (newConnection.Connected)
             {
-                Debug.WriteLine("Connection established");
+                Debug.WriteLine("Connection from server to " + newConnection.LocalEndPoint.ToString() + " established");
 
                 StateObject state = new StateObject();
                 state.workSocket = newConnection;
                 state.buffer = new byte[StateObject.BufferSize];
 
-                // opens up the remote side of the client's socket (that's us) to begin receiving messages
+                // gets us ready to receive the first packet from the new client
                 newConnection.BeginReceive(state.buffer, 0, state.buffer.Length, SocketFlags.None, OnPacketReceivedFromClient, state);
 
-                Socket localToRemoteSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                StateObject state2 = new StateObject();
-                state2.workSocket = localToRemoteSocket;
-                localToRemoteSocket.BeginConnect(newConnection.LocalEndPoint, ar =>
-                {
-                    StateObject state3 = (StateObject)ar.AsyncState;
-                    state3.workSocket.EndConnect(result);
-                    clientSockets.Add(state3.workSocket);
-                }, state2);
-
-                Socket remoteSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                remoteSocket.Bind(newConnection.LocalEndPoint);
-                remoteSocket.Listen(1);
-                remoteSocket.Accept();
-
-                //clientSockets.Add(newConnection);
+                clientSockets.Add(newConnection);
             }
 
-            stateSocket.BeginAccept(OnConnectionEstablished, stateSocket);
+            stateSocket.BeginAccept(OnConnectionReceived, stateSocket);
         }
 
         public override void Send(IPacket packet, SocketFlags flags = SocketFlags.None)
         {
             if (clientSockets.Count > 0)
             {
-                clientSockets[0].Send(new byte[] { 1, 2, 3, 4 });
+                Debug.WriteLine("Server sending packet to " + clientSockets[0].LocalEndPoint.ToString());
+
+                StateObject state = new StateObject();
+                state.workSocket = clientSockets[0];
+
+                clientSockets[0].BeginSend(state.buffer, 0, state.buffer.Length, SocketFlags.None, DefaultSendCallback, state);
             }
         }
 
@@ -91,12 +79,14 @@ namespace Networking.Models
                     s.Close();
             }
 
-            if (serverSocket != null)
-                serverSocket.Close();
+            if (connectionSocket != null)
+                connectionSocket.Close();
         }
 
         protected void OnPacketReceivedFromClient(IAsyncResult result)
         {
+            Debug.WriteLine("Server received packet from client");
+
             base.OnPacketReceived(result);
 
             StateObject state = (StateObject)result.AsyncState;
@@ -105,7 +95,7 @@ namespace Networking.Models
             state.buffer = new byte[packetSize];
 
             // this "workSocket" is essentially the connection to the client
-            // opens up the remote side of the client's socket (that's us) to begin receiving messages again
+            // gets us ready to receive something from the client once again
             state.workSocket.BeginReceive(state.buffer, 0, state.buffer.Length, SocketFlags.None, OnPacketReceivedFromClient, state);
         }
     }
