@@ -41,7 +41,7 @@
                 BorderBrush="Black"
                 BorderThickness="2"
                 Background="LightGray" Height="25">
-            <TextBlock x:Name="IPTextBlock" Text="IP Address Not Found" Foreground="Black" Margin="5 0"/>
+            <TextBlock x:Name="IPTextBlock" Text="IP Address Not Found" Foreground="Black" Margin="5 0" TextAlignment="Center"/>
         </Border>
         <Button Grid.Row="2" Grid.Column="1"
                 HorizontalAlignment="Center" VerticalAlignment="Top"
