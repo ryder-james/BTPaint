@@ -249,7 +249,14 @@ namespace BTPaint
                     {
                         client = new GuestClient();
 
-                        ((GuestClient)client).BeginConnect(new IPEndPoint(IPAddress.Parse(joinPage.IPText), Client.DefaultPort));
+                        try
+                        {
+                            ((GuestClient)client).BeginConnect(new IPEndPoint(IPAddress.Parse(joinPage.IPText), Client.DefaultPort));
+                        } catch (FormatException ex)
+                        {
+                            ShowSplash();
+                            return;
+                        }
                         client.PacketReceived += mainCanvas.ProcessPacket;
                         isConnected = true;
 
