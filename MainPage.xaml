@@ -84,7 +84,7 @@
                                 PolySides="{Binding ElementName=sidesValue, Path=Value, Mode=TwoWay}"
                                 DrawColor="{Binding ElementName=colorPicker, Path=Color, Mode=OneWay}"
                                 Height="720"
-                                Width="1024"/>
+                                Width="900"/>
             <!-- Height and Width set to enable scroll bars, DO NOT CHANGE -->
         </ScrollViewer>
 
