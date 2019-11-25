@@ -47,7 +47,14 @@ namespace Networking.Models
         protected void DefaultConnectCallback(IAsyncResult result)
         {
             StateObject state = (StateObject)result.AsyncState;
-            state.workSocket.EndConnect(result);
+            try 
+            {
+                state.workSocket.EndConnect(result);
+            }
+            catch (ObjectDisposedException ex)
+            {
+                return;
+            }
             clientSocket = state.workSocket;
 
             StateObject state2 = new StateObject();

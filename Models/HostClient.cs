@@ -34,8 +34,16 @@ namespace Networking.Models
 
         private void OnConnectionReceived(IAsyncResult result)
         {
+            Socket newConnection = null;
             Socket stateSocket = (Socket)result.AsyncState;
-            Socket newConnection = stateSocket.EndAccept(result);
+            try 
+            {
+                newConnection = stateSocket.EndAccept(result);
+            }
+            catch (ObjectDisposedException ex)
+            {
+                return;
+            }
 
             if (newConnection.Connected)
             {
