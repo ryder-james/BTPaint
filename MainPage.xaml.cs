@@ -235,6 +235,8 @@ namespace BTPaint
             {
                 case WelcomeSplashResult.Solo:
                     isConnected = false;
+                    loadBtn.IsEnabled = true;
+                    loadBtn.Visibility = Visibility.Visible;
                     break;
                 case WelcomeSplashResult.Join:
                     loadBtn.IsEnabled = false;
