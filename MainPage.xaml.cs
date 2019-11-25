@@ -294,15 +294,11 @@ namespace BTPaint
             {
                 connectBtn.Visibility = Visibility.Collapsed;
                 disconnectBtn.Visibility = Visibility.Visible;
-                clearBtn.Visibility = Visibility.Collapsed;
-                editSep1.Visibility = Visibility.Collapsed;
                 fileSep1.Visibility = Visibility.Collapsed;
             }else
             {
                 connectBtn.Visibility = Visibility.Visible;
                 disconnectBtn.Visibility = Visibility.Collapsed;
-                clearBtn.Visibility = Visibility.Visible;
-                editSep1.Visibility = Visibility.Visible;
                 fileSep1.Visibility = Visibility.Visible;
             }
             SideBar.IsPaneOpen = true;
