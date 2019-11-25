@@ -83,8 +83,8 @@
                                 Size="{Binding ElementName=sizeSlider, Path=Value, Mode=TwoWay}"
                                 PolySides="{Binding ElementName=sidesValue, Path=Value, Mode=TwoWay}"
                                 DrawColor="{Binding ElementName=colorPicker, Path=Color, Mode=OneWay}"
-                                Height="2000"
-                                Width="2000"/>
+                                Height="720"
+                                Width="1024"/>
             <!-- Height and Width set to enable scroll bars, DO NOT CHANGE -->
         </ScrollViewer>
 
@@ -102,9 +102,11 @@
                         
                         <!-- Color Picker -->
                         <ColorPicker x:Name="colorPicker"
-                        ColorSpectrumShape="Ring"
+                        ColorSpectrumShape="Box"
                         Margin="0 0 5 0"
                         Color="Black"
+                        IsAlphaEnabled="False"
+                        ColorSpectrumComponents="SaturationValue"
                         ColorChanged="colorPicker_ColorChanged">
                         </ColorPicker>
 
