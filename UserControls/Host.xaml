@@ -12,14 +12,14 @@
     <ContentDialog.Resources>
         <Style TargetType="Button">
             <Setter Property="FontSize" Value="14"/>
-            <Setter Property="Background" Value="#41494E"/>
+            <Setter Property="Background" Value="#808080"/>
             <Setter Property="Padding" Value="5 10"/>
             <Setter Property="Margin" Value="10 10"/>
             <Setter Property="Width" Value="75"/>
         </Style>
     </ContentDialog.Resources>
     
-    <Grid Background="#425450">
+    <Grid Background="DarkGray">
         <Grid.RowDefinitions>
             <RowDefinition Height="2*"/>
             <RowDefinition/>
@@ -41,7 +41,7 @@
                 BorderBrush="Black"
                 BorderThickness="2"
                 Background="LightGray" Height="25">
-            <TextBlock Text="THIS IS FOR THE IP" Foreground="Black" Margin="5 0"/>
+            <TextBlock x:Name="IPTextBlock" Text="IP Address Not Found" Foreground="Black" Margin="5 0"/>
         </Border>
         <Button Grid.Row="2" Grid.Column="1"
                 HorizontalAlignment="Center" VerticalAlignment="Top"
