@@ -38,9 +38,9 @@
                         </Flyout.FlyoutPresenterStyle>
                         <StackPanel Orientation="Vertical">
                             <MenuFlyoutItem x:Name="saveBtn" Text="Save" HorizontalContentAlignment="Center" Click="saveBtn_Click"></MenuFlyoutItem>
-                            <MenuFlyoutSeparator/>
+                            <MenuFlyoutSeparator x:Name="fileSep1"/>
                             <MenuFlyoutItem x:Name="loadBtn" Text="Load" HorizontalContentAlignment="Center" Click="loadBtn_Click"></MenuFlyoutItem>
-                            <MenuFlyoutSeparator/>
+                            <MenuFlyoutSeparator x:Name="fileSep2"/>
                             <MenuFlyoutItem x:Name="exitBtn" Text="Exit" HorizontalContentAlignment="Center" Click="exitBtn_Click" Foreground="Red"></MenuFlyoutItem>
                         </StackPanel>
                     </Flyout>
@@ -61,7 +61,7 @@
                         </Flyout.FlyoutPresenterStyle>
                         <StackPanel Orientation="Vertical">
                             <MenuFlyoutItem x:Name="resizeBtn" Text="Resize" HorizontalContentAlignment="Center" Click="resizeBtn_Click"></MenuFlyoutItem>
-                            <MenuFlyoutSeparator/>
+                            <MenuFlyoutSeparator x:Name="editSep1"/>
                             <MenuFlyoutItem x:Name="clearBtn" Text="Clear" HorizontalContentAlignment="Center" Click="clearBtn_Click" Foreground="Red"></MenuFlyoutItem>
                         </StackPanel>
                     </Flyout>
