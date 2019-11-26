@@ -45,7 +45,7 @@
         </Border>
         <Button Grid.Row="2" Grid.Column="1"
                 HorizontalAlignment="Center" VerticalAlignment="Top"
-                Content="Host"
+                Content="Start Host"
                 Click="Host_Click"/>
         <Button Grid.Row="2" Grid.Column="2"
                 HorizontalAlignment="Center" VerticalAlignment="Top"

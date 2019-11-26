@@ -204,21 +204,9 @@ namespace BTPaint
             client.Send(line);
         }
 
-        private void importBtn_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-
-
         private void exitBtn_Click(object sender, RoutedEventArgs e)
         {
             CoreApplication.Exit();
-        }
-
-        private void resizeBtn_Click(object sender, RoutedEventArgs e)
-        {
-
         }
 
         private void clearBtn_Click(object sender, RoutedEventArgs e)
@@ -281,10 +269,11 @@ namespace BTPaint
                     if (hostPage.Result == Host.HostResult.MainMenu)
                     {
                         ShowSplash();
+                        if (client != null) client.Close();
                     }
                     else if (hostPage.Result == Host.HostResult.Host)
                     {
-
+                        mainCanvas.Clear(Colors.Transparent);
                     }
                     break;
                 case WelcomeSplashResult.Exit:
