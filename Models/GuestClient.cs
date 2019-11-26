@@ -71,7 +71,16 @@ namespace Networking.Models
 
             StateObject state = (StateObject)result.AsyncState;
 
-            int packetSize = state.workSocket.EndReceive(result);
+            int packetSize;
+            try
+            {
+                packetSize = state.workSocket.EndReceive(result);
+            }
+            catch (ObjectDisposedException)
+            {
+                return;
+            }
+
             state.buffer = new byte[packetSize];
 
             // this "workSocket" is essentially the connection to the client
