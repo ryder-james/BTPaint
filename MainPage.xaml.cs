@@ -227,6 +227,11 @@ namespace BTPaint
             client.Send(line);
         }
 
+        /// <summary>
+        /// Closes the Program
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void exitBtn_Click(object sender, RoutedEventArgs e)
         {
             CoreApplication.Exit();
@@ -249,6 +254,7 @@ namespace BTPaint
                     loadBtn.IsEnabled = true;
                     loadBtn.Visibility = Visibility.Visible;
                     break;
+                //shows the Join Splash or shows the MainMenu Splash
                 case WelcomeSplashResult.Join:
                     loadBtn.IsEnabled = false;
                     loadBtn.Visibility = Visibility.Collapsed;
@@ -276,6 +282,7 @@ namespace BTPaint
                         mainCanvas.LineDrawn += CanvasLineDrawn;
                     }
                     break;
+                //shows the Host Splash or shows the MainMenu Splash
                 case WelcomeSplashResult.Host:
                     client = new HostClient();
 
