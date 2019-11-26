@@ -42,6 +42,11 @@ namespace BTPaint
             ShowSplash();
         }
 
+        /// <summary>
+        /// Checks is the side bar is open. If not, open the side bar. If open, close the sidebar. Change the icon accordingly.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void collapseSideBarBtn_Click(object sender, RoutedEventArgs e)
         {
             SideBar.IsPaneOpen = !SideBar.IsPaneOpen;
@@ -242,6 +247,9 @@ namespace BTPaint
             mainCanvas.Clear();
         }
 
+        /// <summary>
+        /// Shows the welcoming title screen.
+        /// </summary>
         private async void ShowSplash()
         {
             WelcomePage welcomePage = new WelcomePage();
@@ -249,6 +257,7 @@ namespace BTPaint
 
             switch (welcomePage.Result)
             {
+                //If the user clicks on "Solo Paint"
                 case WelcomeSplashResult.Solo:
                     isConnected = false;
                     loadBtn.IsEnabled = true;
@@ -311,6 +320,9 @@ namespace BTPaint
                     break;
             }
 
+            //checks is the user is currently hosting or attempting to join a hosted canvas. If so, hide
+            //the clear and load buttons (and their corresponding separators), and switch the connection button's state
+            //(from disconnect to connect, and vice versa)
             if (isConnected)
             {
                 connectBtn.Visibility = Visibility.Collapsed;
@@ -329,6 +341,11 @@ namespace BTPaint
             SideBar.IsPaneOpen = true;
         }
 
+        /// <summary>
+        /// Highlights the pencil button, and sets the drawing style to line.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void pencilBtn_Click(object sender, RoutedEventArgs e)
         {
             mainCanvas.ShouldErase = false;
@@ -341,6 +358,11 @@ namespace BTPaint
             sidesValue.Value = 1;
         }
 
+        /// <summary>
+        /// Highlights the eraser button, and sets the drawing style to eraser
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void eraserBtn_Click(object sender, RoutedEventArgs e)
         {
             mainCanvas.ShouldErase = true;
@@ -352,6 +374,11 @@ namespace BTPaint
             sidesValue.Value = 1;
         }
 
+        /// <summary>
+        /// Hightlights the polygon button, displays the number of sides slider, and sets the drawing style to polygon.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void polygonBtn_Click(object sender, RoutedEventArgs e)
         {
             mainCanvas.ShouldErase = false;
@@ -366,21 +393,25 @@ namespace BTPaint
             sidesSlider.Value = 3;
         }
 
+        //Event handler to set the sidesValue.value to the sidesSlider.value
         private void sidesSlider_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
         {
             sidesValue.Value = sidesSlider.Value;
         }
 
+        //event handler to set the raster canvas' current color to the color picker's color
         private void colorPicker_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
         {
             mainCanvas.DrawColor = colorPicker.Color;
         }
 
+        //show the splash screen
         private void connectBtn_Click(object sender, RoutedEventArgs e)
         {
             ShowSplash();
         }
 
+        //show the splash screen, and close the client
         private void disconnectBtn_Click(object sender, RoutedEventArgs e)
         {
             ShowSplash();
