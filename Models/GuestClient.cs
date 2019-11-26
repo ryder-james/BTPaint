@@ -78,6 +78,7 @@ namespace Networking.Models
             }
             catch (Exception e) when (e is ObjectDisposedException || e is SocketException) 
             {
+                base.RemoteDisconnected((IPEndPoint)state.workSocket.RemoteEndPoint);
                 return;
             }
 

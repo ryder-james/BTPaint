@@ -11,6 +11,7 @@ namespace Networking.Models
 {
     public delegate void PacketReceivedEventHandler(byte[] packetBytes);
 
+    public delegate void DisconnectEventHandler(IPEndPoint disconnectedEndPoint);
 
     public abstract class Client
     {
@@ -25,6 +26,7 @@ namespace Networking.Models
         public const int DefaultPort = 10000;
 
         public event PacketReceivedEventHandler PacketReceived;
+        public event DisconnectEventHandler RemoteDisconnectedHandler;
 
         protected Socket connectionSocket;
 
@@ -65,6 +67,14 @@ namespace Networking.Models
             if (realPacket && PacketReceived != null)
             {
                 PacketReceived(state.buffer);
+            }
+        }
+
+        protected virtual void RemoteDisconnected(IPEndPoint remote)
+        {
+            if (RemoteDisconnectedHandler != null)
+            {
+                RemoteDisconnectedHandler(remote);
             }
         }
 

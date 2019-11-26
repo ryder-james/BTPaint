@@ -104,6 +104,7 @@ namespace Networking.Models
             {
                 clientSockets.Contains(state.workSocket);
                 clientSockets.Remove(state.workSocket);
+                base.RemoteDisconnected((IPEndPoint)state.workSocket.RemoteEndPoint);
                 return;
             }
             
