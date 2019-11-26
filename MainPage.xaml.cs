@@ -266,6 +266,14 @@ namespace BTPaint
                     }
                     break;
                 case WelcomeSplashResult.Host:
+                    client = new HostClient();
+
+                    ((HostClient)client).BeginAccept();
+                    client.PacketReceived += mainCanvas.ProcessPacket;
+                    isConnected = true;
+
+                    mainCanvas.LineDrawn += CanvasLineDrawn;
+
                     loadBtn.IsEnabled = false;
                     loadBtn.Visibility = Visibility.Collapsed;
                     Host hostPage = new Host();
@@ -276,13 +284,7 @@ namespace BTPaint
                     }
                     else if (hostPage.Result == Host.HostResult.Host)
                     {
-                        client = new HostClient();
 
-                        ((HostClient)client).BeginAccept();
-                        client.PacketReceived += mainCanvas.ProcessPacket;
-                        isConnected = true;
-
-                        mainCanvas.LineDrawn += CanvasLineDrawn;
                     }
                     break;
                 case WelcomeSplashResult.Exit:
