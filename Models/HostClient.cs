@@ -94,8 +94,18 @@ namespace Networking.Models
             base.OnPacketReceived(result);
 
             StateObject state = (StateObject)result.AsyncState;
+            int packetSize;
 
-            int packetSize = state.workSocket.EndReceive(result);
+            try
+            {
+                packetSize = state.workSocket.EndReceive(result);
+            }
+            catch (SocketException)
+            {
+                clientSockets.Contains(state.workSocket);
+                clientSockets.Remove(state.workSocket);
+                return;
+            }
             
             Send(state.buffer.Take(packetSize).ToArray());
 
