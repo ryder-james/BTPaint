@@ -55,6 +55,11 @@ namespace BTPaint
             }
         }
 
+        /// <summary>
+        /// Gets the file location to save the Bitmap
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void saveBtn_Click(object sender, RoutedEventArgs e)
         {
             FileSavePicker fileSavePicker = new FileSavePicker();
@@ -75,12 +80,18 @@ namespace BTPaint
             }
         }
 
+        /// <summary>
+        /// Saves the Writeable Bitmap to a file the user chooses.
+        /// </summary>
+        /// <param name="softwareBitmap">The softwareBitmap that gets saved to the file path.</param>
+        /// <param name="outputFile">The file path that the user wants to save to.</param>
         private async void SaveSoftwareBitmapToFile(SoftwareBitmap softwareBitmap, StorageFile outputFile)
         {
             using (IRandomAccessStream stream = await outputFile.OpenAsync(FileAccessMode.ReadWrite))
             {
                 // Create an encoder with the desired format
                 BitmapEncoder encoder;
+                //Saves the file in the correct encoder
                 if (outputFile.FileType == ".jpg" || outputFile.FileType == ".jpeg")
                 {
                     encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, stream);
@@ -94,6 +105,7 @@ namespace BTPaint
                 encoder.SetSoftwareBitmap(softwareBitmap);
 
                 // Set additional encoding parameters, if needed
+                // Scales the scaled photo back to the original size 
                 if (imageProperties != null)
                 {
                     encoder.BitmapTransform.ScaledWidth = imageProperties.Width;
@@ -137,10 +149,16 @@ namespace BTPaint
             }
         }
 
+        /// <summary>
+        /// Loads any Photo that is a Jpeg or PNG that the user chooses
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void loadBtn_Click(object sender, RoutedEventArgs e)
         {
             FileOpenPicker fileOpenPicker = new FileOpenPicker();
             fileOpenPicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+            //The types that are alowed to be seen by the user to load
             fileOpenPicker.FileTypeFilter.Add(".jpg");
             fileOpenPicker.FileTypeFilter.Add(".jpeg");
             fileOpenPicker.FileTypeFilter.Add(".png");
@@ -166,6 +184,8 @@ namespace BTPaint
 
                     ImageProperties x = await inputFile.Properties.GetImagePropertiesAsync();
                     imageProperties = x;
+
+                    //Scales the photo depending on size
                     if (x.Width > 2000 && x.Height > 1600)
                     {
                         mainCanvas.Width = x.Width / (scale * 2);
@@ -181,10 +201,12 @@ namespace BTPaint
                         mainCanvas.Width = x.Width;
                         mainCanvas.Height = x.Height;
                     }
+                    //Transforms the Softwarebitmap so that it doesnt run out of memory
                     BitmapTransform bt = new BitmapTransform();
                     softwareBitmap = new SoftwareBitmap(BitmapPixelFormat.Bgra8, (int)(mainCanvas.Width), (int)(mainCanvas.Height));
                     bt.ScaledHeight = (uint)mainCanvas.Height;
                     bt.ScaledWidth = (uint)mainCanvas.Width;
+                    //Decodes the Image to write it to the Bitmap
                     softwareBitmap = await decoder.GetSoftwareBitmapAsync(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Ignore, bt, ExifOrientationMode.IgnoreExifOrientation, ColorManagementMode.DoNotColorManage);
 
                     await mainCanvas.Bitmap.SetSourceAsync(stream);
@@ -199,26 +221,15 @@ namespace BTPaint
             }
         }
 
+
         private void CanvasLineDrawn(DrawPacket line)
         {
             client.Send(line);
         }
 
-        private void importBtn_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-
-
         private void exitBtn_Click(object sender, RoutedEventArgs e)
         {
             CoreApplication.Exit();
-        }
-
-        private void resizeBtn_Click(object sender, RoutedEventArgs e)
-        {
-
         }
 
         private void clearBtn_Click(object sender, RoutedEventArgs e)
