@@ -38,9 +38,9 @@
                         </Flyout.FlyoutPresenterStyle>
                         <StackPanel Orientation="Vertical">
                             <MenuFlyoutItem x:Name="saveBtn" Text="Save" HorizontalContentAlignment="Center" Click="saveBtn_Click"></MenuFlyoutItem>
-                            <MenuFlyoutSeparator/>
+                            <MenuFlyoutSeparator x:Name="fileSep1"/>
                             <MenuFlyoutItem x:Name="loadBtn" Text="Load" HorizontalContentAlignment="Center" Click="loadBtn_Click"></MenuFlyoutItem>
-                            <MenuFlyoutSeparator/>
+                            <MenuFlyoutSeparator x:Name="fileSep2"/>
                             <MenuFlyoutItem x:Name="exitBtn" Text="Exit" HorizontalContentAlignment="Center" Click="exitBtn_Click" Foreground="Red"></MenuFlyoutItem>
                         </StackPanel>
                     </Flyout>
@@ -48,25 +48,7 @@
             </AppBarButton>
 
             <!-- Edit Button -->
-            <AppBarButton Icon="Edit"  Label="Edit">
-                <AppBarButton.Flyout>
-                    <Flyout>
-                        <Flyout.FlyoutPresenterStyle>
-                            <Style TargetType="FlyoutPresenter">
-                                <Setter Property="Padding" Value="5"/>
-                                <Setter Property="Margin" Value="0 -5 0 0"/>
-                                <Setter Property="BorderBrush" Value="Black"/>
-                                <Setter Property="BorderThickness" Value="2"/>
-                            </Style>
-                        </Flyout.FlyoutPresenterStyle>
-                        <StackPanel Orientation="Vertical">
-                            <MenuFlyoutItem x:Name="resizeBtn" Text="Resize" HorizontalContentAlignment="Center" Click="resizeBtn_Click"></MenuFlyoutItem>
-                            <MenuFlyoutSeparator/>
-                            <MenuFlyoutItem x:Name="clearBtn" Text="Clear" HorizontalContentAlignment="Center" Click="clearBtn_Click" Foreground="Red"></MenuFlyoutItem>
-                        </StackPanel>
-                    </Flyout>
-                </AppBarButton.Flyout>
-            </AppBarButton>
+            <AppBarButton x:Name="clearBtn" Icon="Clear" Label="Clear" Foreground="Red" Click="clearBtn_Click" />
 
             <!-- Connection Buttons -->
             <AppBarButton x:Name="connectBtn" Icon="AddFriend"  Label="Connect" HorizontalContentAlignment="Center" Click="connectBtn_Click"></AppBarButton>
@@ -83,8 +65,8 @@
                                 Size="{Binding ElementName=sizeSlider, Path=Value, Mode=TwoWay}"
                                 PolySides="{Binding ElementName=sidesValue, Path=Value, Mode=TwoWay}"
                                 DrawColor="{Binding ElementName=colorPicker, Path=Color, Mode=OneWay}"
-                                Height="2000"
-                                Width="2000"/>
+                                Height="720"
+                                Width="900"/>
             <!-- Height and Width set to enable scroll bars, DO NOT CHANGE -->
         </ScrollViewer>
 
@@ -102,9 +84,11 @@
                         
                         <!-- Color Picker -->
                         <ColorPicker x:Name="colorPicker"
-                        ColorSpectrumShape="Ring"
+                        ColorSpectrumShape="Box"
                         Margin="0 0 5 0"
                         Color="Black"
+                        IsAlphaEnabled="False"
+                        ColorSpectrumComponents="SaturationValue"
                         ColorChanged="colorPicker_ColorChanged">
                         </ColorPicker>
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -29,7 +30,9 @@ namespace BTPaint.UserControls
         public Host()
         {
             this.InitializeComponent();
-            
+
+            IPHostEntry ipHost = Dns.GetHostEntry(Dns.GetHostName());
+            IPTextBlock.Text = ipHost.AddressList[1].ToString();
         }
 
         private void Host_Click(object sender, RoutedEventArgs e)

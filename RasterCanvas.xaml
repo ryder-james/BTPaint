@@ -14,6 +14,8 @@
             PointerExited="MainCanvas_PointerReleased"
             SizeChanged="MainCanvas_SizeChanged">
 
-        <Image x:Name="ImageControl"/>
+        <Border BorderBrush="Gray" BorderThickness="2">
+            <Image x:Name="ImageControl"/>
+        </Border>
     </Canvas>
 </UserControl>

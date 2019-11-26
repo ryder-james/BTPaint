@@ -12,14 +12,14 @@
     <ContentDialog.Resources>
         <Style TargetType="Button">
             <Setter Property="FontSize" Value="14"/>
-            <Setter Property="Background" Value="#41494E"/>
+            <Setter Property="Background" Value="#808080"/>
             <Setter Property="Padding" Value="5 10"/>
             <Setter Property="Margin" Value="10 10"/>
             <Setter Property="Width" Value="75"/>
         </Style>
     </ContentDialog.Resources>
 
-    <Grid Background="#425450">
+    <Grid Background="DarkGray">
         <Grid.RowDefinitions>
             <RowDefinition Height="2*"/>
             <RowDefinition Height="30"/>
@@ -44,6 +44,7 @@
                  BorderBrush="Black"
                  BorderThickness="2"
                  Background="LightGray"
+                 Foreground="Black"
                  Margin="0 0 0 2"
                  MaxLength="15"
                  Height="30"/>

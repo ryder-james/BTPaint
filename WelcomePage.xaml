@@ -6,12 +6,12 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="#425450">
+    Background="DarkGray">
 
     <ContentDialog.Resources>
         <Style TargetType="Button">
             <Setter Property="FontSize" Value="24"/>
-            <Setter Property="Background" Value="#41494E"/>
+            <Setter Property="Background" Value="#808080"/>
             <Setter Property="Padding" Value="20 10"/>
         </Style>
     </ContentDialog.Resources>
@@ -23,10 +23,12 @@
         </Grid.RowDefinitions>
 
         <TextBlock Text="Better Together Paint"
+                   FontFamily="Assets/Fonts/PermanentMarker-Regular.ttf#Permanent Marker"
                    FontSize="42"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Center"
                    FontStyle="Italic"
+                   Padding="0 0 20 0"
                    IsColorFontEnabled="True" 
                    Margin="0 0 0 20"/>
 
