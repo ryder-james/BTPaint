@@ -76,7 +76,7 @@ namespace Networking.Models
             {
                 packetSize = state.workSocket.EndReceive(result);
             }
-            catch (ObjectDisposedException)
+            catch (Exception e) when (e is ObjectDisposedException || e is SocketException) 
             {
                 return;
             }
