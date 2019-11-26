@@ -52,7 +52,17 @@ namespace Networking.Models
 
             StateObject state = (StateObject)result.AsyncState;
 
-            if (PacketReceived != null)
+            bool realPacket = false;
+            foreach (byte b in state.buffer)
+            {
+                if (b != 0)
+                {
+                    realPacket = true;
+                    break;
+                }
+            }
+
+            if (realPacket && PacketReceived != null)
             {
                 PacketReceived(state.buffer);
             }
