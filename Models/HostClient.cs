@@ -100,7 +100,7 @@ namespace Networking.Models
             {
                 packetSize = state.workSocket.EndReceive(result);
             }
-            catch (SocketException)
+            catch (Exception e) when (e is ObjectDisposedException || e is SocketException)
             {
                 clientSockets.Contains(state.workSocket);
                 clientSockets.Remove(state.workSocket);
