@@ -226,6 +226,17 @@ namespace BTPaint
             mainCanvas.Clear();
         }
 
+        private void HostDisconnected(IPEndPoint hostEndpoint)
+        {
+            mainCanvas.Clear();
+            ShowSplash();
+        }
+
+        private void ClientDisconnected(IPEndPoint clientEndPoint)
+        {
+            // notify host of disconnection
+        }
+
         private async void ShowSplash()
         {
             WelcomePage welcomePage = new WelcomePage();
@@ -260,6 +271,7 @@ namespace BTPaint
                             return;
                         }
                         client.PacketReceived += mainCanvas.ProcessPacket;
+                        client.RemoteDisconnectedHandler += HostDisconnected;
                         isConnected = true;
 
                         mainCanvas.LineDrawn += CanvasLineDrawn;
@@ -280,6 +292,7 @@ namespace BTPaint
 
                         ((HostClient)client).BeginAccept();
                         client.PacketReceived += mainCanvas.ProcessPacket;
+                        client.RemoteDisconnectedHandler += ClientDisconnected;
                         isConnected = true;
 
                         mainCanvas.LineDrawn += CanvasLineDrawn;
