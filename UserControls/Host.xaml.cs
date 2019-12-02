@@ -21,8 +21,8 @@ namespace BTPaint.UserControls
     public sealed partial class Host : ContentDialog
     {
         public enum HostResult {
-            Host,
-            MainMenu
+            MainMenu,
+            Host
         }
 
         public HostResult Result { get; set; }
