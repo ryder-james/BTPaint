@@ -252,6 +252,7 @@ namespace BTPaint
         /// </summary>
         private async void ShowSplash()
         {
+            mainCanvas.CanDraw = false;
             WelcomePage welcomePage = new WelcomePage();
             await welcomePage.ShowAsync();
 
