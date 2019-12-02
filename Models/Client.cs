@@ -11,7 +11,7 @@ namespace Networking.Models
 {
     public delegate void PacketReceivedEventHandler(byte[] packetBytes);
 
-    public delegate void DisconnectEventHandler(IPEndPoint disconnectedEndPoint);
+    public delegate void DisconnectEventHandler(IPEndPoint disconnectedEndPoint, bool wasLastConnection);
 
     public abstract class Client
     {
@@ -70,11 +70,11 @@ namespace Networking.Models
             }
         }
 
-        protected virtual void RemoteDisconnected(IPEndPoint remote)
+        protected virtual void RemoteDisconnected(IPEndPoint remote, bool wasLastConnection = true)
         {
             if (RemoteDisconnectedHandler != null)
             {
-                RemoteDisconnectedHandler(remote);
+                RemoteDisconnectedHandler(remote, wasLastConnection);
             }
         }
 

@@ -32,8 +32,8 @@ namespace BTPaint
     public sealed partial class MainPage : Page
     {
         private Client client;
-        
-        private bool isConnected = false;
+
+        private bool isConnected = false, splashOpen = false;
         private ImageProperties imageProperties;
 
         public MainPage()
@@ -229,16 +229,17 @@ namespace BTPaint
             mainCanvas.Clear();
         }
 
-        private async void HostDisconnected(IPEndPoint hostEndpoint)
+        private async void HostDisconnected(IPEndPoint hostEndpoint, bool wasLastConnection = true)
         {
             await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             {
                 mainCanvas.Clear();
                 ShowSplash();
+                client.Close();
             });
         }
 
-        private void ClientDisconnected(IPEndPoint clientEndPoint)
+        private async void ClientDisconnected(IPEndPoint clientEndPoint, bool wasLastConnection)
         {
             // notify host of disconnection
 
@@ -252,16 +253,32 @@ namespace BTPaint
             toastNodeList.Item(0).AppendChild(toastXml.CreateTextNode($"Aight, {userString} headed out."));
             IXmlNode toastNode = toastXml.SelectSingleNode("/toast");
             XmlElement audio = toastXml.CreateElement("audio");
-            audio.SetAttribute("src", "ms-winsoundevent:Notification.SMS");
+            audio.SetAttribute("src", "ms-winsoundevent:Notification.Default");
 
             ToastNotification toast = new ToastNotification(toastXml);
-            toast.ExpirationTime = DateTime.Now.AddSeconds(4);
+            toast.ExpirationTime = DateTime.Now.AddMilliseconds(300);
             ToastNotifier.Show(toast);
 
+            if (wasLastConnection)
+            {
+                await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                {
+                    mainCanvas.Clear();
+                    ShowSplash();
+                    client.Close();
+                });
+            }
         }
 
         private async void ShowSplash()
         {
+            if (splashOpen)
+            {
+                return;
+            }
+
+            splashOpen = true;
+
             WelcomePage welcomePage = new WelcomePage();
             await welcomePage.ShowAsync();
 
@@ -341,7 +358,9 @@ namespace BTPaint
                 clearBtn.Visibility = Visibility.Visible;
                 loadBtn.Visibility = Visibility.Visible;
             }
+
             SideBar.IsPaneOpen = true;
+            splashOpen = false;
         }
 
         private void pencilBtn_Click(object sender, RoutedEventArgs e)
@@ -399,6 +418,7 @@ namespace BTPaint
         private void disconnectBtn_Click(object sender, RoutedEventArgs e)
         {
             if (client != null) client.Close();
+            ShowSplash();
         }
     }
 }

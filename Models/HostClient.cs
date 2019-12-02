@@ -107,7 +107,7 @@ namespace Networking.Models
             {
                 clientSockets.Contains(state.workSocket);
                 clientSockets.Remove(state.workSocket);
-                base.RemoteDisconnected(clientEndPoints[state.workSocket]);
+                base.RemoteDisconnected(clientEndPoints[state.workSocket], clientSockets.Count == 0);
                 clientEndPoints.Remove(state.workSocket);
                 return;
             }
