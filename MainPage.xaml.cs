@@ -4,8 +4,10 @@ using Networking.Models;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Http;
 using System.Net.Sockets;
 using Windows.ApplicationModel.Core;
+using Windows.Data.Xml.Dom;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
@@ -13,6 +15,7 @@ using Windows.Storage.FileProperties;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
 using Windows.UI;
+using Windows.UI.Notifications;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -238,6 +241,23 @@ namespace BTPaint
         private void ClientDisconnected(IPEndPoint clientEndPoint)
         {
             // notify host of disconnection
+
+            ToastNotifier ToastNotifier = ToastNotificationManager.CreateToastNotifier();
+            XmlDocument toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText01);
+            XmlNodeList toastNodeList = toastXml.GetElementsByTagName("text");
+
+            String userString = clientEndPoint.ToString();
+            userString = userString.Substring(0, userString.IndexOf(':'));
+
+            toastNodeList.Item(0).AppendChild(toastXml.CreateTextNode($"Aight, {userString} headed out."));
+            IXmlNode toastNode = toastXml.SelectSingleNode("/toast");
+            XmlElement audio = toastXml.CreateElement("audio");
+            audio.SetAttribute("src", "ms-winsoundevent:Notification.SMS");
+
+            ToastNotification toast = new ToastNotification(toastXml);
+            toast.ExpirationTime = DateTime.Now.AddSeconds(4);
+            ToastNotifier.Show(toast);
+
         }
 
         private async void ShowSplash()
