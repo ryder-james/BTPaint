@@ -57,7 +57,6 @@ namespace Networking.Models
             }
             clientSocket = state.workSocket;
 
-            StateObject state2 = new StateObject();
             state.workSocket = clientSocket;
             state.buffer = new byte[StateObject.BufferSize];
 
