@@ -14,6 +14,7 @@
         <BitmapImage x:Key="eraserImage" UriSource="Assets/Icons/eraser.png"/>
         <BitmapImage x:Key="polygonImage" UriSource="Assets/Icons/triangle.png"/>
         <StandardUICommand x:Key="loadImage" Kind="Open" ExecuteRequested="loadBtn_Command"/>
+        <StandardUICommand x:Key="saveImage" Kind="Save" ExecuteRequested="saveBtn_Command"/>
     </Page.Resources>
     
     <!-- Grid Definitions -->
@@ -38,11 +39,16 @@
                             </Style>
                         </Flyout.FlyoutPresenterStyle>
                         <StackPanel Orientation="Vertical">
-                            <MenuFlyoutItem x:Name="saveBtn" Text="Save" HorizontalContentAlignment="Center" Click="saveBtn_Click"></MenuFlyoutItem>
+                            <MenuFlyoutItem x:Name="saveBtn" Text="Save" HorizontalContentAlignment="Center" Command="{StaticResource saveImage}"></MenuFlyoutItem>
                             <MenuFlyoutSeparator x:Name="fileSep1"/>
                             <MenuFlyoutItem x:Name="loadBtn" Text="Load" HorizontalContentAlignment="Center" Command="{StaticResource loadImage}"></MenuFlyoutItem>
                             <MenuFlyoutSeparator x:Name="fileSep2"/>
-                            <MenuFlyoutItem x:Name="exitBtn" Text="Exit" HorizontalContentAlignment="Center" Click="exitBtn_Click" Foreground="Red"></MenuFlyoutItem>
+                            <MenuFlyoutItem x:Name="exitBtn" Text="Exit" HorizontalContentAlignment="Center" Click="exitBtn_Click" Foreground="Red">
+                                <MenuFlyoutItem.KeyboardAccelerators>
+                                    <KeyboardAccelerator Key="D"
+                                     Modifiers="Menu"/>
+                                </MenuFlyoutItem.KeyboardAccelerators>
+                            </MenuFlyoutItem>
                         </StackPanel>
                     </Flyout>
                 </AppBarButton.Flyout>
