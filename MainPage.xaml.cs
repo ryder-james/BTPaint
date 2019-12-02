@@ -226,10 +226,13 @@ namespace BTPaint
             mainCanvas.Clear();
         }
 
-        private void HostDisconnected(IPEndPoint hostEndpoint)
+        private async void HostDisconnected(IPEndPoint hostEndpoint)
         {
-            mainCanvas.Clear();
-            ShowSplash();
+            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            {
+                mainCanvas.Clear();
+                ShowSplash();
+            });
         }
 
         private void ClientDisconnected(IPEndPoint clientEndPoint)
