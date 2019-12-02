@@ -378,7 +378,6 @@ namespace BTPaint
 
         private void disconnectBtn_Click(object sender, RoutedEventArgs e)
         {
-            ShowSplash();
             if (client != null) client.Close();
         }
     }
