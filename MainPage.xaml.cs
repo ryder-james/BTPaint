@@ -4,8 +4,10 @@ using Networking.Models;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Http;
 using System.Net.Sockets;
 using Windows.ApplicationModel.Core;
+using Windows.Data.Xml.Dom;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
@@ -13,6 +15,7 @@ using Windows.Storage.FileProperties;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
 using Windows.UI;
+using Windows.UI.Notifications;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -29,8 +32,8 @@ namespace BTPaint
     public sealed partial class MainPage : Page
     {
         private Client client;
-        
-        private bool isConnected = false;
+
+        private bool isConnected = false, splashOpen = false;
         private ImageProperties imageProperties;
 
         public MainPage()
@@ -226,8 +229,56 @@ namespace BTPaint
             mainCanvas.Clear();
         }
 
+        private async void HostDisconnected(IPEndPoint hostEndpoint, bool wasLastConnection = true)
+        {
+            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            {
+                mainCanvas.Clear();
+                ShowSplash();
+                client.Close();
+            });
+        }
+
+        private async void ClientDisconnected(IPEndPoint clientEndPoint, bool wasLastConnection)
+        {
+            // notify host of disconnection
+
+            ToastNotifier ToastNotifier = ToastNotificationManager.CreateToastNotifier();
+            XmlDocument toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText01);
+            XmlNodeList toastNodeList = toastXml.GetElementsByTagName("text");
+
+            String userString = clientEndPoint.ToString();
+            userString = userString.Substring(0, userString.IndexOf(':'));
+
+            toastNodeList.Item(0).AppendChild(toastXml.CreateTextNode($"Aight, {userString} headed out."));
+            IXmlNode toastNode = toastXml.SelectSingleNode("/toast");
+            XmlElement audio = toastXml.CreateElement("audio");
+            audio.SetAttribute("src", "ms-winsoundevent:Notification.Default");
+
+            ToastNotification toast = new ToastNotification(toastXml);
+            toast.ExpirationTime = DateTime.Now.AddMilliseconds(300);
+            ToastNotifier.Show(toast);
+
+            if (wasLastConnection)
+            {
+                await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                {
+                    mainCanvas.Clear();
+                    ShowSplash();
+                    client.Close();
+                });
+            }
+        }
+
         private async void ShowSplash()
         {
+            if (splashOpen)
+            {
+                return;
+            }
+
+            splashOpen = true;
+
             WelcomePage welcomePage = new WelcomePage();
             await welcomePage.ShowAsync();
 
@@ -260,6 +311,7 @@ namespace BTPaint
                             return;
                         }
                         client.PacketReceived += mainCanvas.ProcessPacket;
+                        client.RemoteDisconnectedHandler += HostDisconnected;
                         isConnected = true;
 
                         mainCanvas.LineDrawn += CanvasLineDrawn;
@@ -280,6 +332,7 @@ namespace BTPaint
 
                         ((HostClient)client).BeginAccept();
                         client.PacketReceived += mainCanvas.ProcessPacket;
+                        client.RemoteDisconnectedHandler += ClientDisconnected;
                         isConnected = true;
 
                         mainCanvas.LineDrawn += CanvasLineDrawn;
@@ -305,7 +358,9 @@ namespace BTPaint
                 clearBtn.Visibility = Visibility.Visible;
                 loadBtn.Visibility = Visibility.Visible;
             }
+
             SideBar.IsPaneOpen = true;
+            splashOpen = false;
         }
 
         private void pencilBtn_Click(object sender, RoutedEventArgs e)
@@ -362,8 +417,8 @@ namespace BTPaint
 
         private void disconnectBtn_Click(object sender, RoutedEventArgs e)
         {
-            ShowSplash();
             if (client != null) client.Close();
+            ShowSplash();
         }
     }
 }
