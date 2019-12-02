@@ -45,8 +45,8 @@
                             <MenuFlyoutSeparator x:Name="fileSep2"/>
                             <MenuFlyoutItem x:Name="exitBtn" Text="Exit" HorizontalContentAlignment="Center" Click="exitBtn_Click" Foreground="Red">
                                 <MenuFlyoutItem.KeyboardAccelerators>
-                                    <KeyboardAccelerator Key="D"
-                                     Modifiers="Menu"/>
+                                    <KeyboardAccelerator Key="Escape"
+                                     Modifiers="None"/>
                                 </MenuFlyoutItem.KeyboardAccelerators>
                             </MenuFlyoutItem>
                         </StackPanel>
