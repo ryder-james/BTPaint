@@ -313,6 +313,7 @@ namespace BTPaint
                     else if (hostPage.Result == Host.HostResult.Host)
                     {
                         mainCanvas.Clear(Colors.Transparent);
+                        mainCanvas.CanDraw = true;
                     }
                     break;
                 case WelcomeSplashResult.Exit:

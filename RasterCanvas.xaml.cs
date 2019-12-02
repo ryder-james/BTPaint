@@ -29,6 +29,7 @@ namespace BTPaint
     public sealed partial class RasterCanvas : UserControl, INotifyPropertyChanged
     {
         public static readonly DependencyProperty SizeProperty = DependencyProperty.Register("Size", typeof(double), typeof(RasterCanvas), null);
+        public static readonly DependencyProperty CanDrawProperty = DependencyProperty.Register("CanDraw", typeof(bool), typeof(RasterCanvas), null);
         public static readonly DependencyProperty PolySidesProperty = DependencyProperty.Register("PolySides", typeof(double), typeof(RasterCanvas), null);
         public static readonly DependencyProperty DrawColorProperty = DependencyProperty.Register("DrawColor", typeof(Color), typeof(RasterCanvas), null);
 
@@ -37,6 +38,7 @@ namespace BTPaint
 
         private bool shouldErase = false;
         private bool sizeInitialized = false;
+        private bool canDraw = false;
 
         private Point prevPosition;
         private WriteableBitmap writeableBitmap = new WriteableBitmap(512, 512);
@@ -49,6 +51,12 @@ namespace BTPaint
                 base.Background = value;
                 MainCanvas.Background = value;
             }
+        }
+
+        public bool CanDraw
+        {
+            get { return (bool)GetValue(DrawColorProperty); }
+            set { SetValue(DrawColorProperty, value); }
         }
 
         public double Size
@@ -152,53 +160,62 @@ namespace BTPaint
 
         private void MainCanvas_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            DrawColor = (ShouldErase ? ((SolidColorBrush)MainCanvas.Background).Color : DrawColor);
-
-            int size = (int)Size;
-
-            Point cp = e.GetCurrentPoint(MainCanvas).Position;
-            System.Drawing.Point currentPosition = new System.Drawing.Point((int)cp.X, (int)cp.Y);
-            System.Drawing.Color newColor = System.Drawing.Color.FromArgb(DrawColor.A, DrawColor.R, DrawColor.G, DrawColor.B);
-
-
-            if (e.Pointer.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Pen)
+            if (canDraw)
             {
-                size = (int)Math.Ceiling(size * e.GetCurrentPoint(null).Properties.Pressure);
+                DrawColor = (ShouldErase ? ((SolidColorBrush)MainCanvas.Background).Color : DrawColor);
+
+                int size = (int)Size;
+
+                Point cp = e.GetCurrentPoint(MainCanvas).Position;
+                System.Drawing.Point currentPosition = new System.Drawing.Point((int)cp.X, (int)cp.Y);
+                System.Drawing.Color newColor = System.Drawing.Color.FromArgb(DrawColor.A, DrawColor.R, DrawColor.G, DrawColor.B);
+
+
+                if (e.Pointer.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Pen)
+                {
+                    size = (int)Math.Ceiling(size * e.GetCurrentPoint(null).Properties.Pressure);
+                }
+
+                DrawPacket line = new DrawPacket(currentPosition, currentPosition, newColor, size, (byte)PolySides);
+
+                DrawPacket(line);
+
+
+                prevPosition = e.GetCurrentPoint(MainCanvas).Position;
+                MainCanvas.PointerMoved += MainCanvas_PointerMoved;
             }
-
-            DrawPacket line = new DrawPacket(currentPosition, currentPosition, newColor, size, (byte)PolySides);
-
-            DrawPacket(line);
-
-
-            prevPosition = e.GetCurrentPoint(MainCanvas).Position;
-            MainCanvas.PointerMoved += MainCanvas_PointerMoved;
         }
 
         private void MainCanvas_PointerReleased(object sender, PointerRoutedEventArgs e)
         {
-            MainCanvas.PointerMoved -= MainCanvas_PointerMoved;
+            if (canDraw)
+            {            
+                MainCanvas.PointerMoved -= MainCanvas_PointerMoved;
+            }
         }
 
         private void MainCanvas_PointerMoved(object sender, PointerRoutedEventArgs e)
         {
-            Point cp = e.GetCurrentPoint(MainCanvas).Position;
-
-            System.Drawing.Point pp = new System.Drawing.Point((int)prevPosition.X, (int)prevPosition.Y);
-            System.Drawing.Point currentPosition = new System.Drawing.Point((int)cp.X, (int)cp.Y);
-
-            System.Drawing.Color newColor = System.Drawing.Color.FromArgb(DrawColor.A, DrawColor.R, DrawColor.G, DrawColor.B);
-
-            int size = (int)Size;
-
-            if (e.Pointer.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Pen)
+            if (canDraw)
             {
-                size = (int)Math.Ceiling(size * e.GetCurrentPoint(null).Properties.Pressure);
+                Point cp = e.GetCurrentPoint(MainCanvas).Position;
+
+                System.Drawing.Point pp = new System.Drawing.Point((int)prevPosition.X, (int)prevPosition.Y);
+                System.Drawing.Point currentPosition = new System.Drawing.Point((int)cp.X, (int)cp.Y);
+
+                System.Drawing.Color newColor = System.Drawing.Color.FromArgb(DrawColor.A, DrawColor.R, DrawColor.G, DrawColor.B);
+
+                int size = (int)Size;
+
+                if (e.Pointer.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Pen)
+                {
+                    size = (int)Math.Ceiling(size * e.GetCurrentPoint(null).Properties.Pressure);
+                }
+
+                DrawPacket(new DrawPacket(pp, currentPosition, newColor, size, (byte)PolySides));
+
+                prevPosition = cp;                
             }
-
-            DrawPacket(new DrawPacket(pp, currentPosition, newColor, size, (byte)PolySides));
-
-            prevPosition = cp;
         }
 
         private void DrawPacket(DrawPacket packet, bool invokeLineDrawn = true)
@@ -269,6 +286,7 @@ namespace BTPaint
 
         public async void ProcessPacket(byte[] packet)
         {
+            canDraw = true;
             await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => {
                 DrawPacket(Models.DrawPacket.Restore(packet), false);
             });
