@@ -12,11 +12,13 @@ namespace Networking.Models
     public class HostClient : Client
     {
         private List<Socket> clientSockets; // list of everybody connected to the service
+        private Dictionary<Socket, IPEndPoint> clientEndPoints;
 
         public HostClient(int maxConnections = 100, int port = Client.DefaultPort)
         {
             connectionSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             clientSockets = new List<Socket>();
+            clientEndPoints = new Dictionary<Socket, IPEndPoint>();
 
             IPHostEntry ipHost = Dns.GetHostEntry(Dns.GetHostName());
             IPAddress ipAddr = ipHost.AddressList[1];
@@ -55,6 +57,7 @@ namespace Networking.Models
                 newConnection.BeginReceive(state.buffer, 0, state.buffer.Length, SocketFlags.None, OnPacketReceivedFromClient, state);
 
                 clientSockets.Add(newConnection);
+                clientEndPoints.Add(newConnection, (IPEndPoint) newConnection.RemoteEndPoint);
             }
 
             stateSocket.BeginAccept(OnConnectionReceived, stateSocket);
@@ -104,7 +107,8 @@ namespace Networking.Models
             {
                 clientSockets.Contains(state.workSocket);
                 clientSockets.Remove(state.workSocket);
-                base.RemoteDisconnected((IPEndPoint)state.workSocket.RemoteEndPoint);
+                base.RemoteDisconnected(clientEndPoints[state.workSocket]);
+                clientEndPoints.Remove(state.workSocket);
                 return;
             }
             
