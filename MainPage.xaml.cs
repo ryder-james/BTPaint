@@ -263,6 +263,7 @@ namespace BTPaint
                     isConnected = false;
                     loadBtn.IsEnabled = true;
                     loadBtn.Visibility = Visibility.Visible;
+                    mainCanvas.CanDraw = true;
                     break;
                 //shows the Join Splash or shows the MainMenu Splash
                 case WelcomeSplashResult.Join:
