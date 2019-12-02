@@ -50,7 +50,12 @@
                  Height="30"/>
         <Button Grid.Row="2" Grid.Column="1"
                 HorizontalAlignment="Center" VerticalAlignment="Top"
-                Content="Join" Click="Join_Click"/>
+                Content="Join" Click="Join_Click">
+            <Button.KeyboardAccelerators>
+                <KeyboardAccelerator Key="Enter"
+                                     Modifiers="None"/>
+            </Button.KeyboardAccelerators>
+        </Button>
         <Button Grid.Row="2" Grid.Column="2"
                 HorizontalAlignment="Center" VerticalAlignment="Top"
                 Content="Return" Click="Return_Click"/>

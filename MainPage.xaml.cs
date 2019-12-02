@@ -55,7 +55,7 @@ namespace BTPaint
             }
         }
 
-        private async void saveBtn_Click(object sender, RoutedEventArgs e)
+        private async void saveBtn_Command(XamlUICommand sender, ExecuteRequestedEventArgs args)
         {
             FileSavePicker fileSavePicker = new FileSavePicker();
             fileSavePicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
@@ -137,7 +137,7 @@ namespace BTPaint
             }
         }
 
-        private async void loadBtn_Click(object sender, RoutedEventArgs e)
+        private async void loadBtn_Command(XamlUICommand sender, ExecuteRequestedEventArgs args)
         {
             FileOpenPicker fileOpenPicker = new FileOpenPicker();
             fileOpenPicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
