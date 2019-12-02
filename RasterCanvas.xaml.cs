@@ -29,7 +29,6 @@ namespace BTPaint
     public sealed partial class RasterCanvas : UserControl, INotifyPropertyChanged
     {
         public static readonly DependencyProperty SizeProperty = DependencyProperty.Register("Size", typeof(double), typeof(RasterCanvas), null);
-        public static readonly DependencyProperty CanDrawProperty = DependencyProperty.Register("CanDraw", typeof(bool), typeof(RasterCanvas), null);
         public static readonly DependencyProperty PolySidesProperty = DependencyProperty.Register("PolySides", typeof(double), typeof(RasterCanvas), null);
         public static readonly DependencyProperty DrawColorProperty = DependencyProperty.Register("DrawColor", typeof(Color), typeof(RasterCanvas), null);
 
@@ -55,8 +54,8 @@ namespace BTPaint
 
         public bool CanDraw
         {
-            get { return (bool)GetValue(DrawColorProperty); }
-            set { SetValue(DrawColorProperty, value); }
+            get { return canDraw; }
+            set { canDraw = value; }
         }
 
         public double Size
