@@ -13,6 +13,7 @@
         <BitmapImage x:Key="pencilImage" UriSource="Assets/Icons/pencil.png"/>
         <BitmapImage x:Key="eraserImage" UriSource="Assets/Icons/eraser.png"/>
         <BitmapImage x:Key="polygonImage" UriSource="Assets/Icons/triangle.png"/>
+        <StandardUICommand x:Key="loadImage" Kind="Open" ExecuteRequested="loadBtn_Command"/>
     </Page.Resources>
     
     <!-- Grid Definitions -->
@@ -39,7 +40,7 @@
                         <StackPanel Orientation="Vertical">
                             <MenuFlyoutItem x:Name="saveBtn" Text="Save" HorizontalContentAlignment="Center" Click="saveBtn_Click"></MenuFlyoutItem>
                             <MenuFlyoutSeparator x:Name="fileSep1"/>
-                            <MenuFlyoutItem x:Name="loadBtn" Text="Load" HorizontalContentAlignment="Center" Click="loadBtn_Click"></MenuFlyoutItem>
+                            <MenuFlyoutItem x:Name="loadBtn" Text="Load" HorizontalContentAlignment="Center" Command="{StaticResource loadImage}"></MenuFlyoutItem>
                             <MenuFlyoutSeparator x:Name="fileSep2"/>
                             <MenuFlyoutItem x:Name="exitBtn" Text="Exit" HorizontalContentAlignment="Center" Click="exitBtn_Click" Foreground="Red"></MenuFlyoutItem>
                         </StackPanel>
