@@ -45,7 +45,12 @@
             <Button x:Name="exitBtn"
                     Content="Exit"
                     Width="{Binding ElementName=soloBtn, Path=ActualWidth, Mode=OneWay}" 
-                    Click="exitBtn_Click"/>
+                    Click="exitBtn_Click">
+                <Button.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="Escape"
+                                     Modifiers="None"/>
+                </Button.KeyboardAccelerators>
+            </Button>
         </StackPanel>
     </Grid>
 </ContentDialog>

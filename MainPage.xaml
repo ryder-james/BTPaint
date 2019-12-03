@@ -13,6 +13,8 @@
         <BitmapImage x:Key="pencilImage" UriSource="Assets/Icons/pencil.png"/>
         <BitmapImage x:Key="eraserImage" UriSource="Assets/Icons/eraser.png"/>
         <BitmapImage x:Key="polygonImage" UriSource="Assets/Icons/triangle.png"/>
+        <StandardUICommand x:Key="loadImage" Kind="Open" ExecuteRequested="loadBtn_Command"/>
+        <StandardUICommand x:Key="saveImage" Kind="Save" ExecuteRequested="saveBtn_Command"/>
     </Page.Resources>
     
     <!-- Grid Definitions -->
@@ -37,18 +39,28 @@
                             </Style>
                         </Flyout.FlyoutPresenterStyle>
                         <StackPanel Orientation="Vertical">
-                            <MenuFlyoutItem x:Name="saveBtn" Text="Save" HorizontalContentAlignment="Center" Click="saveBtn_Click"></MenuFlyoutItem>
+                            <MenuFlyoutItem x:Name="saveBtn" Text="Save" HorizontalContentAlignment="Center" Command="{StaticResource saveImage}"></MenuFlyoutItem>
                             <MenuFlyoutSeparator x:Name="fileSep1"/>
-                            <MenuFlyoutItem x:Name="loadBtn" Text="Load" HorizontalContentAlignment="Center" Click="loadBtn_Click"></MenuFlyoutItem>
+                            <MenuFlyoutItem x:Name="loadBtn" Text="Load" HorizontalContentAlignment="Center" Command="{StaticResource loadImage}"></MenuFlyoutItem>
                             <MenuFlyoutSeparator x:Name="fileSep2"/>
-                            <MenuFlyoutItem x:Name="exitBtn" Text="Exit" HorizontalContentAlignment="Center" Click="exitBtn_Click" Foreground="Red"></MenuFlyoutItem>
+                            <MenuFlyoutItem x:Name="exitBtn" Text="Exit" HorizontalContentAlignment="Center" Click="exitBtn_Click" Foreground="Red">
+                                <MenuFlyoutItem.KeyboardAccelerators>
+                                    <KeyboardAccelerator Key="Escape"
+                                                         Modifiers="None"/>
+                                </MenuFlyoutItem.KeyboardAccelerators>
+                            </MenuFlyoutItem>
                         </StackPanel>
                     </Flyout>
                 </AppBarButton.Flyout>
             </AppBarButton>
 
             <!-- Edit Button -->
-            <AppBarButton x:Name="clearBtn" Icon="Clear" Label="Clear" Foreground="Red" Click="clearBtn_Click" />
+            <AppBarButton x:Name="clearBtn" Icon="Clear" Label="Clear" Foreground="Red" Click="clearBtn_Click">
+                <AppBarButton.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="Delete"
+                                         Modifiers="Control"/>
+                </AppBarButton.KeyboardAccelerators>
+            </AppBarButton>
 
             <!-- Connection Buttons -->
             <AppBarButton x:Name="connectBtn" Icon="AddFriend"  Label="Connect" HorizontalContentAlignment="Center" Click="connectBtn_Click"></AppBarButton>
@@ -56,7 +68,12 @@
         </CommandBar>
 
         <!-- Collapse Side Bar Button -->
-        <AppBarButton x:Name="collapseSideBarBtn" Icon="Back"  Click="collapseSideBarBtn_Click"/>
+        <AppBarButton x:Name="collapseSideBarBtn" Icon="Back"  Click="collapseSideBarBtn_Click">
+            <AppBarButton.KeyboardAccelerators>
+                <KeyboardAccelerator Key="Q"
+                                 Modifiers="None"/>
+            </AppBarButton.KeyboardAccelerators>
+        </AppBarButton>
 
         <!-- Canvas -->
         <ScrollViewer Grid.Row="1" Grid.ColumnSpan="2" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible">

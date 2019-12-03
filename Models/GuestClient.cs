@@ -12,6 +12,7 @@ namespace Networking.Models
     public class GuestClient : Client
     {
         private Socket clientSocket;
+        private IPEndPoint serverEndPoint;
 
         public void BeginConnect(IPEndPoint targetAddress)
         {
@@ -56,8 +57,8 @@ namespace Networking.Models
                 return;
             }
             clientSocket = state.workSocket;
+            serverEndPoint = (IPEndPoint) clientSocket.RemoteEndPoint;
 
-            StateObject state2 = new StateObject();
             state.workSocket = clientSocket;
             state.buffer = new byte[StateObject.BufferSize];
 
@@ -71,7 +72,17 @@ namespace Networking.Models
 
             StateObject state = (StateObject)result.AsyncState;
 
-            int packetSize = state.workSocket.EndReceive(result);
+            int packetSize;
+            try
+            {
+                packetSize = state.workSocket.EndReceive(result);
+            }
+            catch (Exception e) when (e is ObjectDisposedException || e is SocketException) 
+            {
+                base.RemoteDisconnected(serverEndPoint);
+                return;
+            }
+
             state.buffer = new byte[packetSize];
 
             // this "workSocket" is essentially the connection to the client
