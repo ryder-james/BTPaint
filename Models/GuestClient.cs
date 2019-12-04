@@ -12,6 +12,7 @@ namespace Networking.Models
     public class GuestClient : Client
     {
         private Socket clientSocket;
+        private IPEndPoint serverEndPoint;
 
         public void BeginConnect(IPEndPoint targetAddress)
         {
@@ -56,8 +57,8 @@ namespace Networking.Models
                 return;
             }
             clientSocket = state.workSocket;
+            serverEndPoint = (IPEndPoint) clientSocket.RemoteEndPoint;
 
-            StateObject state2 = new StateObject();
             state.workSocket = clientSocket;
             state.buffer = new byte[StateObject.BufferSize];
 
@@ -67,11 +68,37 @@ namespace Networking.Models
 
         private void OnPacketReceivedFromServer(IAsyncResult result)
         {
+            bool realPacket = false;
+            StateObject state = (StateObject)result.AsyncState;
+            for (int i = 0; i < Client.BlockPacket.Length; i++)
+            {
+                if (state.buffer[i] != Client.BlockPacket[i])
+                {
+                    realPacket = true;
+                    break;
+                }
+            }
+
+            if (!realPacket)
+            {
+                Debug.WriteLine("Connection blocked");
+                state.workSocket.EndReceive(result);
+                return;
+            }
+
             base.OnPacketReceived(result);
 
-            StateObject state = (StateObject)result.AsyncState;
+            int packetSize;
+            try
+            {
+                packetSize = state.workSocket.EndReceive(result);
+            }
+            catch (Exception e) when (e is ObjectDisposedException || e is SocketException) 
+            {
+                base.RemoteDisconnected(serverEndPoint);
+                return;
+            }
 
-            int packetSize = state.workSocket.EndReceive(result);
             state.buffer = new byte[packetSize];
 
             // this "workSocket" is essentially the connection to the client
