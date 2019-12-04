@@ -353,6 +353,7 @@ namespace BTPaint
 
                     loadBtn.IsEnabled = false;
                     loadBtn.Visibility = Visibility.Collapsed;
+
                     Host hostPage = new Host();
                     await hostPage.ShowAsync();
                     if (hostPage.Result == Host.HostResult.MainMenu)
@@ -362,18 +363,13 @@ namespace BTPaint
                     }
                     else if (hostPage.Result == Host.HostResult.Host)
                     {
+                        ((HostClient)client).StopAccepting();
+
                         mainCanvas.Clear(Colors.Transparent);
                         mainCanvas.CanDraw = true;
 
-                        client = new HostClient();
-
-                        ((HostClient)client).BeginAccept();
                         client.PacketReceived += mainCanvas.ProcessPacket;
                         client.RemoteDisconnectedHandler += ClientDisconnected;
-                        isConnected = true;
-
-                        mainCanvas.LineDrawn += CanvasLineDrawn;
-
                     }
                     break;
                 case WelcomeSplashResult.Exit:

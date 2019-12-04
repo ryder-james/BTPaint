@@ -14,6 +14,8 @@ namespace Networking.Models
         private List<Socket> clientSockets; // list of everybody connected to the service
         private Dictionary<Socket, IPEndPoint> clientEndPoints;
 
+        private bool accepting = false;
+
         public HostClient(int maxConnections = 100, int port = Client.DefaultPort)
         {
             connectionSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -31,7 +33,14 @@ namespace Networking.Models
 
         public void BeginAccept()
         {
+            accepting = true;
+
             connectionSocket.BeginAccept(OnConnectionReceived, connectionSocket);
+        }
+
+        public void StopAccepting()
+        {
+            accepting = false;
         }
 
         private void OnConnectionReceived(IAsyncResult result)
@@ -41,13 +50,16 @@ namespace Networking.Models
             try 
             {
                 newConnection = stateSocket.EndAccept(result);
+
+                if (!accepting)
+                    newConnection.Close();
             }
             catch (ObjectDisposedException ex)
             {
                 return;
             }
 
-            if (newConnection.Connected)
+            if (accepting && newConnection.Connected)
             {
                 StateObject state = new StateObject();
                 state.workSocket = newConnection;
@@ -60,7 +72,8 @@ namespace Networking.Models
                 clientEndPoints.Add(newConnection, (IPEndPoint) newConnection.RemoteEndPoint);
             }
 
-            stateSocket.BeginAccept(OnConnectionReceived, stateSocket);
+            if (accepting)
+                stateSocket.BeginAccept(OnConnectionReceived, stateSocket);
         }
 
         public override void Send(byte[] buffer, SocketFlags flags = SocketFlags.None)
