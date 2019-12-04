@@ -264,22 +264,10 @@ namespace BTPaint
         private async void ClientDisconnected(IPEndPoint clientEndPoint, bool wasLastConnection)
         {
             // notify host of disconnection
-
-            ToastNotifier ToastNotifier = ToastNotificationManager.CreateToastNotifier();
-            XmlDocument toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText01);
-            XmlNodeList toastNodeList = toastXml.GetElementsByTagName("text");
-
-            String userString = clientEndPoint.ToString();
+            string userString = clientEndPoint.ToString();
             userString = userString.Substring(0, userString.IndexOf(':'));
 
-            toastNodeList.Item(0).AppendChild(toastXml.CreateTextNode($"Aight, {userString} headed out."));
-            IXmlNode toastNode = toastXml.SelectSingleNode("/toast");
-            XmlElement audio = toastXml.CreateElement("audio");
-            audio.SetAttribute("src", "ms-winsoundevent:Notification.Default");
-
-            ToastNotification toast = new ToastNotification(toastXml);
-            toast.ExpirationTime = DateTime.Now.AddMilliseconds(300);
-            ToastNotifier.Show(toast);
+            ShowMessage($"Aight, {userString} headed out.");
 
             if (wasLastConnection)
             {
@@ -290,6 +278,31 @@ namespace BTPaint
                     client.Close();
                 });
             }
+        }
+
+        private void ClientConnected(IPEndPoint clientEndPoint)
+        {
+            string userString = clientEndPoint.ToString();
+            userString = userString.Substring(0, userString.IndexOf(':'));
+
+            ShowMessage($"{userString} is ready to party.");
+        }
+
+
+        private void ShowMessage(string messageText)
+        {
+            ToastNotifier ToastNotifier = ToastNotificationManager.CreateToastNotifier();
+            XmlDocument toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText01);
+            XmlNodeList toastNodeList = toastXml.GetElementsByTagName("text");
+
+            toastNodeList.Item(0).AppendChild(toastXml.CreateTextNode(messageText));
+            IXmlNode toastNode = toastXml.SelectSingleNode("/toast");
+            XmlElement audio = toastXml.CreateElement("audio");
+            audio.SetAttribute("src", "ms-winsoundevent:Notification.Default");
+
+            ToastNotification toast = new ToastNotification(toastXml);
+            toast.ExpirationTime = DateTime.Now.AddMilliseconds(300);
+            ToastNotifier.Show(toast);
         }
 
         private async void ShowSplash()
@@ -350,6 +363,7 @@ namespace BTPaint
 
                     ((HostClient)client).BeginAccept();
                     client.PacketReceived += mainCanvas.ProcessPacket;
+                    client.RemoteConnectedHandler += ClientConnected;
                     isConnected = true;
 
                     mainCanvas.LineDrawn += CanvasLineDrawn;
