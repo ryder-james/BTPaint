@@ -68,9 +68,25 @@ namespace Networking.Models
 
         private void OnPacketReceivedFromServer(IAsyncResult result)
         {
-            base.OnPacketReceived(result);
-
+            bool realPacket = false;
             StateObject state = (StateObject)result.AsyncState;
+            for (int i = 0; i < Client.BlockPacket.Length; i++)
+            {
+                if (state.buffer[i] != Client.BlockPacket[i])
+                {
+                    realPacket = true;
+                    break;
+                }
+            }
+
+            if (!realPacket)
+            {
+                Debug.WriteLine("Connection blocked");
+                state.workSocket.EndReceive(result);
+                return;
+            }
+
+            base.OnPacketReceived(result);
 
             int packetSize;
             try
