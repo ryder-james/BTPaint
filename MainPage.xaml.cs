@@ -335,8 +335,11 @@ namespace BTPaint
                             return;
                         }
                         client.PacketReceived += mainCanvas.ProcessPacket;
+                        client.PacketReceived += FirstPacketReceived;
                         client.RemoteDisconnectedHandler += HostDisconnected;
                         isConnected = true;
+
+                        await lockDialog.ShowAsync();
 
                         mainCanvas.LineDrawn += CanvasLineDrawn;
                     }
@@ -474,6 +477,12 @@ namespace BTPaint
         {
             if (client != null) client.Close();
             ShowSplash();
+        }
+
+        private async void FirstPacketReceived(byte[] packets)
+        {
+            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => lockDialog.Hide());
+            client.PacketReceived -= FirstPacketReceived;
         }
     }
 }
