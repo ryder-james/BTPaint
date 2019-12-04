@@ -57,12 +57,12 @@ namespace Networking.Models
                     state.workSocket = newConnection;
 
                     byte[] buffer = new byte[StateObject.BufferSize];
-                    for (int i = 0; i < Client.BlockPacket.Count(); i++)
+                    for (int i = 0; i < Client.BlockPacket.Length; i++)
                     {
                         buffer[i] = Client.BlockPacket[i];
                     }
 
-                    state.buffer = new byte[StateObject.BufferSize];
+                    state.buffer = buffer;
 
                     newConnection.BeginSend(state.buffer, 0, state.buffer.Length, SocketFlags.None, DefaultSendCallback, state);
                     newConnection.Close();
