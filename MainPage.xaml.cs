@@ -338,6 +338,8 @@ namespace BTPaint
                         client.RemoteDisconnectedHandler += HostDisconnected;
                         isConnected = true;
 
+                        await lockDialog.ShowAsync();
+
                         mainCanvas.LineDrawn += CanvasLineDrawn;
                     }
                     break;
@@ -474,6 +476,11 @@ namespace BTPaint
         {
             if (client != null) client.Close();
             ShowSplash();
+        }
+
+        private async void FirstPacketReceived(byte[] packets)
+        {
+            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => lockDialog.Hide());
         }
     }
 }
