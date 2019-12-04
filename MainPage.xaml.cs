@@ -35,6 +35,7 @@ namespace BTPaint
 
         private bool isConnected = false, splashOpen = false;
         private ImageProperties imageProperties;
+        LockDialog lockDialog = new LockDialog();
 
         public MainPage()
         {
@@ -310,7 +311,6 @@ namespace BTPaint
                     isConnected = false;
                     loadBtn.IsEnabled = true;
                     loadBtn.Visibility = Visibility.Visible;
-                    mainCanvas.CanDraw = true;
                     break;
                 //shows the Join Splash or shows the MainMenu Splash
                 case WelcomeSplashResult.Join:
@@ -366,7 +366,6 @@ namespace BTPaint
                         ((HostClient)client).StopAccepting();
 
                         mainCanvas.Clear(Colors.Transparent);
-                        mainCanvas.CanDraw = true;
 
                         client.PacketReceived += mainCanvas.ProcessPacket;
                         client.RemoteDisconnectedHandler += ClientDisconnected;
