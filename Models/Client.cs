@@ -15,6 +15,8 @@ namespace Networking.Models
 
     public abstract class Client
     {
+        protected static readonly byte[] BlockPacket = BitConverter.GetBytes(0xDEADC0DE);
+
         protected class StateObject
         {
             public const int BufferSize = 1024;

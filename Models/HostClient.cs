@@ -52,7 +52,21 @@ namespace Networking.Models
                 newConnection = stateSocket.EndAccept(result);
 
                 if (!accepting)
+                {
+                    StateObject state = new StateObject();
+                    state.workSocket = newConnection;
+
+                    byte[] buffer = new byte[StateObject.BufferSize];
+                    for (int i = 0; i < Client.BlockPacket.Count(); i++)
+                    {
+                        buffer[i] = Client.BlockPacket[i];
+                    }
+
+                    state.buffer = new byte[StateObject.BufferSize];
+
+                    newConnection.BeginSend(state.buffer, 0, state.buffer.Length, SocketFlags.None, DefaultSendCallback, state);
                     newConnection.Close();
+                }
             }
             catch (ObjectDisposedException ex)
             {
