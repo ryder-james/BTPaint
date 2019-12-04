@@ -37,7 +37,6 @@ namespace BTPaint
 
         private bool shouldErase = false;
         private bool sizeInitialized = false;
-        private bool canDraw = false;
 
         private Point prevPosition;
         private WriteableBitmap writeableBitmap = new WriteableBitmap(512, 512);
@@ -50,12 +49,6 @@ namespace BTPaint
                 base.Background = value;
                 MainCanvas.Background = value;
             }
-        }
-
-        public bool CanDraw
-        {
-            get { return canDraw; }
-            set { canDraw = value; }
         }
 
         public double Size
@@ -159,62 +152,53 @@ namespace BTPaint
 
         private void MainCanvas_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            if (canDraw)
+            DrawColor = (ShouldErase ? ((SolidColorBrush)MainCanvas.Background).Color : DrawColor);
+
+            int size = (int)Size;
+
+            Point cp = e.GetCurrentPoint(MainCanvas).Position;
+            System.Drawing.Point currentPosition = new System.Drawing.Point((int)cp.X, (int)cp.Y);
+            System.Drawing.Color newColor = System.Drawing.Color.FromArgb(DrawColor.A, DrawColor.R, DrawColor.G, DrawColor.B);
+
+
+            if (e.Pointer.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Pen)
             {
-                DrawColor = (ShouldErase ? ((SolidColorBrush)MainCanvas.Background).Color : DrawColor);
-
-                int size = (int)Size;
-
-                Point cp = e.GetCurrentPoint(MainCanvas).Position;
-                System.Drawing.Point currentPosition = new System.Drawing.Point((int)cp.X, (int)cp.Y);
-                System.Drawing.Color newColor = System.Drawing.Color.FromArgb(DrawColor.A, DrawColor.R, DrawColor.G, DrawColor.B);
-
-
-                if (e.Pointer.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Pen)
-                {
-                    size = (int)Math.Ceiling(size * e.GetCurrentPoint(null).Properties.Pressure);
-                }
-
-                DrawPacket line = new DrawPacket(currentPosition, currentPosition, newColor, size, (byte)PolySides);
-
-                DrawPacket(line);
-
-
-                prevPosition = e.GetCurrentPoint(MainCanvas).Position;
-                MainCanvas.PointerMoved += MainCanvas_PointerMoved;
+                size = (int)Math.Ceiling(size * e.GetCurrentPoint(null).Properties.Pressure);
             }
+
+            DrawPacket line = new DrawPacket(currentPosition, currentPosition, newColor, size, (byte)PolySides);
+
+            DrawPacket(line);
+
+
+            prevPosition = e.GetCurrentPoint(MainCanvas).Position;
+            MainCanvas.PointerMoved += MainCanvas_PointerMoved;
         }
 
         private void MainCanvas_PointerReleased(object sender, PointerRoutedEventArgs e)
         {
-            if (canDraw)
-            {            
-                MainCanvas.PointerMoved -= MainCanvas_PointerMoved;
-            }
+            MainCanvas.PointerMoved -= MainCanvas_PointerMoved;
         }
 
         private void MainCanvas_PointerMoved(object sender, PointerRoutedEventArgs e)
         {
-            if (canDraw)
+            Point cp = e.GetCurrentPoint(MainCanvas).Position;
+
+            System.Drawing.Point pp = new System.Drawing.Point((int)prevPosition.X, (int)prevPosition.Y);
+            System.Drawing.Point currentPosition = new System.Drawing.Point((int)cp.X, (int)cp.Y);
+
+            System.Drawing.Color newColor = System.Drawing.Color.FromArgb(DrawColor.A, DrawColor.R, DrawColor.G, DrawColor.B);
+
+            int size = (int)Size;
+
+            if (e.Pointer.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Pen)
             {
-                Point cp = e.GetCurrentPoint(MainCanvas).Position;
-
-                System.Drawing.Point pp = new System.Drawing.Point((int)prevPosition.X, (int)prevPosition.Y);
-                System.Drawing.Point currentPosition = new System.Drawing.Point((int)cp.X, (int)cp.Y);
-
-                System.Drawing.Color newColor = System.Drawing.Color.FromArgb(DrawColor.A, DrawColor.R, DrawColor.G, DrawColor.B);
-
-                int size = (int)Size;
-
-                if (e.Pointer.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Pen)
-                {
-                    size = (int)Math.Ceiling(size * e.GetCurrentPoint(null).Properties.Pressure);
-                }
-
-                DrawPacket(new DrawPacket(pp, currentPosition, newColor, size, (byte)PolySides));
-
-                prevPosition = cp;                
+                size = (int)Math.Ceiling(size * e.GetCurrentPoint(null).Properties.Pressure);
             }
+
+            DrawPacket(new DrawPacket(pp, currentPosition, newColor, size, (byte)PolySides));
+
+            prevPosition = cp;                
         }
 
         private void DrawPacket(DrawPacket packet, bool invokeLineDrawn = true)
@@ -285,7 +269,6 @@ namespace BTPaint
 
         public async void ProcessPacket(byte[] packet)
         {
-            canDraw = true;
             await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => {
                 DrawPacket(Models.DrawPacket.Restore(packet), false);
             });

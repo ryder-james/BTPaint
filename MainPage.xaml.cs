@@ -31,7 +31,9 @@ namespace BTPaint
         private Client client;
         
         private bool isConnected = false;
+        private bool canDraw = false;
         private ImageProperties imageProperties;
+        LockDialog lockDialog = new LockDialog();
 
         public MainPage()
         {
@@ -252,8 +254,9 @@ namespace BTPaint
         /// </summary>
         private async void ShowSplash()
         {
-            mainCanvas.CanDraw = false;
+            canDraw = false;
             WelcomePage welcomePage = new WelcomePage();
+
             await welcomePage.ShowAsync();
 
             switch (welcomePage.Result)
@@ -263,7 +266,7 @@ namespace BTPaint
                     isConnected = false;
                     loadBtn.IsEnabled = true;
                     loadBtn.Visibility = Visibility.Visible;
-                    mainCanvas.CanDraw = true;
+                    canDraw = true;
                     break;
                 //shows the Join Splash or shows the MainMenu Splash
                 case WelcomeSplashResult.Join:
@@ -287,10 +290,15 @@ namespace BTPaint
                             ShowSplash();
                             return;
                         }
+
                         client.PacketReceived += mainCanvas.ProcessPacket;
+                        client.PacketReceived += FirstPacketReceived;
                         isConnected = true;
 
                         mainCanvas.LineDrawn += CanvasLineDrawn;
+
+                        await lockDialog.ShowAsync();
+
                     }
                     break;
                 //shows the Host Splash or shows the MainMenu Splash
@@ -315,7 +323,7 @@ namespace BTPaint
                     else if (hostPage.Result == Host.HostResult.Host)
                     {
                         mainCanvas.Clear(Colors.Transparent);
-                        mainCanvas.CanDraw = true;
+                        canDraw = true;
                     }
                     break;
                 case WelcomeSplashResult.Exit:
@@ -419,6 +427,12 @@ namespace BTPaint
         {
             ShowSplash();
             if (client != null) client.Close();
+        }
+
+        private async void FirstPacketReceived(byte[] packet)
+        {
+            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => lockDialog.Hide());
+            client.PacketReceived -= FirstPacketReceived;
         }
     }
 }
