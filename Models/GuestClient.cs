@@ -59,6 +59,8 @@ namespace Networking.Models
             clientSocket = state.workSocket;
             serverEndPoint = (IPEndPoint) clientSocket.RemoteEndPoint;
 
+            base.RemoteConnected(serverEndPoint);
+
             state.workSocket = clientSocket;
             state.buffer = new byte[StateObject.BufferSize];
 

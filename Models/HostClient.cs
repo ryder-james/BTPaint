@@ -82,6 +82,8 @@ namespace Networking.Models
                 // gets us ready to receive the first packet from the new client
                 newConnection.BeginReceive(state.buffer, 0, state.buffer.Length, SocketFlags.None, OnPacketReceivedFromClient, state);
 
+                base.RemoteConnected((IPEndPoint)newConnection.RemoteEndPoint);
+
                 clientSockets.Add(newConnection);
                 clientEndPoints.Add(newConnection, (IPEndPoint) newConnection.RemoteEndPoint);
             }
