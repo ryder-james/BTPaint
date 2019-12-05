@@ -174,17 +174,17 @@ namespace BTPaint
             {
                 ((GuestClient)client).BeginConnect(new IPEndPoint(IPAddress.Parse(ipText), Client.DefaultPort));
 
-                client.PacketReceived += FirstPacketReceived;
-                client.RemoteDisconnectedHandler += HostDisconnected;
-
-                // TODO : dialog needs to 
-
+                client.ConnectionFailed += () => lockDialog.Hide();
 
                 await lockDialog.ShowAsync();
 
                 if (lockDialog.Success)
-                {
+                {      
+                    client.PacketReceived += FirstPacketReceived;
+                    client.RemoteDisconnectedHandler += HostDisconnected;
+
                     mainCanvas.LineDrawn += CanvasLineDrawn;
+
                     isConnected = true;
                 }
                 else
