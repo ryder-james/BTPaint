@@ -113,7 +113,7 @@ namespace BTPaint
             bool mainMenuShouldShowAgain = false;
 
             client = new HostClient();
-            client.RemoteConnectedHandler += ClientConnected;
+            client.RemoteConnected += ClientConnected;
 
             ((HostClient)client).BeginAccept();
 
@@ -137,7 +137,7 @@ namespace BTPaint
                 isConnected = true;
 
                 client.PacketReceived += mainCanvas.ProcessPacket;
-                client.RemoteDisconnectedHandler += ClientDisconnected;
+                client.RemoteDisconnected += ClientDisconnected;
                 mainCanvas.LineDrawn += CanvasLineDrawn;
             }
 
@@ -181,7 +181,7 @@ namespace BTPaint
                 if (lockDialog.Success)
                 {      
                     client.PacketReceived += FirstPacketReceived;
-                    client.RemoteDisconnectedHandler += HostDisconnected;
+                    client.RemoteDisconnected += HostDisconnected;
 
                     mainCanvas.LineDrawn += CanvasLineDrawn;
 

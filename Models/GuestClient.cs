@@ -59,7 +59,7 @@ namespace Networking.Models
             clientSocket = state.workSocket;
             serverEndPoint = (IPEndPoint) clientSocket.RemoteEndPoint;
 
-            base.RemoteConnected(serverEndPoint);
+            base.FireRemoteConnected(serverEndPoint);
 
             state.workSocket = clientSocket;
             state.buffer = new byte[StateObject.BufferSize];
@@ -97,7 +97,7 @@ namespace Networking.Models
             }
             catch (Exception e) when (e is ObjectDisposedException || e is SocketException) 
             {
-                base.RemoteDisconnected(serverEndPoint);
+                base.FireRemoteDisconnected(serverEndPoint);
                 return;
             }
 

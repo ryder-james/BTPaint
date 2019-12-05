@@ -13,6 +13,7 @@ namespace Networking.Models
 
     public delegate void ConnectEventHandler(IPEndPoint connectedEndPoint);
     public delegate void DisconnectEventHandler(IPEndPoint disconnectedEndPoint, bool wasLastConnection);
+    public delegate void ConnectionFailedHandler();
 
     public abstract class Client
     {
@@ -29,8 +30,9 @@ namespace Networking.Models
         public const int DefaultPort = 10000;
 
         public event PacketReceivedEventHandler PacketReceived;
-        public event ConnectEventHandler RemoteConnectedHandler;
-        public event DisconnectEventHandler RemoteDisconnectedHandler;
+        public event ConnectEventHandler RemoteConnected;
+        public event DisconnectEventHandler RemoteDisconnected;
+        public event ConnectionFailedHandler ConnectionFailed;
 
         protected Socket connectionSocket;
 
@@ -68,26 +70,20 @@ namespace Networking.Models
                 }
             }
 
-            if (realPacket && PacketReceived != null)
+            if (realPacket)
             {
-                PacketReceived(state.buffer);
+                PacketReceived?.Invoke(state.buffer);
             }
         }
 
-        protected virtual void RemoteConnected(IPEndPoint remote)
+        protected virtual void FireRemoteConnected(IPEndPoint remote)
         {
-            if (RemoteConnectedHandler != null)
-            {
-                RemoteConnectedHandler(remote);
-            }
+            RemoteConnected?.Invoke(remote);
         }
 
-        protected virtual void RemoteDisconnected(IPEndPoint remote, bool wasLastConnection = true)
+        protected virtual void FireRemoteDisconnected(IPEndPoint remote, bool wasLastConnection = true)
         {
-            if (RemoteDisconnectedHandler != null)
-            {
-                RemoteDisconnectedHandler(remote, wasLastConnection);
-            }
+            RemoteDisconnected?.Invoke(remote, wasLastConnection);
         }
 
         protected virtual void DefaultSendCallback(IAsyncResult result)

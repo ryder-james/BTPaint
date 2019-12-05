@@ -82,7 +82,7 @@ namespace Networking.Models
                 // gets us ready to receive the first packet from the new client
                 newConnection.BeginReceive(state.buffer, 0, state.buffer.Length, SocketFlags.None, OnPacketReceivedFromClient, state);
 
-                base.RemoteConnected((IPEndPoint)newConnection.RemoteEndPoint);
+                base.FireRemoteConnected((IPEndPoint)newConnection.RemoteEndPoint);
 
                 clientSockets.Add(newConnection);
                 clientEndPoints.Add(newConnection, (IPEndPoint) newConnection.RemoteEndPoint);
@@ -136,7 +136,7 @@ namespace Networking.Models
             {
                 clientSockets.Contains(state.workSocket);
                 clientSockets.Remove(state.workSocket);
-                base.RemoteDisconnected(clientEndPoints[state.workSocket], clientSockets.Count == 0);
+                base.FireRemoteDisconnected(clientEndPoints[state.workSocket], clientSockets.Count == 0);
                 clientEndPoints.Remove(state.workSocket);
                 return;
             }
