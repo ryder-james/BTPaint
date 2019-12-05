@@ -36,7 +36,7 @@ namespace BTPaint
 
         private bool isConnected = false, splashOpen = false;
         private ImageProperties imageProperties;
-        LockDialog lockDialog = new LockDialog();
+        private LockDialog lockDialog = new LockDialog();
 
         public MainPage()
         {
