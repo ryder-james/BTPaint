@@ -28,11 +28,15 @@ namespace BTPaint.UserControls
             Success = true;
         }
 
-        public void ConnectionFailed()
+        public async void ConnectionFailed()
         {
-            Success = false;
+            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            {
+                Success = false;
 
-            this.Hide();
+                this.Hide();
+            });
+ 
         }
 
         private void cancelBtn_Click(object sender, RoutedEventArgs e)
