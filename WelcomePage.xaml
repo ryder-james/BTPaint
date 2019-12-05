@@ -23,6 +23,7 @@
         </Grid.RowDefinitions>
 
         <TextBlock Text="Better Together Paint"
+                   Foreground="Black"
                    FontFamily="Assets/Fonts/PermanentMarker-Regular.ttf#Permanent Marker"
                    FontSize="42"
                    HorizontalAlignment="Center"
