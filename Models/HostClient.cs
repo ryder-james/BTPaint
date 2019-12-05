@@ -14,6 +14,8 @@ namespace Networking.Models
         private List<Socket> clientSockets; // list of everybody connected to the service
         private Dictionary<Socket, IPEndPoint> clientEndPoints;
 
+        private bool accepting = false;
+
         public HostClient(int maxConnections = 100, int port = Client.DefaultPort)
         {
             connectionSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -31,7 +33,14 @@ namespace Networking.Models
 
         public void BeginAccept()
         {
+            accepting = true;
+
             connectionSocket.BeginAccept(OnConnectionReceived, connectionSocket);
+        }
+
+        public void StopAccepting()
+        {
+            accepting = false;
         }
 
         private void OnConnectionReceived(IAsyncResult result)
@@ -41,13 +50,30 @@ namespace Networking.Models
             try 
             {
                 newConnection = stateSocket.EndAccept(result);
+
+                if (!accepting)
+                {
+                    StateObject state = new StateObject();
+                    state.workSocket = newConnection;
+
+                    byte[] buffer = new byte[StateObject.BufferSize];
+                    for (int i = 0; i < Client.BlockPacket.Length; i++)
+                    {
+                        buffer[i] = Client.BlockPacket[i];
+                    }
+
+                    state.buffer = buffer;
+
+                    newConnection.BeginSend(state.buffer, 0, state.buffer.Length, SocketFlags.None, DefaultSendCallback, state);
+                    newConnection.Close();
+                }
             }
             catch (ObjectDisposedException ex)
             {
                 return;
             }
 
-            if (newConnection.Connected)
+            if (accepting && newConnection.Connected)
             {
                 StateObject state = new StateObject();
                 state.workSocket = newConnection;
@@ -56,11 +82,14 @@ namespace Networking.Models
                 // gets us ready to receive the first packet from the new client
                 newConnection.BeginReceive(state.buffer, 0, state.buffer.Length, SocketFlags.None, OnPacketReceivedFromClient, state);
 
+                base.FireRemoteConnected((IPEndPoint)newConnection.RemoteEndPoint);
+
                 clientSockets.Add(newConnection);
                 clientEndPoints.Add(newConnection, (IPEndPoint) newConnection.RemoteEndPoint);
             }
 
-            stateSocket.BeginAccept(OnConnectionReceived, stateSocket);
+            if (accepting)
+                stateSocket.BeginAccept(OnConnectionReceived, stateSocket);
         }
 
         public override void Send(byte[] buffer, SocketFlags flags = SocketFlags.None)
@@ -107,7 +136,7 @@ namespace Networking.Models
             {
                 clientSockets.Contains(state.workSocket);
                 clientSockets.Remove(state.workSocket);
-                base.RemoteDisconnected(clientEndPoints[state.workSocket], clientSockets.Count == 0);
+                base.FireRemoteDisconnected(clientEndPoints[state.workSocket], clientSockets.Count == 0);
                 clientEndPoints.Remove(state.workSocket);
                 return;
             }

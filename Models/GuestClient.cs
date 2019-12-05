@@ -59,6 +59,8 @@ namespace Networking.Models
             clientSocket = state.workSocket;
             serverEndPoint = (IPEndPoint) clientSocket.RemoteEndPoint;
 
+            base.FireRemoteConnected(serverEndPoint);
+
             state.workSocket = clientSocket;
             state.buffer = new byte[StateObject.BufferSize];
 
@@ -68,9 +70,25 @@ namespace Networking.Models
 
         private void OnPacketReceivedFromServer(IAsyncResult result)
         {
-            base.OnPacketReceived(result);
-
+            bool realPacket = false;
             StateObject state = (StateObject)result.AsyncState;
+            for (int i = 0; i < Client.BlockPacket.Length; i++)
+            {
+                if (state.buffer[i] != Client.BlockPacket[i])
+                {
+                    realPacket = true;
+                    break;
+                }
+            }
+
+            if (!realPacket)
+            {
+                state.workSocket.EndReceive(result);
+                base.FireConnectionFailed();
+                return;
+            }
+
+            base.OnPacketReceived(result);
 
             int packetSize;
             try
@@ -79,7 +97,7 @@ namespace Networking.Models
             }
             catch (Exception e) when (e is ObjectDisposedException || e is SocketException) 
             {
-                base.RemoteDisconnected(serverEndPoint);
+                base.FireRemoteDisconnected(serverEndPoint);
                 return;
             }
 

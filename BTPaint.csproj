@@ -137,6 +137,9 @@
     <Compile Include="UserControls\Join.xaml.cs">
       <DependentUpon>Join.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\LockDialog.xaml.cs">
+      <DependentUpon>LockDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WelcomePage.xaml.cs">
       <DependentUpon>WelcomePage.xaml</DependentUpon>
     </Compile>
@@ -224,6 +227,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\Join.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\LockDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

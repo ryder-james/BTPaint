@@ -198,7 +198,7 @@ namespace BTPaint
 
             DrawPacket(new DrawPacket(pp, currentPosition, newColor, size, (byte)PolySides));
 
-            prevPosition = cp;
+            prevPosition = cp;                
         }
 
         private void DrawPacket(DrawPacket packet, bool invokeLineDrawn = true)

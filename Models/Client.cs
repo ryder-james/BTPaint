@@ -11,10 +11,14 @@ namespace Networking.Models
 {
     public delegate void PacketReceivedEventHandler(byte[] packetBytes);
 
+    public delegate void ConnectEventHandler(IPEndPoint connectedEndPoint);
     public delegate void DisconnectEventHandler(IPEndPoint disconnectedEndPoint, bool wasLastConnection);
+    public delegate void ConnectionFailedHandler();
 
     public abstract class Client
     {
+        protected static readonly byte[] BlockPacket = BitConverter.GetBytes(0xDEADC0DE);
+
         protected class StateObject
         {
             public const int BufferSize = 1024;
@@ -26,7 +30,9 @@ namespace Networking.Models
         public const int DefaultPort = 10000;
 
         public event PacketReceivedEventHandler PacketReceived;
-        public event DisconnectEventHandler RemoteDisconnectedHandler;
+        public event ConnectEventHandler RemoteConnected;
+        public event DisconnectEventHandler RemoteDisconnected;
+        public event ConnectionFailedHandler ConnectionFailed;
 
         protected Socket connectionSocket;
 
@@ -50,8 +56,6 @@ namespace Networking.Models
 
         protected virtual void OnPacketReceived(IAsyncResult result)
         {
-            Debug.WriteLine("Packet received");
-
             StateObject state = (StateObject)result.AsyncState;
 
             bool realPacket = false;
@@ -64,18 +68,24 @@ namespace Networking.Models
                 }
             }
 
-            if (realPacket && PacketReceived != null)
+            if (realPacket)
             {
-                PacketReceived(state.buffer);
+                PacketReceived?.Invoke(state.buffer);
             }
         }
 
-        protected virtual void RemoteDisconnected(IPEndPoint remote, bool wasLastConnection = true)
+        protected virtual void FireRemoteConnected(IPEndPoint remote)
         {
-            if (RemoteDisconnectedHandler != null)
-            {
-                RemoteDisconnectedHandler(remote, wasLastConnection);
-            }
+            RemoteConnected?.Invoke(remote);
+        }
+
+        protected virtual void FireRemoteDisconnected(IPEndPoint remote, bool wasLastConnection = true)
+        {
+            RemoteDisconnected?.Invoke(remote, wasLastConnection);
+        }
+        protected virtual void FireConnectionFailed()
+        {
+            ConnectionFailed?.Invoke();
         }
 
         protected virtual void DefaultSendCallback(IAsyncResult result)
