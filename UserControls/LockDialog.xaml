@@ -10,12 +10,17 @@
     Background="DarkGray">
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        
         <TextBlock x:Name="lockTextBack"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Center"
-                   Text="{Binding Path=Text, Mode=OneWay}"
+                   Text="{Binding ElementName=lockTextFore, Path=Text}"
                    Foreground="Black"
-                   FontSize="{Binding Path=FontSize, Mode=OneWay}"
+                   FontSize="{Binding ElementName=lockTextFore, Path=FontSize}"
                    Margin="0 0 2 0"/>
 
         <TextBlock x:Name="lockTextFore"
@@ -23,5 +28,12 @@
                    VerticalAlignment="Center"
                    Text="Please wait for the host to start the session..."
                    FontSize="42"/>
+
+        <Button x:Name="cancelBtn"
+                Grid.Row="1"
+                Content="Cancel"
+                FontSize="30"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center" Click="cancelBtn_Click"/>
     </Grid>
 </ContentDialog>

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.Data.Xml.Dom;
 using Windows.Foundation;
@@ -42,53 +43,199 @@ namespace BTPaint
             this.InitializeComponent();
 
             sidesValue.Value = 1;
+
+            MainMenu();
+        }
+
+        private async void MainMenu(bool clearCanvas = true)
+        {
+            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+            {
+                if (clearCanvas)
+                    mainCanvas.Clear();
+                bool showSplashAgain = true;
+                while (showSplashAgain)
+                {
+                    showSplashAgain = await ShowSplash();
+                }
+            });
+        }
+        private async Task<bool> ShowSplash()
+        {
+            bool showAgain = false;
+
+            SideBar.IsPaneOpen = false;
+
+            if (!splashOpen)
+            {
+                splashOpen = true;
+
+                WelcomePage welcomePage = new WelcomePage();
+                await welcomePage.ShowAsync();
+
+                showAgain = await ExecuteMainMenuOption(welcomePage.Result);
+
+                splashOpen = false;
+            }
             
-            ShowSplash();
+            UpdateConnectBtnVisibility();
+
+            SideBar.IsPaneOpen = true;
+
+            return showAgain;
+        }
+        private async Task<bool> ExecuteMainMenuOption(WelcomeSplashResult result)
+        {
+            bool mainShouldShowAgain = false;
+
+            switch (result)
+            {
+                case WelcomeSplashResult.Solo:
+                    isConnected = false;
+                    loadBtn.IsEnabled = true;
+                    loadBtn.Visibility = Visibility.Visible;
+                    break;
+                case WelcomeSplashResult.Join:
+                    mainShouldShowAgain = await JoinSelected();
+                    break;
+                case WelcomeSplashResult.Host:
+                    mainShouldShowAgain = await HostSelected();
+                    break;
+                case WelcomeSplashResult.Exit:
+                    CoreApplication.Exit();
+                    break;
+            }
+
+            return mainShouldShowAgain;
+        }
+        private async Task<bool> HostSelected()
+        {
+            bool mainMenuShouldShowAgain = false;
+
+            client = new HostClient();
+            client.RemoteConnectedHandler += ClientConnected;
+
+            ((HostClient)client).BeginAccept();
+
+            Host hostPage = new Host();
+            await hostPage.ShowAsync();
+
+            if (hostPage.Result == Host.HostResult.MainMenu)
+            {
+                mainMenuShouldShowAgain = true;
+                if (client != null) client.Close();
+            }
+            else if (hostPage.Result == Host.HostResult.Host)
+            {
+                loadBtn.IsEnabled = false;
+                loadBtn.Visibility = Visibility.Collapsed;
+
+                ((HostClient)client).StopAccepting();
+
+                mainCanvas.Clear(Colors.Transparent);
+
+                isConnected = true;
+
+                client.PacketReceived += mainCanvas.ProcessPacket;
+                client.RemoteDisconnectedHandler += ClientDisconnected;
+                mainCanvas.LineDrawn += CanvasLineDrawn;
+            }
+
+            return mainMenuShouldShowAgain;
+        }
+        private async Task<bool> JoinSelected()
+        {
+            bool mainShouldShowAgain = false;
+
+            loadBtn.IsEnabled = false;
+            loadBtn.Visibility = Visibility.Collapsed;
+
+            Join joinPage = new Join();
+            await joinPage.ShowAsync();
+
+            if (joinPage.Result == Join.JoinResult.MainMenu)
+            {
+                mainShouldShowAgain = true;
+            }
+            else if (joinPage.Result == Join.JoinResult.Connect)
+            {
+                mainShouldShowAgain = await ConnectToClient(joinPage.IPText);
+            }
+
+            return mainShouldShowAgain;
+        }
+        private async Task<bool> ConnectToClient(string ipText)
+        {
+            bool mainShouldShowAgain = false;
+
+            client = new GuestClient();
+
+            try
+            {
+                ((GuestClient)client).BeginConnect(new IPEndPoint(IPAddress.Parse(ipText), Client.DefaultPort));
+
+                client.PacketReceived += FirstPacketReceived;
+                client.RemoteDisconnectedHandler += HostDisconnected;
+
+                // TODO : dialog needs to 
+
+
+                await lockDialog.ShowAsync();
+
+                if (lockDialog.Success)
+                {
+                    mainCanvas.LineDrawn += CanvasLineDrawn;
+                    isConnected = true;
+                }
+                else
+                {
+                    ShowMessage("Connection blocked by host.");
+                    mainShouldShowAgain = true;
+                }
+            }
+            catch (FormatException)
+            {
+                ShowMessage("IP Address is Invalid");
+                mainShouldShowAgain = true;
+            }
+
+            return mainShouldShowAgain;
         }
 
-        /// <summary>
-        /// Checks is the side bar is open. If not, open the side bar. If open, close the sidebar. Change the icon accordingly.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void collapseSideBarBtn_Click(object sender, RoutedEventArgs e)
+        private void ShowMessage(string messageText)
         {
-            SideBar.IsPaneOpen = !SideBar.IsPaneOpen;
+            ToastNotifier ToastNotifier = ToastNotificationManager.CreateToastNotifier();
+            XmlDocument toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText01);
+            XmlNodeList toastNodeList = toastXml.GetElementsByTagName("text");
 
-            if (SideBar.IsPaneOpen)
+            toastNodeList.Item(0).AppendChild(toastXml.CreateTextNode(messageText));
+            IXmlNode toastNode = toastXml.SelectSingleNode("/toast");
+            XmlElement audio = toastXml.CreateElement("audio");
+            audio.SetAttribute("src", "ms-winsoundevent:Notification.Default");
+
+            ToastNotification toast = new ToastNotification(toastXml);
+            toast.ExpirationTime = DateTime.Now.AddMilliseconds(300);
+            ToastNotifier.Show(toast);
+        }
+        private void UpdateConnectBtnVisibility()
+        {
+            if (isConnected)
             {
-                collapseSideBarBtn.Icon = new SymbolIcon(Symbol.Back);
-            }else
+                connectBtn.Visibility = Visibility.Collapsed;
+                disconnectBtn.Visibility = Visibility.Visible;
+                fileSep1.Visibility = Visibility.Collapsed;
+                clearBtn.Visibility = Visibility.Collapsed;
+                loadBtn.Visibility = Visibility.Collapsed;
+            }
+            else
             {
-                collapseSideBarBtn.Icon = new SymbolIcon(Symbol.Forward);
+                connectBtn.Visibility = Visibility.Visible;
+                disconnectBtn.Visibility = Visibility.Collapsed;
+                fileSep1.Visibility = Visibility.Visible;
+                clearBtn.Visibility = Visibility.Visible;
+                loadBtn.Visibility = Visibility.Visible;
             }
         }
-
-        /// <summary>
-        /// Gets the file location to save the Bitmap
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private async void saveBtn_Command(XamlUICommand sender, ExecuteRequestedEventArgs args)
-        {
-            FileSavePicker fileSavePicker = new FileSavePicker();
-            fileSavePicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-            fileSavePicker.FileTypeChoices.Add("JPEG files", new List<string>() { ".jpg", ".jpeg" });
-            fileSavePicker.FileTypeChoices.Add("PNG files", new List<string>() { ".png" });
-            fileSavePicker.SuggestedFileName = "image";
-
-            var outputFile = await fileSavePicker.PickSaveFileAsync();
-            if (outputFile != null)
-            {
-                SoftwareBitmap outputBitmap = SoftwareBitmap.CreateCopyFromBuffer(
-                mainCanvas.Bitmap.PixelBuffer,
-                BitmapPixelFormat.Bgra8,
-                mainCanvas.Bitmap.PixelWidth,
-                mainCanvas.Bitmap.PixelHeight);
-                SaveSoftwareBitmapToFile(outputBitmap, outputFile);
-            }
-        }
-
         /// <summary>
         /// Saves the Writeable Bitmap to a file the user chooses.
         /// </summary>
@@ -158,6 +305,70 @@ namespace BTPaint
             }
         }
 
+        private void CanvasLineDrawn(DrawPacket line)
+        {
+            client.Send(line);
+        }
+        private void HostDisconnected(IPEndPoint hostEndpoint, bool wasLastConnection = true)
+        {
+            MainMenu();
+        }
+        private void ClientDisconnected(IPEndPoint clientEndPoint, bool wasLastConnection)
+        {
+            // notify host of disconnection
+            string userString = clientEndPoint.ToString();
+            userString = userString.Substring(0, userString.IndexOf(':'));
+
+            ShowMessage($"Aight, {userString} headed out.");
+
+            if (wasLastConnection)
+            {
+                MainMenu();
+            }
+        }
+        private void ClientConnected(IPEndPoint clientEndPoint)
+        {
+            string userString = clientEndPoint.ToString();
+            userString = userString.Substring(0, userString.IndexOf(':'));
+
+            ShowMessage($"{userString} is ready to party.");
+        }
+        private async void FirstPacketReceived(byte[] packets)
+        {
+            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => lockDialog.Hide());
+            client.PacketReceived -= FirstPacketReceived;
+            client.PacketReceived += mainCanvas.ProcessPacket;
+        }
+
+        /// <summary>
+        /// Gets the file location to save the Bitmap
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <summary>
+        /// Closes the Program
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void saveBtn_Command(XamlUICommand sender, ExecuteRequestedEventArgs args)
+        {
+            FileSavePicker fileSavePicker = new FileSavePicker();
+            fileSavePicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+            fileSavePicker.FileTypeChoices.Add("JPEG files", new List<string>() { ".jpg", ".jpeg" });
+            fileSavePicker.FileTypeChoices.Add("PNG files", new List<string>() { ".png" });
+            fileSavePicker.SuggestedFileName = "image";
+
+            var outputFile = await fileSavePicker.PickSaveFileAsync();
+            if (outputFile != null)
+            {
+                SoftwareBitmap outputBitmap = SoftwareBitmap.CreateCopyFromBuffer(
+                mainCanvas.Bitmap.PixelBuffer,
+                BitmapPixelFormat.Bgra8,
+                mainCanvas.Bitmap.PixelWidth,
+                mainCanvas.Bitmap.PixelHeight);
+                SaveSoftwareBitmapToFile(outputBitmap, outputFile);
+            }
+        }
         /// <summary>
         /// Loads any Photo that is a Jpeg or PNG that the user chooses
         /// </summary>
@@ -230,192 +441,32 @@ namespace BTPaint
             }
         }
 
-
-        private void CanvasLineDrawn(DrawPacket line)
-        {
-            client.Send(line);
-        }
-
         /// <summary>
-        /// Closes the Program
+        /// Checks is the side bar is open. If not, open the side bar. If open, close the sidebar. Change the icon accordingly.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
+        private void collapseSideBarBtn_Click(object sender, RoutedEventArgs e)
+        {
+            SideBar.IsPaneOpen = !SideBar.IsPaneOpen;
+
+            if (SideBar.IsPaneOpen)
+            {
+                collapseSideBarBtn.Icon = new SymbolIcon(Symbol.Back);
+            }
+            else
+            {
+                collapseSideBarBtn.Icon = new SymbolIcon(Symbol.Forward);
+            }
+        }
         private void exitBtn_Click(object sender, RoutedEventArgs e)
         {
             CoreApplication.Exit();
         }
-
         private void clearBtn_Click(object sender, RoutedEventArgs e)
         {
             mainCanvas.Clear();
         }
-
-        private async void HostDisconnected(IPEndPoint hostEndpoint, bool wasLastConnection = true)
-        {
-            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-            {
-                mainCanvas.Clear();
-                ShowSplash();
-                client.Close();
-            });
-        }
-
-        private async void ClientDisconnected(IPEndPoint clientEndPoint, bool wasLastConnection)
-        {
-            // notify host of disconnection
-            string userString = clientEndPoint.ToString();
-            userString = userString.Substring(0, userString.IndexOf(':'));
-
-            ShowMessage($"Aight, {userString} headed out.");
-
-            if (wasLastConnection)
-            {
-                await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                {
-                    mainCanvas.Clear();
-                    ShowSplash();
-                    client.Close();
-                });
-            }
-        }
-
-        private void ClientConnected(IPEndPoint clientEndPoint)
-        {
-            string userString = clientEndPoint.ToString();
-            userString = userString.Substring(0, userString.IndexOf(':'));
-
-            ShowMessage($"{userString} is ready to party.");
-        }
-
-
-        private void ShowMessage(string messageText)
-        {
-            ToastNotifier ToastNotifier = ToastNotificationManager.CreateToastNotifier();
-            XmlDocument toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText01);
-            XmlNodeList toastNodeList = toastXml.GetElementsByTagName("text");
-
-            toastNodeList.Item(0).AppendChild(toastXml.CreateTextNode(messageText));
-            IXmlNode toastNode = toastXml.SelectSingleNode("/toast");
-            XmlElement audio = toastXml.CreateElement("audio");
-            audio.SetAttribute("src", "ms-winsoundevent:Notification.Default");
-
-            ToastNotification toast = new ToastNotification(toastXml);
-            toast.ExpirationTime = DateTime.Now.AddMilliseconds(300);
-            ToastNotifier.Show(toast);
-        }
-
-        private async void ShowSplash()
-        {
-            if (splashOpen)
-            {
-                return;
-            }
-
-            splashOpen = true;
-
-            WelcomePage welcomePage = new WelcomePage();
-            await welcomePage.ShowAsync();
-
-            switch (welcomePage.Result)
-            {
-                //If the user clicks on "Solo Paint"
-                case WelcomeSplashResult.Solo:
-                    isConnected = false;
-                    loadBtn.IsEnabled = true;
-                    loadBtn.Visibility = Visibility.Visible;
-                    break;
-                //shows the Join Splash or shows the MainMenu Splash
-                case WelcomeSplashResult.Join:
-                    loadBtn.IsEnabled = false;
-                    loadBtn.Visibility = Visibility.Collapsed;
-                    Join joinPage = new Join();
-                    await joinPage.ShowAsync();
-                    if (joinPage.Result == Join.JoinResult.MainMenu)
-                    {
-                        ShowSplash();
-                    }
-                    else if (joinPage.Result == Join.JoinResult.Connect)
-                    {
-                        client = new GuestClient();
-
-                        try
-                        {
-                            ((GuestClient)client).BeginConnect(new IPEndPoint(IPAddress.Parse(joinPage.IPText), Client.DefaultPort));
-                        } catch (FormatException ex)
-                        {
-                            ShowSplash();
-                            return;
-                        }
-                        client.PacketReceived += mainCanvas.ProcessPacket;
-                        client.PacketReceived += FirstPacketReceived;
-                        client.RemoteDisconnectedHandler += HostDisconnected;
-                        isConnected = true;
-
-                        await lockDialog.ShowAsync();
-
-                        mainCanvas.LineDrawn += CanvasLineDrawn;
-                    }
-                    break;
-                //shows the Host Splash or shows the MainMenu Splash
-                case WelcomeSplashResult.Host:
-                    client = new HostClient();
-
-                    ((HostClient)client).BeginAccept();
-                    client.PacketReceived += mainCanvas.ProcessPacket;
-                    client.RemoteConnectedHandler += ClientConnected;
-                    isConnected = true;
-
-                    mainCanvas.LineDrawn += CanvasLineDrawn;
-
-                    loadBtn.IsEnabled = false;
-                    loadBtn.Visibility = Visibility.Collapsed;
-
-                    Host hostPage = new Host();
-                    await hostPage.ShowAsync();
-                    if (hostPage.Result == Host.HostResult.MainMenu)
-                    {
-                        ShowSplash();
-                        if (client != null) client.Close();
-                    }
-                    else if (hostPage.Result == Host.HostResult.Host)
-                    {
-                        ((HostClient)client).StopAccepting();
-
-                        mainCanvas.Clear(Colors.Transparent);
-
-                        client.PacketReceived += mainCanvas.ProcessPacket;
-                        client.RemoteDisconnectedHandler += ClientDisconnected;
-                    }
-                    break;
-                case WelcomeSplashResult.Exit:
-                    CoreApplication.Exit();
-                    break;
-            }
-
-            //checks is the user is currently hosting or attempting to join a hosted canvas. If so, hide
-            //the clear and load buttons (and their corresponding separators), and switch the connection button's state
-            //(from disconnect to connect, and vice versa)
-            if (isConnected)
-            {
-                connectBtn.Visibility = Visibility.Collapsed;
-                disconnectBtn.Visibility = Visibility.Visible;
-                fileSep1.Visibility = Visibility.Collapsed;
-                clearBtn.Visibility = Visibility.Collapsed;
-                loadBtn.Visibility = Visibility.Collapsed;
-            }else
-            {
-                connectBtn.Visibility = Visibility.Visible;
-                disconnectBtn.Visibility = Visibility.Collapsed;
-                fileSep1.Visibility = Visibility.Visible;
-                clearBtn.Visibility = Visibility.Visible;
-                loadBtn.Visibility = Visibility.Visible;
-            }
-
-            SideBar.IsPaneOpen = true;
-            splashOpen = false;
-        }
-
         /// <summary>
         /// Highlights the pencil button, and sets the drawing style to line.
         /// </summary>
@@ -432,7 +483,6 @@ namespace BTPaint
             sidesSlider.Visibility = Visibility.Collapsed;
             sidesValue.Value = 1;
         }
-
         /// <summary>
         /// Highlights the eraser button, and sets the drawing style to eraser
         /// </summary>
@@ -448,7 +498,6 @@ namespace BTPaint
             sidesSlider.Visibility = Visibility.Collapsed;
             sidesValue.Value = 1;
         }
-
         /// <summary>
         /// Hightlights the polygon button, displays the number of sides slider, and sets the drawing style to polygon.
         /// </summary>
@@ -467,11 +516,16 @@ namespace BTPaint
             sidesValue.Value = 3;
             sidesSlider.Value = 3;
         }
-
-        //Event handler to set the sidesValue.value to the sidesSlider.value
-        private void sidesSlider_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+        //show the splash screen
+        private void connectBtn_Click(object sender, RoutedEventArgs e)
         {
-            sidesValue.Value = sidesSlider.Value;
+            MainMenu(false);
+        }
+        //show the splash screen, and close the client
+        private void disconnectBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (client != null) client.Close();
+            MainMenu(false);
         }
 
         //event handler to set the raster canvas' current color to the color picker's color
@@ -479,24 +533,10 @@ namespace BTPaint
         {
             mainCanvas.DrawColor = colorPicker.Color;
         }
-
-        //show the splash screen
-        private void connectBtn_Click(object sender, RoutedEventArgs e)
+        //Event handler to set the sidesValue.value to the sidesSlider.value
+        private void sidesSlider_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
         {
-            ShowSplash();
-        }
-
-        //show the splash screen, and close the client
-        private void disconnectBtn_Click(object sender, RoutedEventArgs e)
-        {
-            if (client != null) client.Close();
-            ShowSplash();
-        }
-
-        private async void FirstPacketReceived(byte[] packets)
-        {
-            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => lockDialog.Hide());
-            client.PacketReceived -= FirstPacketReceived;
+            sidesValue.Value = sidesSlider.Value;
         }
     }
 }

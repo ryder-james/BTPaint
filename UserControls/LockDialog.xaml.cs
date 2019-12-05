@@ -19,13 +19,20 @@ namespace BTPaint.UserControls
 {
     public sealed partial class LockDialog : ContentDialog
     {
+        public bool Success { get; private set; }
+
         public LockDialog()
         {
             this.InitializeComponent();
 
-            lockTextBack.DataContext = lockTextFore;
+            Success = true;
         }
 
+        private void cancelBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Success = false;
 
+            this.Hide();
+        }
     }
 }
