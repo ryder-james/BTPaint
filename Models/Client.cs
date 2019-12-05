@@ -56,8 +56,6 @@ namespace Networking.Models
 
         protected virtual void OnPacketReceived(IAsyncResult result)
         {
-            Debug.WriteLine("Packet received");
-
             StateObject state = (StateObject)result.AsyncState;
 
             bool realPacket = false;
@@ -84,6 +82,10 @@ namespace Networking.Models
         protected virtual void FireRemoteDisconnected(IPEndPoint remote, bool wasLastConnection = true)
         {
             RemoteDisconnected?.Invoke(remote, wasLastConnection);
+        }
+        protected virtual void FireConnectionFailed()
+        {
+            ConnectionFailed?.Invoke();
         }
 
         protected virtual void DefaultSendCallback(IAsyncResult result)
