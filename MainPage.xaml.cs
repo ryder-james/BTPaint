@@ -175,11 +175,11 @@ namespace BTPaint
                 ((GuestClient)client).BeginConnect(new IPEndPoint(IPAddress.Parse(ipText), Client.DefaultPort));
 
                 client.ConnectionFailed += lockDialog.ConnectionFailed;
+                client.PacketReceived += FirstPacketReceived;
                 await lockDialog.ShowAsync();
 
                 if (lockDialog.Success)
                 {      
-                    client.PacketReceived += FirstPacketReceived;
                     client.RemoteDisconnected += HostDisconnected;
 
                     mainCanvas.LineDrawn += CanvasLineDrawn;
