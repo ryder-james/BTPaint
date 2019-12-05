@@ -28,6 +28,13 @@ namespace BTPaint.UserControls
             Success = true;
         }
 
+        public void ConnectionFailed()
+        {
+            Success = false;
+
+            this.Hide();
+        }
+
         private void cancelBtn_Click(object sender, RoutedEventArgs e)
         {
             Success = false;

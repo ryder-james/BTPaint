@@ -174,8 +174,7 @@ namespace BTPaint
             {
                 ((GuestClient)client).BeginConnect(new IPEndPoint(IPAddress.Parse(ipText), Client.DefaultPort));
 
-                client.ConnectionFailed += () => lockDialog.Hide();
-
+                client.ConnectionFailed += lockDialog.ConnectionFailed;
                 await lockDialog.ShowAsync();
 
                 if (lockDialog.Success)

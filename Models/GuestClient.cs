@@ -83,8 +83,8 @@ namespace Networking.Models
 
             if (!realPacket)
             {
-                Debug.WriteLine("Connection blocked");
                 state.workSocket.EndReceive(result);
+                base.FireConnectionFailed();
                 return;
             }
 
