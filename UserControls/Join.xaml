@@ -33,6 +33,7 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <TextBlock Grid.ColumnSpan="4" Text="Join a Canvas"
+                   Foreground="Black"
                    FontSize="42"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Bottom"
