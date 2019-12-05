@@ -310,6 +310,8 @@ namespace BTPaint
         }
         private void HostDisconnected(IPEndPoint hostEndpoint, bool wasLastConnection = true)
         {
+            ShowMessage("Host has disconnected.");
+
             MainMenu();
         }
         private void ClientDisconnected(IPEndPoint clientEndPoint, bool wasLastConnection)
