@@ -20,37 +20,51 @@
         </Style>
     </ContentDialog.Resources>
     
-    <Grid>
+    <Grid MinWidth="270">
         <Grid.RowDefinitions>
             <RowDefinition Height="2*"/>
+            <RowDefinition/>
             <RowDefinition/>
             <RowDefinition Height="3*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="2*"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <TextBlock Grid.ColumnSpan="4" Text="Host a Canvas"
-                   FontSize="42"
+        <TextBlock Grid.ColumnSpan="4" Text="Hosting Canvas"
+                   FontSize="30"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Bottom"
                    IsColorFontEnabled="True" 
+                   Foreground="Black"
                    Margin="0 0 0 20"/>
-        <Border Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" 
+        <TextBlock Grid.Row="1"
+                   Grid.Column="1"
+                   Grid.ColumnSpan="2"
+                   Text="Waiting for connections..."
+                   FontSize="15"
+                   Foreground="Black"
+                   HorizontalAlignment="Center"/>
+        <Border Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" 
                 BorderBrush="Black"
                 BorderThickness="2"
                 Background="LightGray" Height="25">
             <TextBlock x:Name="IPTextBlock" Text="IP Address Not Found" Foreground="Black" Margin="5 0" TextAlignment="Center"/>
         </Border>
-        <Button Grid.Row="2" Grid.Column="1"
+        <Button x:Name="drawBtn"
+                Grid.Row="3" Grid.Column="1"
                 HorizontalAlignment="Center" VerticalAlignment="Top"
-                Content="Start Host"
+                Content="Start Drawing"
+                FontSize="12"
+                MinWidth="86"
                 Click="Host_Click"/>
-        <Button Grid.Row="2" Grid.Column="2"
+        <Button Grid.Row="3" Grid.Column="2"
                 HorizontalAlignment="Center" VerticalAlignment="Top"
                 Content="Return"
+                FontSize="12"
+                Width="{Binding ElementName=drawBtn, Path=ActualWidth}"
                 Click="Return_Click"/>
     </Grid>
 </ContentDialog>
