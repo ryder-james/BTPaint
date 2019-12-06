@@ -33,11 +33,9 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <TextBlock Grid.ColumnSpan="4" Text="Join a Canvas"
-                   Foreground="Black"
                    FontSize="42"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Bottom"
-                   IsColorFontEnabled="True" 
                    Margin="0 0 0 20"/>
         <Rectangle Fill="Black" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" />
         <TextBox x:Name="ipEnter"
@@ -46,7 +44,6 @@
                  BorderBrush="Black"
                  BorderThickness="2"
                  Background="LightGray"
-                 Foreground="Black"
                  Margin="0 0 0 2"
                  MaxLength="15"
                  Height="30"/>
